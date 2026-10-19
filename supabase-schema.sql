@@ -333,20 +333,25 @@ CREATE POLICY members_delete ON study_group_members FOR DELETE
   USING (user_id = current_app_user_id() OR is_admin());
 
 -- ─── STORAGE (avatars + resources buckets) ──────────────────────────────────
--- Create buckets `avatars` and `resources` (both Public) in Storage first.
+-- Buckets are created here so a fresh install just works.
 
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('avatars', 'avatars', true), ('resources', 'resources', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- storage.objects has RLS enabled by default; without policies every upload
+-- and download is denied.
 DROP POLICY IF EXISTS "storage_read"   ON storage.objects;
+DROP POLICY IF EXISTS "storage_insert" ON storage.objects;
+DROP POLICY IF EXISTS "storage_update" ON storage.objects;
 DROP POLICY IF EXISTS "storage_write"  ON storage.objects;
 
 CREATE POLICY "storage_read" ON storage.objects FOR SELECT
   USING (bucket_id IN ('avatars','resources'));
-
-CREATE POLICY "storage_write" ON storage.objects FOR INSERT
-  WITH CHECK (
-    bucket_id IN ('avatars','resources')
-    AND (storage.foldername(name))[1] = current_app_user_id()::text
-    OR bucket_id = 'avatars'
-  );
+CREATE POLICY "storage_insert" ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id IN ('avatars','resources'));
+CREATE POLICY "storage_update" ON storage.objects FOR UPDATE
+  USING (bucket_id IN ('avatars','resources'));
 
 -- ─── REALTIME ───────────────────────────────────────────────────────────────
 ALTER PUBLICATION supabase_realtime ADD TABLE messages;
