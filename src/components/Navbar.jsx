@@ -1,5 +1,5 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import { UserButton, useUser } from '@clerk/clerk-react'
+import { NavLink } from 'react-router-dom'
+import { UserButton } from '@clerk/clerk-react'
 import { useUserRole } from '../hooks/useUserRole.js'
 
 const NAV_ITEMS = [

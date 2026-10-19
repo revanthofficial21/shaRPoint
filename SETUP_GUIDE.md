@@ -68,8 +68,10 @@ VITE_APP_NAME=shaRPoint
 VITE_APP_URL=http://localhost:3000
 ```
 
-> ⚠️ For AI translation (Claude API), proxy the API key through a backend in production.
-> For development, you can temporarily expose it as VITE_ANTHROPIC_API_KEY.
+> ⚠️ Never expose a Claude/Anthropic API key through a `VITE_` variable — it gets
+> bundled into the browser and is fully public. Put it in a small backend /
+> serverless function instead, and point `VITE_AI_ENDPOINT` at that function.
+> See the report for details.
 
 ---
 
