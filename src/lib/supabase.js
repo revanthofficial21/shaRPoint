@@ -3,10 +3,13 @@ import { createClient } from "@supabase/supabase-js"
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
+// createClient() throws if the URL is missing — which would blank the whole
+// app at import time. Fall back to harmless placeholders; main.jsx renders a
+// clear "configuration required" screen when the real values are absent.
 if (!supabaseUrl || !supabaseAnonKey) {
-  // Fail loudly in dev rather than silently hitting "undefined.supabase.co"
   console.error(
-    "[shaRPoint] Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY. Copy .env.example to .env and fill them in."
+    "[shaRPoint] Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY. " +
+      "Copy .env.example to .env and fill them in."
   )
 }
 
@@ -33,10 +36,14 @@ async function clerkAccessToken() {
   }
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: { persistSession: false, autoRefreshToken: false },
-  accessToken: clerkAccessToken,
-})
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder.supabase.co",
+  supabaseAnonKey || "placeholder-anon-key",
+  {
+    auth: { persistSession: false, autoRefreshToken: false },
+    accessToken: clerkAccessToken,
+  }
+)
 
 /* =========================================================================
  * USERS
@@ -79,7 +86,7 @@ export async function updateUserProfile(userId, updates) {
 
 const POST_SELECT = `
   id, content, tags, created_at, author_id,
-  author:users!author_id ( id, name, avatar_url, college, year, role ),
+  author:users!posts_author_id_fkey ( id, name, avatar_url, college, year, role ),
   post_likes ( user_id ),
   comments ( count )
 `
@@ -152,7 +159,7 @@ export async function toggleLike(postId, userId) {
 export async function getComments(postId) {
   const { data, error } = await supabase
     .from("comments")
-    .select("id, content, created_at, author:users!author_id ( id, name, avatar_url, role )")
+    .select("id, content, created_at, author:users!comments_author_id_fkey ( id, name, avatar_url, role )")
     .eq("post_id", postId)
     .order("created_at", { ascending: true })
   if (error) throw error
@@ -222,7 +229,7 @@ export async function getLeaderboard(limit = 50) {
 
 const OPP_SELECT = `
   *,
-  poster:users!posted_by ( id, name, avatar_url, college, role )
+  poster:users!opportunities_posted_by_fkey ( id, name, avatar_url, college, role )
 `
 
 export async function getOpportunities(type) {
@@ -264,7 +271,7 @@ export async function incrementApplicants(id) {
 
 const RESOURCE_SELECT = `
   *,
-  uploader:users!uploader_id ( id, name, avatar_url, college )
+  uploader:users!resources_uploader_id_fkey ( id, name, avatar_url, college )
 `
 
 export async function getResources(search, type) {
@@ -319,7 +326,7 @@ export async function uploadFile(bucket, path, file) {
 
 const GROUP_SELECT = `
   *,
-  creator:users!created_by ( id, name ),
+  creator:users!study_groups_created_by_fkey ( id, name ),
   study_group_members ( count )
 `
 
@@ -476,7 +483,7 @@ export async function setUserRole(userId, role) {
 export async function getRecentActivity(limit = 20) {
   const { data, error } = await supabase
     .from("rewards")
-    .select("id, points, activity, created_at, user:users!user_id ( id, name, avatar_url )")
+    .select("id, points, activity, created_at, user:users!rewards_user_id_fkey ( id, name, avatar_url )")
     .order("created_at", { ascending: false })
     .limit(limit)
   if (error) throw error
