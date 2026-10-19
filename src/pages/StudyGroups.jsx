@@ -7,6 +7,7 @@ import {
   getMyGroupIds,
   createStudyGroup,
   awardPoints,
+  logActivity,
 } from '../lib/supabase.js'
 import { useUserRole } from '../hooks/useUserRole.js'
 import { Tag, Spinner, PageHeader, EmptyState } from '../components/UI.jsx'
@@ -14,7 +15,7 @@ import { Tag, Spinner, PageHeader, EmptyState } from '../components/UI.jsx'
 const BLANK = { name: '', subject: '', level: 'All Levels', schedule: '', capacity: 50, tags: '' }
 
 export default function StudyGroups() {
-  const { profile } = useUserRole()
+  const { profile, can } = useUserRole()
   const [groups, setGroups] = useState([])
   const [joined, setJoined] = useState({})
   const [loading, setLoading] = useState(true)
@@ -47,6 +48,10 @@ export default function StudyGroups() {
     try {
       if (joined[group.id]) {
         await leaveStudyGroup(group.id, profile.id)
+        logActivity({
+          userId: profile.id, actorName: profile.name, actorRole: profile.role,
+          action: 'group_left', entity: 'study_group', detail: `Left "${group.name}"`,
+        })
         setJoined((j) => ({ ...j, [group.id]: false }))
         setGroups((gs) =>
           gs.map((g) =>
@@ -67,6 +72,10 @@ export default function StudyGroups() {
           )
         )
         await awardPoints(profile.id, 5, 'Joined a study group')
+        logActivity({
+          userId: profile.id, actorName: profile.name, actorRole: profile.role,
+          action: 'group_joined', entity: 'study_group', detail: `Joined "${group.name}"`,
+        })
         toast.success('Joined group! +5 pts')
       }
     } catch (e) {
@@ -77,7 +86,7 @@ export default function StudyGroups() {
   }
 
   async function handleCreate() {
-    if (!profile || !form.name) return
+    if (!profile || !can.createGroup || !form.name) return
     setCreating(true)
     try {
       await createStudyGroup({
@@ -88,6 +97,10 @@ export default function StudyGroups() {
         schedule: form.schedule,
         capacity: Number(form.capacity) || 50,
         tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean),
+      })
+      logActivity({
+        userId: profile.id, actorName: profile.name, actorRole: profile.role,
+        action: 'group_created', entity: 'study_group', detail: `Created "${form.name}"`,
       })
       toast.success('Study group created!')
       setShowForm(false)
@@ -108,13 +121,19 @@ export default function StudyGroups() {
         title="Study Groups"
         subtitle="Find your tribe. Learn together, grow faster."
       >
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="mt-4 px-4 py-2 rounded-lg text-sm font-bold"
-          style={{ background: 'rgba(255,255,255,.2)', color: '#fff', border: 'none', cursor: 'pointer' }}
-        >
-          {showForm ? '✕ Cancel' : '+ Create Group'}
-        </button>
+        {can.createGroup ? (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="mt-4 px-4 py-2 rounded-lg text-sm font-bold"
+            style={{ background: 'rgba(255,255,255,.2)', color: '#fff', border: 'none', cursor: 'pointer' }}
+          >
+            {showForm ? '✕ Cancel' : '+ Create Group'}
+          </button>
+        ) : (
+          <p className="mt-4 text-sm" style={{ color: 'rgba(255,255,255,.75)' }}>
+            Teachers and owners can create study groups.
+          </p>
+        )}
       </PageHeader>
 
       {showForm && (

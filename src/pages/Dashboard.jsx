@@ -9,6 +9,7 @@ import {
   getComments,
   createComment,
   deleteComment,
+  logActivity,
 } from '../lib/supabase.js'
 import { useUserRole } from '../hooks/useUserRole.js'
 import { Avatar, RoleBadge, Tag, Spinner, FilterBar, EmptyState } from '../components/UI.jsx'
@@ -17,7 +18,7 @@ import ChatWidget from '../components/ChatWidget.jsx'
 const FILTERS = ['All', 'ML', 'Placement', 'CP', 'GATE', 'Advice', 'Internship']
 
 export default function Dashboard() {
-  const { profile, isAdmin, loading: profileLoading } = useUserRole()
+  const { profile, isOwner, loading: profileLoading } = useUserRole()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [newPost, setNewPost] = useState('')
@@ -50,6 +51,11 @@ export default function Dashboard() {
       const tagArr = tags.split(',').map((t) => t.trim()).filter(Boolean)
       await createPost({ authorId: profile.id, content: newPost, tags: tagArr })
       await awardPoints(profile.id, 10, 'Created a post')
+      logActivity({
+        userId: profile.id, actorName: profile.name, actorRole: profile.role,
+        action: 'post_created', entity: 'post',
+        detail: newPost.slice(0, 80),
+      })
       toast.success('Posted! +10 points earned')
       setNewPost('')
       setTags('')
@@ -65,7 +71,13 @@ export default function Dashboard() {
     if (!profile) return
     try {
       const nowLiked = await toggleLike(postId, profile.id)
-      if (nowLiked) await awardPoints(profile.id, 1, 'Liked a post')
+      if (nowLiked) {
+        await awardPoints(profile.id, 1, 'Liked a post')
+        logActivity({
+          userId: profile.id, actorName: profile.name, actorRole: profile.role,
+          action: 'post_liked', entity: 'post', detail: 'Liked a post',
+        })
+      }
       await loadPosts()
     } catch {
       toast.error('Failed to like')
@@ -104,6 +116,11 @@ export default function Dashboard() {
     try {
       await createComment({ postId, authorId: profile.id, content: commentDraft.trim() })
       await awardPoints(profile.id, 5, 'Commented on a post')
+      logActivity({
+        userId: profile.id, actorName: profile.name, actorRole: profile.role,
+        action: 'comment_added', entity: 'comment',
+        detail: commentDraft.trim().slice(0, 80),
+      })
       const data = await getComments(postId)
       setComments((c) => ({ ...c, [postId]: data }))
       setCommentDraft('')
@@ -234,7 +251,7 @@ export default function Dashboard() {
                         {new Date(post.created_at).toLocaleDateString()}
                       </span>
 
-                      {(isAdmin || post.author?.id === profile?.id) && (
+                      {(isOwner || post.author?.id === profile?.id) && (
                         <button
                           onClick={() => handleDelete(post.id)}
                           className="text-xs text-red-400 hover:text-red-600 ml-2"
@@ -256,7 +273,7 @@ export default function Dashboard() {
                                 <span className="text-xs font-bold text-gray-800">
                                   {c.author?.name}
                                 </span>
-                                {(isAdmin || c.author?.id === profile?.id) && (
+                                {(isOwner || c.author?.id === profile?.id) && (
                                   <button
                                     onClick={() => handleDeleteComment(post.id, c.id)}
                                     className="text-[10px] text-red-300 hover:text-red-500"

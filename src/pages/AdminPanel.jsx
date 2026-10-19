@@ -15,6 +15,9 @@ import {
   getStudyGroups,
   setStudyGroupActive,
   deleteStudyGroup,
+  getActivityLog,
+  getActivityActions,
+  logActivity,
 } from '../lib/supabase.js'
 import { Avatar, RoleBadge, Spinner } from '../components/UI.jsx'
 
@@ -25,6 +28,7 @@ const TABS = [
   { key: 'resources', label: 'Resources', icon: '📚' },
   { key: 'opportunities', label: 'Opportunities', icon: '💼' },
   { key: 'groups', label: 'Groups', icon: '🎓' },
+  { key: 'audit', label: 'Activity Log', icon: '🕵️' },
 ]
 
 export default function AdminPanel() {
@@ -40,6 +44,10 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true)
   const [userSearch, setUserSearch] = useState('')
   const [busy, setBusy] = useState({})
+  const [auditLog, setAuditLog] = useState([])
+  const [auditActions, setAuditActions] = useState([])
+  const [auditAction, setAuditAction] = useState('All')
+  const [auditRole, setAuditRole] = useState('All')
 
   const loadOverview = useCallback(async () => {
     const [s, a] = await Promise.all([getAdminStats(), getRecentActivity(15)])
@@ -61,13 +69,21 @@ export default function AdminPanel() {
         else if (which === 'resources') setResources(await getResources())
         else if (which === 'opportunities') setOpportunities(await getOpportunities())
         else if (which === 'groups') setGroups(await getStudyGroups())
+        else if (which === 'audit') {
+          const [log, actions] = await Promise.all([
+            getActivityLog({ action: auditAction, role: auditRole }),
+            getActivityActions(),
+          ])
+          setAuditLog(log)
+          setAuditActions(actions)
+        }
       } catch (e) {
         toast.error(e.message || 'Failed to load data')
       } finally {
         setLoading(false)
       }
     },
-    [loadOverview, loadUsers, userSearch]
+    [loadOverview, loadUsers, userSearch, auditAction, auditRole]
   )
 
   useEffect(() => {
@@ -90,6 +106,14 @@ export default function AdminPanel() {
     try {
       await setUserRole(userId, role)
       setUsers((u) => u.map((x) => (x.id === userId ? { ...x, role } : x)))
+      logActivity({
+        userId: profile?.id,
+        actorName: profile?.name,
+        actorRole: profile?.role,
+        action: 'role_changed',
+        entity: 'user',
+        detail: `Set ${users.find((x) => x.id === userId)?.name || userId} to ${role}`,
+      })
       toast.success(`Role updated to ${role}`)
     } catch {
       toast.error('Failed to update role')
@@ -173,10 +197,10 @@ export default function AdminPanel() {
     <div className="max-w-screen-xl mx-auto px-4 py-6">
       <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
         <div>
-          <h1 className="font-serif font-black text-2xl text-gray-900">Admin Panel ⚙️</h1>
-          <p className="text-sm text-gray-400 mt-1">Platform management and moderation</p>
+          <h1 className="font-serif font-black text-2xl text-gray-900">Owner Console 🔐</h1>
+          <p className="text-sm text-gray-400 mt-1">Platform management, moderation and full audit trail</p>
         </div>
-        <span className="badge badge-admin">🔴 Admin Access · {profile?.name}</span>
+        <span className="badge badge-admin">🔴 Owner · {profile?.name}</span>
       </div>
 
       {/* Tabs */}
@@ -294,9 +318,9 @@ export default function AdminPanel() {
                         disabled={u.id === profile?.id || busy[u.id]}
                         className="text-xs border border-gray-200 rounded-lg px-2 py-1 outline-none disabled:opacity-50"
                       >
-                        <option value="user">Member</option>
-                        <option value="early_access">Early Access</option>
-                        <option value="admin">Admin</option>
+                        <option value="user">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Owner</option>
                       </select>
                     </td>
                   </tr>
@@ -506,6 +530,82 @@ export default function AdminPanel() {
                   <tr>
                     <td colSpan={5} className="px-4 py-8 text-center text-gray-300 text-sm">
                       No groups.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ── ACTIVITY LOG (audit) ── */}
+      {!loading && tab === 'audit' && (
+        <div className="card overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-50 flex justify-between items-center gap-3 flex-wrap">
+            <h2 className="font-serif font-bold text-base text-gray-900">
+              Activity Log ({auditLog.length})
+            </h2>
+            <div className="flex gap-2">
+              <select
+                value={auditRole}
+                onChange={(e) => setAuditRole(e.target.value)}
+                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none"
+              >
+                {['All', 'user', 'teacher', 'admin'].map((r) => (
+                  <option key={r} value={r}>{r === 'All' ? 'All roles' : r}</option>
+                ))}
+              </select>
+              <select
+                value={auditAction}
+                onChange={(e) => setAuditAction(e.target.value)}
+                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none"
+              >
+                <option value="All">All actions</option>
+                {auditActions.map((a) => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => loadTab('audit')}
+                className="text-xs font-bold px-3 py-1.5 rounded-lg text-white"
+                style={{ background: '#1e3a5f', border: 'none', cursor: 'pointer' }}
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  {['When', 'Who', 'Role', 'Action', 'Detail'].map((h) => (
+                    <th key={h} className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wide">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {auditLog.map((a) => (
+                  <tr key={a.id} className="border-b border-gray-50 hover:bg-gray-50">
+                    <td className="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">
+                      {new Date(a.created_at).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-xs font-semibold text-gray-800">{a.actor_name || '—'}</td>
+                    <td className="px-4 py-3"><RoleBadge role={a.actor_role} /></td>
+                    <td className="px-4 py-3">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">
+                        {a.action}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-xs text-gray-600">{a.detail || '—'}</td>
+                  </tr>
+                ))}
+                {auditLog.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-8 text-center text-gray-300 text-sm">
+                      No activity recorded yet.
                     </td>
                   </tr>
                 )}

@@ -6,6 +6,7 @@ import {
   uploadFile,
   getUserActivity,
   getPostsByAuthor,
+  logActivity,
 } from '../lib/supabase.js'
 import { Avatar, RoleBadge, Spinner, Tag, EmptyState } from '../components/UI.jsx'
 
@@ -71,6 +72,10 @@ export default function Profile() {
         skills: form.skills.split(',').map((s) => s.trim()).filter(Boolean),
       })
       await refresh()
+      logActivity({
+        userId: profile.id, actorName: profile.name, actorRole: profile.role,
+        action: 'profile_updated', entity: 'user', detail: 'Updated profile details',
+      })
       toast.success('Profile updated!')
       setEditing(false)
     } catch {

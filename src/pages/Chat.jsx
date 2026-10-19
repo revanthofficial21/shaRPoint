@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
 import { useUserRole } from '../hooks/useUserRole.js'
 import { useRealTimeMessages } from '../hooks/useRealTimeMessages.js'
-import { getChatPeers } from '../lib/supabase.js'
+import { getChatPeers, logActivity } from '../lib/supabase.js'
 import { translateMessage } from '../services/api.js'
 import { Avatar, Spinner } from '../components/UI.jsx'
 
@@ -36,6 +36,11 @@ export default function Chat() {
     if (!input.trim() || !activeUser) return
     try {
       await send(input.trim())
+      logActivity({
+        userId: profile?.id, actorName: profile?.name, actorRole: profile?.role,
+        action: 'message_sent', entity: 'message',
+        detail: `To ${activeUser.name}`, // content is intentionally not logged
+      })
       setInput('')
     } catch {
       toast.error('Message failed to send')

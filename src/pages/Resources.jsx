@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import toast from 'react-hot-toast'
-import { getResources, uploadFile, uploadResource, deleteResource, incrementDownloads, awardPoints } from '../lib/supabase.js'
+import { getResources, uploadFile, uploadResource, deleteResource, incrementDownloads, awardPoints, logActivity } from '../lib/supabase.js'
 import { useUserRole } from '../hooks/useUserRole.js'
 import { Tag, Spinner, FilterBar, PageHeader, EmptyState } from '../components/UI.jsx'
 
 const TYPES = ['All', 'PDF', 'Notes', 'Guide', 'Sheet']
 
 export default function Resources() {
-  const { profile, isAdmin } = useUserRole()
+  const { profile, isOwner } = useUserRole()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -49,6 +49,14 @@ export default function Resources() {
         size: `${(selectedFile.size / 1024).toFixed(0)} KB`,
       })
       await awardPoints(profile.id, 25, 'Uploaded a resource')
+      logActivity({
+        userId: profile.id,
+        actorName: profile.name,
+        actorRole: profile.role,
+        action: 'resource_uploaded',
+        entity: 'resource',
+        detail: `Uploaded "${form.title}" (${form.type})`,
+      })
       toast.success('Resource uploaded! +25 pts')
       setShowUpload(false)
       setForm({ title: '', type: 'PDF', tags: '' })
@@ -66,7 +74,17 @@ export default function Resources() {
       await incrementDownloads(item.id)
       if (item.file_url) window.open(item.file_url, '_blank')
       toast.success('Downloading! +5 pts')
-      if (profile) await awardPoints(profile.id, 5, 'Downloaded a resource')
+      if (profile) {
+        await awardPoints(profile.id, 5, 'Downloaded a resource')
+        logActivity({
+          userId: profile.id,
+          actorName: profile.name,
+          actorRole: profile.role,
+          action: 'resource_downloaded',
+          entity: 'resource',
+          detail: `Downloaded "${item.title}"`,
+        })
+      }
     } catch {
       toast.error('Download failed')
     }
@@ -184,7 +202,7 @@ export default function Resources() {
                 ⬇️ {r.downloads || 0} · {r.size || '–'}
               </span>
               <div className="flex gap-2 items-center">
-                {(isAdmin || r.uploader_id === profile?.id) && (
+                {(isOwner || r.uploader_id === profile?.id) && (
                   <button
                     onClick={() => handleDelete(r.id)}
                     className="text-xs text-red-400 hover:text-red-600"

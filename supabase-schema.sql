@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
   college         TEXT DEFAULT '',
   year            TEXT DEFAULT '',
   skills          TEXT[]  DEFAULT '{}',
-  role            TEXT    DEFAULT 'user' CHECK (role IN ('user','early_access','admin')),
+  role            TEXT    DEFAULT 'user' CHECK (role IN ('user','teacher','admin')),
   points          INTEGER DEFAULT 0,
   badges          TEXT[]  DEFAULT '{}',
   created_at      TIMESTAMPTZ DEFAULT NOW(),
@@ -109,6 +109,18 @@ CREATE TABLE IF NOT EXISTS rewards (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Audit trail: every action taken on the platform, readable only by the owner.
+CREATE TABLE IF NOT EXISTS activity_log (
+  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id    UUID REFERENCES users(id) ON DELETE SET NULL,
+  actor_name TEXT,
+  actor_role TEXT,
+  action     TEXT NOT NULL,
+  entity     TEXT,
+  detail     TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS study_groups (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_by  UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
@@ -135,6 +147,7 @@ CREATE INDEX IF NOT EXISTS idx_posts_created      ON posts (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_messages_pair      ON messages (sender_id, receiver_id);
 CREATE INDEX IF NOT EXISTS idx_rewards_user       ON rewards (user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_users_points       ON users (points DESC);
+CREATE INDEX IF NOT EXISTS idx_activity_log_created ON activity_log (created_at DESC);
 
 -- ─── IDENTITY HELPERS ───────────────────────────────────────────────────────
 
@@ -217,6 +230,7 @@ ALTER TABLE resources           ENABLE ROW LEVEL SECURITY;
 ALTER TABLE opportunities       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages            ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rewards             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE activity_log        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE study_groups        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE study_group_members ENABLE ROW LEVEL SECURITY;
 
@@ -229,7 +243,7 @@ BEGIN
     WHERE schemaname = 'public'
       AND tablename IN ('users','posts','comments','post_likes','resources',
                         'opportunities','messages','rewards','study_groups',
-                        'study_group_members')
+                        'study_group_members','activity_log')
   LOOP
     EXECUTE format('DROP POLICY IF EXISTS %I ON %I.%I',
                    r.policyname, r.schemaname, r.tablename);
@@ -239,7 +253,10 @@ END $$;
 -- USERS: everyone signed in can read the directory; you insert/update yourself.
 CREATE POLICY users_select ON users FOR SELECT USING (true);
 CREATE POLICY users_insert ON users FOR INSERT
-  WITH CHECK (clerk_user_id = (auth.jwt() ->> 'sub'));
+  WITH CHECK (
+    clerk_user_id = (auth.jwt() ->> 'sub')
+    AND role IN ('user','teacher')   -- the owner role can never be self-assigned
+  );
 CREATE POLICY users_update ON users FOR UPDATE
   USING (id = current_app_user_id() OR is_admin())
   WITH CHECK (id = current_app_user_id() OR is_admin());
@@ -295,6 +312,10 @@ CREATE POLICY rewards_select ON rewards FOR SELECT
   USING (user_id = current_app_user_id() OR is_admin());
 CREATE POLICY rewards_insert ON rewards FOR INSERT
   WITH CHECK (user_id = current_app_user_id() OR is_admin());
+
+-- ACTIVITY LOG: the owner's audit trail. Only the owner reads it; anyone writes.
+CREATE POLICY activity_log_select ON activity_log FOR SELECT USING (is_admin());
+CREATE POLICY activity_log_insert ON activity_log FOR INSERT WITH CHECK (true);
 
 -- STUDY GROUPS
 CREATE POLICY groups_select ON study_groups FOR SELECT USING (true);

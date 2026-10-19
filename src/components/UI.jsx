@@ -30,9 +30,9 @@ export function Avatar({ name = '?', size = 40, src = null }) {
 // ─── RoleBadge ───────────────────────────────────────────────────────────────
 export function RoleBadge({ role }) {
   const map = {
-    admin:        { label: 'Admin',        cls: 'badge badge-admin' },
-    early_access: { label: 'Early Access', cls: 'badge badge-early' },
-    user:         { label: 'Member',       cls: 'badge badge-user'  },
+    admin:   { label: 'Owner',   cls: 'badge badge-admin' },
+    teacher: { label: 'Teacher', cls: 'badge badge-teacher' },
+    user:    { label: 'Student', cls: 'badge badge-user' },
   }
   const { label, cls } = map[role] || map.user
   return <span className={cls}>{label}</span>

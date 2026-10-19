@@ -492,3 +492,56 @@ export async function getAdminPosts(limit = 50) {
   if (error) throw error
   return data
 }
+
+/* =========================================================================
+ * ACTIVITY LOG  (the audit trail the owner watches)
+ * ====================================================================== */
+
+/**
+ * Records one action. Never throws — an audit-log failure must not break the
+ * action the user was performing.
+ */
+export async function logActivity({
+  userId = null,
+  actorName = null,
+  actorRole = null,
+  action,
+  entity = null,
+  detail = null,
+}) {
+  const { error } = await supabase.from("activity_log").insert({
+    user_id: userId,
+    actor_name: actorName,
+    actor_role: actorRole,
+    action,
+    entity,
+    detail,
+  })
+  if (error) console.warn("[shaRPoint] activity log failed:", error.message)
+}
+
+/** Owner console: the full audit feed, newest first. */
+export async function getActivityLog({ limit = 150, action = null, role = null } = {}) {
+  let query = supabase
+    .from("activity_log")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit)
+
+  if (action && action !== "All") query = query.eq("action", action)
+  if (role && role !== "All") query = query.eq("actor_role", role)
+
+  const { data, error } = await query
+  if (error) throw error
+  return data
+}
+
+/** Distinct action types present, for the owner console filter. */
+export async function getActivityActions() {
+  const { data, error } = await supabase
+    .from("activity_log")
+    .select("action")
+    .limit(1000)
+  if (error) throw error
+  return [...new Set((data || []).map((r) => r.action))].sort()
+}

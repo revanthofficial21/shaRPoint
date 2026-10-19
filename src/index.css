@@ -97,8 +97,8 @@
     @apply bg-red-100 text-red-800;
   }
 
-  .badge-early {
-    @apply bg-violet-100 text-violet-800;
+  .badge-teacher {
+    @apply bg-amber-100 text-amber-800;
   }
 
   .badge-user {

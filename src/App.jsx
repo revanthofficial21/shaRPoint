@@ -12,6 +12,7 @@ import StudyGroups from "./pages/StudyGroups.jsx"
 import AdminPanel from "./pages/AdminPanel.jsx"
 import Navbar from "./components/Navbar.jsx"
 import AuthPage from "./pages/AuthPage.jsx"
+import OwnerLogin from "./pages/OwnerLogin.jsx"
 import { Spinner } from "./components/UI.jsx"
 import { useUserRole } from "./hooks/useUserRole.js"
 
@@ -56,6 +57,8 @@ export default function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/sign-in" element={<AuthPage mode="sign-in" />} />
       <Route path="/sign-up" element={<AuthPage mode="sign-up" />} />
+      {/* Separate, unlisted owner sign-in */}
+      <Route path="/owner" element={<OwnerLogin />} />
 
       {/* Protected (any signed-in user) */}
       <Route path="/feed" element={<Protected><Dashboard /></Protected>} />

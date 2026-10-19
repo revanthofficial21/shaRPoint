@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { UserButton } from '@clerk/clerk-react'
 import { useUserRole } from '../hooks/useUserRole.js'
+import { RoleBadge } from './UI.jsx'
 
 const NAV_ITEMS = [
   { to: '/feed',          icon: '🏠', label: 'Feed'          },
@@ -12,9 +13,10 @@ const NAV_ITEMS = [
 ]
 
 export default function Navbar() {
-  const { isAdmin } = useUserRole()
-  const items = isAdmin
-    ? [...NAV_ITEMS, { to: '/admin', icon: '⚙️', label: 'Admin' }]
+  const { profile, isOwner, isTeacher } = useUserRole()
+
+  const items = isOwner
+    ? [...NAV_ITEMS, { to: '/admin', icon: '⚙️', label: 'Owner Console' }]
     : NAV_ITEMS
 
   return (
@@ -49,8 +51,16 @@ export default function Navbar() {
         <div className="flex items-center gap-3 ml-2">
           <NavLink to="/profile" className="nav-link no-underline">
             <span className="text-sm">👤</span>
-            <span className="hidden sm:inline text-xs">Profile</span>
+            <span className="hidden md:inline text-xs">{profile?.name?.split(' ')[0] || 'Profile'}</span>
           </NavLink>
+          <span className="hidden sm:inline">
+            <RoleBadge role={profile?.role} />
+          </span>
+          {isTeacher && !isOwner && (
+            <span className="hidden lg:inline text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
+              Teacher tools
+            </span>
+          )}
           <UserButton afterSignOutUrl="/" />
         </div>
       </div>

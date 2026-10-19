@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useState } from "react"
 import { useUser } from "@clerk/clerk-react"
-import { getUserByClerkId, createUser } from "../lib/supabase.js"
+import { getUserByClerkId, createUser, logActivity } from "../lib/supabase.js"
 
 /**
  * Single source of truth for "who is this user and what can they do".
  *
- * Previously this hook was a stub that always returned the string "user",
- * so every page that read `profile` got `undefined` and `isAdmin` was never
- * true. It now:
- *   1. reads the signed-in Clerk user,
- *   2. finds (or lazily creates) their row in Supabase `users`,
- *   3. exposes { profile, role, isAdmin, isEarlyAccess, loading, refresh }.
+ * Roles (stored in users.role):
+ *   user     -> Student   (self-selectable at signup)
+ *   teacher  -> Teacher   (self-selectable at signup; more tools)
+ *   admin    -> Owner     (granted manually only; full console + audit trail)
+ *
+ * The owner role can NEVER be set from signup metadata — that would be a
+ * privilege-escalation hole. It is assigned by hand in the database.
  */
 export function useUserRole() {
   const { user, isLoaded, isSignedIn } = useUser()
@@ -38,25 +39,33 @@ export function useUserRole() {
           user.emailAddresses?.[0]?.emailAddress ||
           `${user.id}@users.noreply.clerk`
 
-        const name =
-          user.fullName ||
-          user.username ||
-          email.split("@")[0] ||
-          "Student"
+        const name = user.fullName || user.username || email.split("@")[0] || "Student"
+
+        // Only student/teacher are self-selectable. Anything else -> student.
+        const requested = user.unsafeMetadata?.role === "teacher" ? "teacher" : "user"
 
         row = await createUser({
           clerk_user_id: user.id,
           name,
           email,
           avatar_url: user.imageUrl || null,
+          role: requested,
+        })
+
+        logActivity({
+          userId: row.id,
+          actorName: row.name,
+          actorRole: row.role,
+          action: "signup",
+          entity: "user",
+          detail: `New ${requested === "teacher" ? "teacher" : "student"} account created`,
         })
       }
 
       setProfile(row)
       setError(null)
     } catch (err) {
-      // Most commonly: RLS blocked the insert/select because the Clerk ->
-      // Supabase token isn't wired up yet. Surface it instead of failing mute.
+      // Most commonly: RLS blocked the insert/select. Surface it, don't fail mute.
       setError(err)
       setProfile(null)
     } finally {
@@ -69,14 +78,26 @@ export function useUserRole() {
   }, [sync])
 
   const role = profile?.role || "user"
+  const isOwner = role === "admin"
+  const isTeacher = role === "teacher"
+  const isStudent = role === "user"
 
   return {
     profile,
     role,
     loading,
     error,
-    isAdmin: role === "admin",
-    isEarlyAccess: role === "early_access",
     refresh: sync,
+    isStudent,
+    isTeacher,
+    isOwner,
+    isAdmin: isOwner, // backwards-compatible alias
+    can: {
+      postOpportunity: isTeacher || isOwner,
+      createGroup: isTeacher || isOwner,
+      uploadResource: true,
+      moderate: isOwner,
+      viewAudit: isOwner,
+    },
   }
 }

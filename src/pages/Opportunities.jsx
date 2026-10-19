@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import toast from 'react-hot-toast'
-import { getOpportunities, postOpportunity, deleteOpportunity, incrementApplicants, awardPoints } from '../lib/supabase.js'
+import { getOpportunities, postOpportunity, deleteOpportunity, incrementApplicants, awardPoints, logActivity } from '../lib/supabase.js'
 import { useUserRole } from '../hooks/useUserRole.js'
 import { Tag, Spinner, FilterBar, PageHeader, EmptyState } from '../components/UI.jsx'
 
@@ -8,7 +8,7 @@ const TYPES = ['All', 'Internship', 'Full-Time', 'Research', 'Fellowship']
 const BLANK = { title: '', company: '', type: 'Internship', location: '', stipend: '', deadline: '', link: '', description: '', tags: '' }
 
 export default function Opportunities() {
-  const { profile, isAdmin } = useUserRole()
+  const { profile, isOwner, can } = useUserRole()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('All')
@@ -40,6 +40,14 @@ export default function Opportunities() {
       try {
         await incrementApplicants(item.id)
         await awardPoints(profile.id, 20, 'Applied to an opportunity')
+        logActivity({
+          userId: profile.id,
+          actorName: profile.name,
+          actorRole: profile.role,
+          action: 'opportunity_applied',
+          entity: 'opportunity',
+          detail: `Applied to ${item.title} at ${item.company}`,
+        })
       } catch {
         /* points are best-effort */
       }
@@ -47,7 +55,7 @@ export default function Opportunities() {
   }
 
   async function handlePost() {
-    if (!profile) return
+    if (!profile || !can.postOpportunity) return
     setPosting(true)
     try {
       await postOpportunity({
@@ -63,6 +71,14 @@ export default function Opportunities() {
         tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean),
       })
       await awardPoints(profile.id, 20, 'Posted an opportunity')
+      logActivity({
+        userId: profile.id,
+        actorName: profile.name,
+        actorRole: profile.role,
+        action: 'opportunity_posted',
+        entity: 'opportunity',
+        detail: `Posted ${form.title} at ${form.company}`,
+      })
       toast.success('Opportunity posted! +20 pts')
       setShowForm(false)
       setForm(BLANK)
@@ -93,13 +109,19 @@ export default function Opportunities() {
         title="Opportunities Board"
         subtitle="Internships, jobs, fellowships & research positions"
       >
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="mt-4 px-4 py-2 rounded-lg text-sm font-bold"
-          style={{ background: 'rgba(255,255,255,.2)', color: '#fff', border: 'none', cursor: 'pointer' }}
-        >
-          {showForm ? '✕ Cancel' : '+ Post Opportunity'}
-        </button>
+        {can.postOpportunity ? (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="mt-4 px-4 py-2 rounded-lg text-sm font-bold"
+            style={{ background: 'rgba(255,255,255,.2)', color: '#fff', border: 'none', cursor: 'pointer' }}
+          >
+            {showForm ? '✕ Cancel' : '+ Post Opportunity'}
+          </button>
+        ) : (
+          <p className="mt-4 text-sm" style={{ color: 'rgba(255,255,255,.75)' }}>
+            Teachers and owners can post opportunities.
+          </p>
+        )}
       </PageHeader>
 
       {showForm && (
@@ -214,7 +236,7 @@ export default function Opportunities() {
               >
                 {applied[o.id] ? '✅ Applied' : 'Apply'}
               </button>
-              {(isAdmin || o.posted_by === profile?.id) && (
+              {(isOwner || o.posted_by === profile?.id) && (
                 <button
                   onClick={() => handleDelete(o.id)}
                   className="text-xs text-red-400 hover:text-red-600"
