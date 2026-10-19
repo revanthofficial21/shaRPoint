@@ -8,7 +8,6 @@ Built by Revanth Kumar.
 Stack: **React + Vite · Clerk (auth) · Supabase (Postgres, Realtime, Storage) · Vercel**
 
 Live: https://sharpoint.vercel.app
-
 ---
 
 ## Features
