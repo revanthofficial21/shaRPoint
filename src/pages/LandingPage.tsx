@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
+import { CampusBackdrop } from '@/components/common/CampusBackdrop'
 import {
   ArrowRight,
   BarChart3,
@@ -52,7 +53,7 @@ const inside = [
     icon: Briefcase,
     label: 'Internships',
     blurb: 'Explore opportunities before anyone else.',
-    tile: 'text-tile-orange bg-tile-orange/15',
+    tile: 'text-tile-amber bg-tile-amber/15',
   },
   {
     icon: FolderOpen,
@@ -83,13 +84,13 @@ const features = [
   },
   {
     icon: Briefcase,
-    tile: 'text-tile-orange bg-tile-orange/15',
+    tile: 'text-tile-amber bg-tile-amber/15',
     title: 'Opportunities, first.',
     body: 'Internships, hackathons and competitions on one board — with a tracker so nothing slips past you.',
   },
   {
     icon: Bot,
-    tile: 'text-tile-teal bg-tile-teal/15',
+    tile: 'text-tile-sky bg-tile-sky/15',
     title: 'Stuck at 2am? Ask.',
     body: 'An assistant that explains concepts and builds revision plans. It teaches — it will not do your graded work.',
   },
@@ -161,7 +162,7 @@ export function LandingPage() {
         { label: 'Students', value: stats.data.students, icon: Users, tile: 'text-tile-blue bg-tile-blue/15' },
         { label: 'Teachers', value: stats.data.teachers, icon: GraduationCap, tile: 'text-tile-violet bg-tile-violet/15' },
         { label: 'Courses', value: stats.data.courses, icon: BookOpen, tile: 'text-tile-green bg-tile-green/15' },
-        { label: 'Opportunities', value: stats.data.opportunities, icon: Briefcase, tile: 'text-tile-orange bg-tile-orange/15' },
+        { label: 'Opportunities', value: stats.data.opportunities, icon: Briefcase, tile: 'text-tile-amber bg-tile-amber/15' },
       ]
     : []
 
@@ -216,6 +217,15 @@ export function LandingPage() {
 
       {/* ── hero ─────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
+        {/* Night-campus backdrop, drawn as SVG — see CampusBackdrop for why. */}
+        <div className="pointer-events-none absolute inset-0 -z-20 h-full w-full" aria-hidden="true">
+          <CampusBackdrop className="h-full w-full" />
+        </div>
+        {/* Legibility scrim: the backdrop must never fight the headline. */}
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-background/55 via-background/75 to-background"
+          aria-hidden="true"
+        />
         <div className="glow-brand pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
         <div
           className="animate-float-slow pointer-events-none absolute -left-24 top-10 -z-10 h-72 w-72 rounded-full bg-tile-violet/20 blur-3xl"
@@ -336,7 +346,7 @@ export function LandingPage() {
 
             <div className="animate-float absolute -left-4 bottom-10 hidden rounded-full border border-border/70 bg-card/90 px-3 py-1.5 text-xs font-medium shadow-card backdrop-blur xl:block">
               <span className="flex items-center gap-1.5">
-                <BarChart3 className="h-3.5 w-3.5 text-tile-teal" aria-hidden="true" />
+                <BarChart3 className="h-3.5 w-3.5 text-tile-sky" aria-hidden="true" />
                 Analytics
               </span>
             </div>

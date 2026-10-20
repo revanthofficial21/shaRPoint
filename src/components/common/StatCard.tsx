@@ -8,15 +8,16 @@ import { cn } from '@/lib/utils'
  * wears the brand colour is unreadable. These are the six saturated tones from
  * the design reference.
  */
-export type TileTone = 'blue' | 'violet' | 'green' | 'orange' | 'pink' | 'teal'
+export type TileTone = 'blue' | 'violet' | 'sky' | 'green' | 'amber' | 'pink' | 'purple'
 
 const TONES: Record<TileTone, string> = {
   blue: 'bg-tile-blue/15 text-tile-blue',
   violet: 'bg-tile-violet/15 text-tile-violet',
+  sky: 'bg-tile-sky/15 text-tile-sky',
   green: 'bg-tile-green/15 text-tile-green',
-  orange: 'bg-tile-orange/15 text-tile-orange',
+  amber: 'bg-tile-amber/15 text-tile-amber',
   pink: 'bg-tile-pink/15 text-tile-pink',
-  teal: 'bg-tile-teal/15 text-tile-teal',
+  purple: 'bg-tile-purple/15 text-tile-purple',
 }
 
 /**

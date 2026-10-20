@@ -54,8 +54,8 @@ export function TeacherHomePage() {
   const cards = [
     { label: 'My courses', value: stats.data?.courses, icon: BookOpen, tone: 'blue' as const },
     { label: 'Enrolled students', value: stats.data?.students, icon: Users, tone: 'violet' as const },
-    { label: 'Assignments', value: stats.data?.assignments, icon: ClipboardList, tone: 'teal' as const },
-    { label: 'Awaiting grading', value: stats.data?.ungraded, icon: Clock, tone: 'orange' as const },
+    { label: 'Assignments', value: stats.data?.assignments, icon: ClipboardList, tone: 'sky' as const },
+    { label: 'Awaiting grading', value: stats.data?.ungraded, icon: Clock, tone: 'amber' as const },
   ]
 
   return (

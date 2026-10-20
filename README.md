@@ -102,9 +102,52 @@ CI runs typecheck, lint, test and build on every push (`.github/workflows/ci.yml
 
 ---
 
+## Hero backdrop
+
+The landing hero sits on `src/components/common/CampusBackdrop.tsx` — a **night campus
+drawn as SVG**: gradient sky, a soft glow, a lit skyline, ~480 windows and a treeline.
+It scales to any viewport, costs a few KB, retints with the accent preset, and is yours.
+
+**Why not the reference image?** That hero illustration is a raster image embedded in a
+composite mockup. It cannot be extracted cleanly — the student figure and the baked-in
+captions sit over it — and its licence is unknown, so a crop would be both low-resolution
+and legally shaky.
+
+**To use a real photograph instead:**
+
+1. Put the file in `public/` (e.g. `public/hero-campus.jpg`)
+2. In `src/pages/LandingPage.tsx`, replace `<CampusBackdrop />` with
+   `<img src="/hero-campus.jpg" alt="" className="h-full w-full object-cover" />`
+3. Keep the scrim `<div>` below it — without that the headline becomes unreadable over a
+   busy photo.
+
+---
+
 ## Theme
 
 **Nebula — electric blue to violet on deep navy. Dark by default. Five accents to choose from.**
+
+### Measured palette
+
+These are **sampled from the design reference**, not eyeballed:
+
+| Element | Value |
+|---|---|
+| Page background | `#011032` — `222 96% 10%` |
+| Panel / sidebar | `#0b2044` — `218 72% 15%` |
+| **Brand gradient** | `#3755f7` → `#5e27fa` — `231 92% 59%` → `256 95% 57%` |
+| Headline gradient | violet → blue → **cyan** `#44bdf5` |
+| Dashboard content | `#f1f6fd` — `215 75% 97%` (light) |
+| Dashboard card | `#ffffff`, divider `#dae0ef` |
+| Tile hues | blue `#3755f7`, violet `#5e27fa`, sky `#44bdf5`, green, amber, pink, purple |
+
+Note the two gradients differ on purpose: the **button** sweeps blue → violet, the
+**headline** sweeps violet → blue → cyan. Both are in the reference; they are separate
+tokens (`--brand-from/--brand-to` and the `.text-brand-gradient` utility).
+
+The reference's dashboards are **light**, so the light theme is tuned to match them
+exactly. Dark is still the default — flip `DEFAULT_PALETTE`/the inline script if you want
+light as the default instead.
 
 Every colour is a CSS variable in `src/styles/globals.css` — there are no hardcoded
 colours in components, so the whole app restyles from that one file.

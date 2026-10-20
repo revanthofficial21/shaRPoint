@@ -67,10 +67,11 @@ export default {
         tile: {
           blue: 'hsl(var(--tile-blue))',
           violet: 'hsl(var(--tile-violet))',
+          sky: 'hsl(var(--tile-sky))',
           green: 'hsl(var(--tile-green))',
-          orange: 'hsl(var(--tile-orange))',
+          amber: 'hsl(var(--tile-amber))',
           pink: 'hsl(var(--tile-pink))',
-          teal: 'hsl(var(--tile-teal))',
+          purple: 'hsl(var(--tile-purple))',
         },
       },
       borderRadius: {
