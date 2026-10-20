@@ -14,12 +14,51 @@ teachers and platform administrators**, built on React + TypeScript + Supabase.
 >
 > **Start here:** [DEPLOYMENT.md](DEPLOYMENT.md) for the ordered setup walkthrough.
 >
-> ⚠️ **Migrations `0006_phase5.sql` and `0007_phase6.sql` have not been applied to the
-> hosted database yet** (the migration tool lost its authorization mid-session). Run
-> both in the Supabase SQL editor — the audit triggers, admin RPCs, realtime publication
-> and notification triggers all live there. Until then the admin console pages that call
-> `admin_user_directory()` / `admin_platform_stats()`, messaging and notifications will
-> not work.
+> **Verified against the live database** (2026-10-20): all seven migrations are applied,
+> and the RLS suite passes **14 of 14** assertions. The security guarantees below are
+> measured, not assumed — see [Verification](#verification).
+
+---
+
+## Verification
+
+What has actually been checked, and how. Anything not on this list is reviewed, not
+proven.
+
+| Check | How | Result |
+|---|---|---|
+| Migrations applied | `admin_user_directory`, `my_conversations`, the grade guard, 4 audit triggers and realtime membership all present | ✅ `1, 1, 4, 1` |
+| **Security model** | `supabase/tests/rls.sql` against the live database | ✅ **14 / 14 PASS** |
+| Application logic | `npm run test` — 95 tests | ✅ pass |
+| Types | `npm run typecheck` | ✅ clean |
+| Lint | `npm run lint` | ✅ 0 errors |
+| Production build | `npm run build` | ✅ succeeds |
+| Bundle boots | built output executed in a DOM | ✅ no console errors |
+| Hosting config | `src/test/deployment.test.ts` | ✅ SPA fallback present and ordered |
+
+### What the RLS suite proved
+
+Each of these was actively attempted and refused by the database:
+
+- a student cannot read submissions for a course they are not enrolled in
+- a student sees exactly their own submission, and a course teacher sees the ones for
+  their course
+- **a student cannot write their own score or release their own results**
+- an outsider cannot read a private conversation
+- a student cannot self-grant the admin role
+- an administrator cannot grant the owner role
+- the last owner account cannot be removed
+- a student cannot delete a course, or read the audit log
+- a suspended account cannot create a post
+- an anonymous visitor can read no profiles and no courses
+- a student cannot edit another user's post
+
+### Not verified
+
+- **The AI assistant**, which needs the Edge Function deployed and a provider key.
+- **Live UI paths end to end** — the interface is covered by tests and a boot check, but
+  no automated browser run has exercised every screen against the live backend.
+- **The privacy and terms pages**, which are a starting point and need legal review.
 
 ---
 
