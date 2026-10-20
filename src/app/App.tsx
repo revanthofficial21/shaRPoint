@@ -62,6 +62,25 @@ const LeaderboardPage = page(
   'LeaderboardPage',
 )
 
+const CoursesManagePage = page(
+  () => import('@/features/teacher/CoursesManagePage'),
+  'CoursesManagePage',
+)
+const StudentsPage = page(() => import('@/features/teacher/StudentsPage'), 'StudentsPage')
+const AssignmentsManagePage = page(
+  () => import('@/features/teacher/AssignmentsManagePage'),
+  'AssignmentsManagePage',
+)
+const SubmissionsPage = page(
+  () => import('@/features/teacher/SubmissionsPage'),
+  'SubmissionsPage',
+)
+const AnnouncementsPage = page(
+  () => import('@/features/teacher/AnnouncementsPage'),
+  'AnnouncementsPage',
+)
+const AnalyticsPage = page(() => import('@/features/teacher/AnalyticsPage'), 'AnalyticsPage')
+
 function RouteFallback() {
   return (
     <div className="flex min-h-[40vh] items-center justify-center gap-3 text-muted-foreground">
@@ -76,13 +95,6 @@ const roadmap: Record<string, string> = {
   '/app/messages': 'Phase 6 — Realtime messaging',
   '/app/assistant': 'Phase 6 — AI study assistant',
   '/app/settings': 'Phase 7 — Settings',
-  '/teacher/courses': 'Phase 4 — Course management',
-  '/teacher/students': 'Phase 4 — Student roster',
-  '/teacher/assignments': 'Phase 4 — Assignment management',
-  '/teacher/submissions': 'Phase 4 — Submission review',
-  '/teacher/resources': 'Phase 4 — Learning materials',
-  '/teacher/announcements': 'Phase 4 — Announcements',
-  '/teacher/analytics': 'Phase 4 — Academic analytics',
   '/teacher/messages': 'Phase 6 — Realtime messaging',
   '/admin/users': 'Phase 5 — User management',
   '/admin/roles': 'Phase 5 — Roles & permissions',
@@ -147,6 +159,17 @@ export default function App() {
           <Route element={<RequireRole allow={['teacher', 'admin', 'owner']} />}>
             <Route element={<AppShell />}>
               <Route path="/teacher" element={<TeacherHomePage />} />
+
+              {/* Phase 4 — teacher experience */}
+              <Route path="/teacher/courses" element={<CoursesManagePage />} />
+              <Route path="/teacher/students" element={<StudentsPage />} />
+              <Route path="/teacher/assignments" element={<AssignmentsManagePage />} />
+              <Route path="/teacher/submissions" element={<SubmissionsPage />} />
+              <Route path="/teacher/announcements" element={<AnnouncementsPage />} />
+              <Route path="/teacher/analytics" element={<AnalyticsPage />} />
+              <Route path="/teacher/resources" element={<ResourcesPage />} />
+              <Route path="/teacher/profile" element={<ProfilePage />} />
+
               {Object.entries(roadmap)
                 .filter(([path]) => path.startsWith('/teacher/'))
                 .map(([path, phase]) => (

@@ -406,6 +406,19 @@ export interface Database {
         Returns: undefined
       }
       increment_resource_downloads: { Args: { p_resource: string }; Returns: undefined }
+      teacher_course_stats: {
+        Args: Record<string, never>
+        Returns: {
+          course_id: string
+          course_title: string
+          course_code: string | null
+          enrolled: number
+          assignment_count: number
+          submission_count: number
+          pending_grading: number
+          average_score: number | null
+        }[]
+      }
     }
     Enums: {
       app_role: AppRole

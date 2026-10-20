@@ -50,6 +50,7 @@ const teacherNav: NavItem[] = [
   { to: '/teacher/announcements', label: 'Announcements', icon: Megaphone },
   { to: '/teacher/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/teacher/messages', label: 'Messages', icon: MessageSquare },
+  { to: '/teacher/profile', label: 'Profile', icon: GraduationCap },
   { to: '/teacher/settings', label: 'Settings', icon: Settings },
 ]
 

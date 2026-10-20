@@ -19,6 +19,7 @@ import { initials, toUserMessage } from '@/lib/utils'
 
 const schema = z.object({
   full_name: z.string().min(2, 'Name is required'),
+  designation: z.string().max(120).optional().default(''),
   bio: z.string().max(500).optional().default(''),
   course: z.string().max(120).optional().default(''),
   year: z.string().max(40).optional().default(''),
@@ -31,7 +32,8 @@ type FormValues = z.input<typeof schema>
 
 export function ProfilePage() {
   const { user } = useAuth()
-  const { profile, isLoading, refetch } = useSessionContext()
+  const { profile, isLoading, refetch, capabilities } = useSessionContext()
+  const isStaff = capabilities.isTeacher || capabilities.isAdmin
   const queryClient = useQueryClient()
   const [uploading, setUploading] = useState(false)
 
@@ -46,6 +48,7 @@ export function ProfilePage() {
     if (profile) {
       reset({
         full_name: profile.full_name,
+        designation: profile.designation ?? '',
         bio: profile.bio ?? '',
         course: profile.course ?? '',
         year: profile.year ?? '',
@@ -63,6 +66,7 @@ export function ProfilePage() {
         .from('profiles')
         .update({
           full_name: parsed.full_name,
+          designation: parsed.designation,
           bio: parsed.bio,
           course: parsed.course,
           year: parsed.year,
@@ -175,16 +179,23 @@ export function ProfilePage() {
               <Textarea id="bio" {...register('bio')} />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            {isStaff ? (
               <div className="space-y-2">
-                <Label htmlFor="course">Course</Label>
-                <Input id="course" {...register('course')} />
+                <Label htmlFor="designation">Designation</Label>
+                <Input id="designation" placeholder="e.g. Assistant Professor" {...register('designation')} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="year">Year</Label>
-                <Input id="year" {...register('year')} />
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="course">Course</Label>
+                  <Input id="course" {...register('course')} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="year">Year</Label>
+                  <Input id="year" {...register('year')} />
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="skills">Skills (comma separated)</Label>

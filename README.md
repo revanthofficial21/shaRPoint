@@ -3,11 +3,11 @@
 An AI-powered student collaboration and academic management platform for **students,
 teachers and platform administrators**, built on React + TypeScript + Supabase.
 
-> **Status: Phase 3 of 7 complete.** Foundation (schema, RLS, auth, role routing, app
-> shell) plus the full student experience — courses, assignments, resources, study
-> groups, opportunities and the leaderboard. Remaining modules are delivered in the
-> phases described in [Roadmap](#roadmap). Pages that are routed but not yet
-> implemented say so explicitly rather than showing fake data.
+> **Status: Phase 4 of 7 complete.** Foundation (schema, RLS, auth, role routing, app
+> shell), the full student experience, and the teacher experience — course management,
+> roster, assignment creation, submission grading and analytics. Remaining modules are
+> delivered in the phases described in [Roadmap](#roadmap). Pages that are routed but
+> not yet implemented say so explicitly rather than showing fake data.
 
 ---
 
@@ -99,6 +99,7 @@ Migrations live in `supabase/migrations/` and are applied in order:
 | `0002_rls.sql` | Helper functions, escalation guards, and 83 RLS policies |
 | `0003_storage.sql` | New-user provisioning trigger + storage buckets and policies |
 | `0004_phase3.sql` | Resource bookmarks, opportunity applications, protected download counter |
+| `0005_phase4.sql` | Teacher course-edit policy, grading guard trigger, analytics RPC |
 
 ### Apply them
 
@@ -156,6 +157,10 @@ Selected RLS guarantees:
 - A user may edit only their own profile; `profiles` carries no role fields.
 - Grades and submissions are readable by the submitting student, the teacher of that
   course, or an administrator — nobody else.
+- Students **cannot write their own grades**: a `BEFORE` trigger forces every
+  non-staff write back to safe values and blocks edits once a submission is graded.
+- Teachers may edit only the courses they are assigned to; course creation and
+  archiving remain administrative.
 - Private conversations are readable only by their participants.
 - Suspended accounts are blocked by `is_active_user()` on write policies.
 - Storage objects are namespaced `<user-id>/…`; users cannot write into another
@@ -249,8 +254,8 @@ for that table and action in `0002_rls.sql`.
 | 1 | Inspect repository, confirm clean slate | ✅ done |
 | 2 | Foundation: toolchain, schema, RLS, auth, role routing, shell | ✅ done |
 | 3 | Student experience: courses, assignments, resources, groups, opportunities, leaderboard | ✅ done |
-| 4 | Teacher experience: course management, materials, grading, analytics | ⏳ next |
-| 5 | Admin & owner: users, roles, moderation, reports, audit logs, settings | ⏳ |
+| 4 | Teacher experience: course management, materials, grading, analytics | ✅ done |
+| 5 | Admin & owner: users, roles, moderation, reports, audit logs, settings | ⏳ next |
 | 6 | Advanced: Realtime messaging & notifications, storage, AI assistant, search | ⏳ |
 | 7 | Quality: tests, RLS verification, accessibility, deployment docs | ⏳ |
 
