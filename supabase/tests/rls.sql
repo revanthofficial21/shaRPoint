@@ -25,6 +25,11 @@
 -- ─── reset any leftovers from a previous run ────────────────────────────────
 do $$
 begin
+  -- Start from a clean identity: a stale jwt claim from an earlier run would
+  -- otherwise make auth.uid() non-null and trip guard_user_roles on the delete.
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+
   begin
     delete from public.courses where title = 'RLS Test Course';
     delete from auth.users     where email like 'rls-%@example.test';
@@ -143,6 +148,7 @@ do $$
 declare v_other uuid; n int;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_other from rls_ids where label = 'student_b';
   perform set_config('request.jwt.claims',
     json_build_object('sub', v_other::text, 'role', 'authenticated')::text, true);
@@ -150,11 +156,13 @@ begin
 
   select count(*) into n from public.assignment_submissions;
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record(
     'student cannot read submissions for a course they are not in',
     n = 0, 'rows visible: ' || n);
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
 end $$;
 
 -- ─── 2. the enrolled student sees only their own submission ─────────────────
@@ -162,6 +170,7 @@ do $$
 declare v_me uuid; n int; total int;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_me from rls_ids where label = 'student_a';
   perform set_config('request.jwt.claims',
     json_build_object('sub', v_me::text, 'role', 'authenticated')::text, true);
@@ -170,11 +179,13 @@ begin
   select count(*) into total from public.assignment_submissions;
   select count(*) into n from public.assignment_submissions where student_id = v_me;
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record(
     'student sees exactly their own submission',
     total = n and n = 1, 'own: ' || n || ', visible: ' || total);
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
 end $$;
 
 -- ─── 3. the teacher of the course can read that submission ──────────────────
@@ -182,6 +193,7 @@ do $$
 declare v_teacher uuid; n int;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_teacher from rls_ids where label = 'teacher';
   perform set_config('request.jwt.claims',
     json_build_object('sub', v_teacher::text, 'role', 'authenticated')::text, true);
@@ -189,10 +201,12 @@ begin
 
   select count(*) into n from public.assignment_submissions;
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('course teacher can read submissions for their course', n = 1,
     'rows visible: ' || n);
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
 end $$;
 
 -- ─── 4. a student cannot write their own grade (guard trigger) ──────────────
@@ -200,6 +214,7 @@ do $$
 declare v_me uuid; v_assign uuid; v_after numeric;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_me     from rls_ids where label = 'student_a';
   select id into v_assign from rls_ids where label = 'assignment';
 
@@ -217,11 +232,13 @@ begin
    where assignment_id = v_assign and student_id = v_me;
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
 
   select score into v_after from public.assignment_submissions
    where assignment_id = v_assign and student_id = v_me;
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record(
     'student cannot write their own score or release results',
     v_after is null, 'score after attempted tamper: ' || coalesce(v_after::text, 'null'));
@@ -232,6 +249,7 @@ do $$
 declare v_other uuid; n int;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_other from rls_ids where label = 'student_b';
   perform set_config('request.jwt.claims',
     json_build_object('sub', v_other::text, 'role', 'authenticated')::text, true);
@@ -239,10 +257,12 @@ begin
 
   select count(*) into n from public.messages;
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('outsider cannot read a private conversation', n = 0,
     'messages visible: ' || n);
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
 end $$;
 
 -- ─── 6. a student cannot grant themselves a role ────────────────────────────
@@ -250,6 +270,7 @@ do $$
 declare v_me uuid; blocked boolean := false;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_me from rls_ids where label = 'student_a';
   perform set_config('request.jwt.claims',
     json_build_object('sub', v_me::text, 'role', 'authenticated')::text, true);
@@ -262,7 +283,9 @@ begin
   end;
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('student cannot self-grant the admin role', blocked,
     case when blocked then 'blocked' else 'ALLOWED — privilege escalation!' end);
 end $$;
@@ -272,6 +295,7 @@ do $$
 declare v_admin uuid; v_other uuid; blocked boolean := false;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_admin from rls_ids where label = 'admin';
   select id into v_other from rls_ids where label = 'student_a';
   perform set_config('request.jwt.claims',
@@ -285,7 +309,9 @@ begin
   end;
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('administrator cannot grant the owner role', blocked,
     case when blocked then 'blocked' else 'ALLOWED — owner escalation!' end);
 end $$;
@@ -320,6 +346,7 @@ begin
   raise exception 'RLS_ROLLBACK_OWNER_TEST';
 exception when others then
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record(
     'the last owner cannot be removed',
     v_blocked and v_reason ilike '%last owner%',
@@ -331,6 +358,7 @@ do $$
 declare v_me uuid; v_course uuid; n int; remaining int;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_me     from rls_ids where label = 'student_a';
   select id into v_course from rls_ids where label = 'course';
   perform set_config('request.jwt.claims',
@@ -340,12 +368,15 @@ begin
   delete from public.courses where id = v_course;
   select count(*) into n from public.audit_logs;
   reset role;
+  perform set_config('request.jwt.claims', '', true);
 
   select count(*) into remaining from public.courses where id = v_course;
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('student cannot delete a course', remaining = 1,
     'course rows remaining: ' || remaining);
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('student cannot read the audit log', n = 0,
     'audit rows visible: ' || n);
 end $$;
@@ -355,6 +386,7 @@ do $$
 declare v_me uuid; blocked boolean := false;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_me from rls_ids where label = 'student_a';
   update public.account_statuses set status = 'suspended' where user_id = v_me;
 
@@ -369,7 +401,9 @@ begin
   end;
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('a suspended account cannot create a post', blocked,
     case when blocked then 'blocked' else 'ALLOWED — suspension not enforced!' end);
 
@@ -387,11 +421,14 @@ begin
   select count(*) into n_profiles from public.profiles;
   select count(*) into n_courses  from public.courses;
   reset role;
+  perform set_config('request.jwt.claims', '', true);
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('anonymous visitor cannot read profiles', n_profiles = 0,
     'profiles visible: ' || n_profiles);
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('anonymous visitor cannot read courses', n_courses = 0,
     'courses visible: ' || n_courses);
 end $$;
@@ -401,6 +438,7 @@ do $$
 declare v_me uuid; changed int;
 begin
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   select id into v_me from rls_ids where label = 'student_a';
   perform set_config('request.jwt.claims',
     json_build_object('sub', v_me::text, 'role', 'authenticated')::text, true);
@@ -409,8 +447,10 @@ begin
   update public.posts set content = 'hijacked' where content = 'Student B post';
   get diagnostics changed = row_count;
   reset role;
+  perform set_config('request.jwt.claims', '', true);
 
   reset role;
+  perform set_config('request.jwt.claims', '', true);
   perform pg_temp.record('student cannot edit another user''s post', changed = 0,
     'rows changed: ' || changed);
 end $$;
@@ -418,6 +458,11 @@ end $$;
 -- ─── clean up everything this script created ────────────────────────────────
 do $$
 begin
+  -- Clean identity: guard_user_roles checks auth.uid(), and a leftover claim
+  -- would make this delete look like a non-admin modifying roles.
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+
   begin
     delete from public.courses where title = 'RLS Test Course';
     delete from auth.users     where email like 'rls-%@example.test';
@@ -434,6 +479,7 @@ begin
   end;
 end $$;
 reset role;
+select set_config('request.jwt.claims', '', true);
 
 -- ─── results (last statement, so the editor displays it) ────────────────────
 select n, result, assertion, detail
