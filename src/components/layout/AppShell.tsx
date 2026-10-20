@@ -22,8 +22,10 @@ import { GlobalSearch } from '@/features/search/GlobalSearch'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 
 /**
- * Authenticated shell: collapsible sidebar, top bar, breadcrumb slot and the
- * routed page content. Navigation is derived from the user's roles.
+ * Authenticated shell: collapsible sidebar, glass top bar, routed content.
+ *
+ * Navigation is derived from the user's roles, so the sidebar a teacher sees is
+ * never the one a student sees.
  */
 export function AppShell() {
   const { signOut } = useAuth()
@@ -50,54 +52,80 @@ export function AppShell() {
         Skip to content
       </a>
 
-      {/* Sidebar */}
+      {/* ── sidebar ──────────────────────────────────────────────────────── */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex flex-col border-r bg-card transition-all duration-200',
+          'fixed inset-y-0 left-0 z-40 flex flex-col border-r border-border/60 bg-card transition-[width,transform] duration-200',
           collapsed ? 'w-[68px]' : 'w-64',
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         )}
       >
-        <div className="flex h-16 items-center gap-2 border-b px-4">
+        <div className="flex h-16 shrink-0 items-center gap-2 border-b border-border/60 px-4">
           <Link to="/" className="flex items-center gap-2 overflow-hidden">
-            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-b from-primary to-primary/85 text-sm font-bold text-primary-foreground shadow-sm">
               S
-            </div>
+            </span>
             {!collapsed && <span className="truncate font-semibold tracking-tight">SHARPOINT</span>}
           </Link>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
           {items.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.to === '/app' || item.to === '/teacher' || item.to === '/admin'}
               onClick={() => setMobileOpen(false)}
+              title={collapsed ? item.label : undefined}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-accent text-accent-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                    : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground',
                 )
               }
             >
-              <item.icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span className="truncate">{item.label}</span>}
+              {({ isActive }) => (
+                <>
+                  {/* A 3px accent bar marks the current page without shouting. */}
+                  {isActive && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
+                    />
+                  )}
+                  <item.icon
+                    className={cn('h-4 w-4 shrink-0', isActive && 'text-primary')}
+                    aria-hidden="true"
+                  />
+                  {!collapsed && <span className="truncate">{item.label}</span>}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="border-t p-3">
+        <div className="shrink-0 border-t border-border/60 p-3">
+          {!collapsed && roles.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-1 px-1">
+              {roles.slice(0, 2).map((role) => (
+                <Badge key={role} variant="muted" className="text-[10px]">
+                  {ROLE_LABEL[role]}
+                </Badge>
+              ))}
+            </div>
+          )}
           <Button
             variant="ghost"
             size="sm"
             className="w-full justify-start gap-3 text-muted-foreground"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             onClick={() => setCollapsed((c) => !c)}
           >
             <ChevronLeft
-              className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')}
+              className={cn('h-4 w-4 transition-transform duration-200', collapsed && 'rotate-180')}
+              aria-hidden="true"
             />
             {!collapsed && <span>Collapse</span>}
           </Button>
@@ -106,21 +134,21 @@ export function AppShell() {
 
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
           role="presentation"
           aria-hidden="true"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Main */}
+      {/* ── main ─────────────────────────────────────────────────────────── */}
       <div
         className={cn(
-          'flex flex-1 flex-col transition-all duration-200',
+          'flex flex-1 flex-col transition-[padding] duration-200',
           collapsed ? 'lg:pl-[68px]' : 'lg:pl-64',
         )}
       >
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border/60 bg-background/70 px-4 backdrop-blur-xl">
           <Button
             variant="ghost"
             size="icon"
@@ -136,28 +164,26 @@ export function AppShell() {
             <GlobalSearch />
           </div>
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-1.5">
             <ThemeToggle />
             <NotificationBell />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 rounded-full pr-2 hover:bg-muted">
-                  <Avatar>
-                    <AvatarImage
-                      src={profile?.avatar_url ?? undefined}
-                      alt={profile?.full_name ?? ''}
-                    />
+                <button
+                  className="ml-1 rounded-full ring-offset-2 ring-offset-background transition-shadow hover:ring-2 hover:ring-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="Account menu"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={profile?.avatar_url ?? undefined} alt={profile?.full_name ?? ''} />
                     <AvatarFallback>{initials(profile?.full_name)}</AvatarFallback>
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuContent align="end" className="w-64">
                 <DropdownMenuLabel>
                   <div className="space-y-1">
-                    <p className="truncate text-sm font-semibold">
-                      {profile?.full_name || 'Account'}
-                    </p>
+                    <p className="truncate text-sm font-semibold">{profile?.full_name || 'Account'}</p>
                     <p className="truncate text-xs font-normal text-muted-foreground">
                       {profile?.email}
                     </p>
@@ -186,7 +212,11 @@ export function AppShell() {
           </div>
         </header>
 
-        <main id="main-content" tabIndex={-1} className="flex-1 p-4 md:p-6 focus:outline-none">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="relative flex-1 p-4 focus:outline-none md:p-6 lg:p-8"
+        >
           <Outlet />
         </main>
       </div>

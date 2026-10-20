@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/features/auth/auth-context'
 import { useSessionContext } from '@/features/profiles/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { StatCard } from '@/components/common/StatCard'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 
@@ -52,10 +52,10 @@ export function TeacherHomePage() {
   })
 
   const cards = [
-    { label: 'My courses', value: stats.data?.courses, icon: BookOpen },
-    { label: 'Enrolled students', value: stats.data?.students, icon: Users },
-    { label: 'Assignments', value: stats.data?.assignments, icon: ClipboardList },
-    { label: 'Awaiting grading', value: stats.data?.ungraded, icon: Clock },
+    { label: 'My courses', value: stats.data?.courses, icon: BookOpen, tone: 'primary' as const },
+    { label: 'Enrolled students', value: stats.data?.students, icon: Users, tone: 'muted' as const },
+    { label: 'Assignments', value: stats.data?.assignments, icon: ClipboardList, tone: 'muted' as const },
+    { label: 'Awaiting grading', value: stats.data?.ungraded, icon: Clock, tone: 'warning' as const },
   ]
 
   return (
@@ -71,21 +71,14 @@ export function TeacherHomePage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
-          <Card key={card.label}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {card.label}
-              </CardTitle>
-              <card.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              {stats.isLoading ? (
-                <Skeleton className="h-8 w-12" />
-              ) : (
-                <p className="text-2xl font-semibold">{card.value ?? 0}</p>
-              )}
-            </CardContent>
-          </Card>
+          <StatCard
+            key={card.label}
+            label={card.label}
+            value={card.value}
+            icon={card.icon}
+            tone={card.tone}
+            isLoading={stats.isLoading}
+          />
         ))}
       </div>
 
@@ -93,7 +86,7 @@ export function TeacherHomePage() {
         <CardHeader>
           <CardTitle className="text-base">Getting started</CardTitle>
           <CardDescription>
-            Course creation and grading are part of the teacher build phase.
+            Manage your courses, create assignments and grade what comes in.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">

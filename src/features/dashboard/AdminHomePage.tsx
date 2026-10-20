@@ -6,7 +6,7 @@ import { useSessionContext } from '@/features/profiles/hooks'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { StatCard } from '@/components/common/StatCard'
 
 export function AdminHomePage() {
   const { capabilities, profile } = useSessionContext()
@@ -30,10 +30,10 @@ export function AdminHomePage() {
   })
 
   const cards = [
-    { label: 'Total users', value: stats.data?.users, icon: Users },
-    { label: 'Courses', value: stats.data?.courses, icon: BookOpen },
-    { label: 'Community posts', value: stats.data?.posts, icon: GraduationCap },
-    { label: 'Open reports', value: stats.data?.reports, icon: Flag },
+    { label: 'Total users', value: stats.data?.users, icon: Users, tone: 'primary' as const },
+    { label: 'Courses', value: stats.data?.courses, icon: BookOpen, tone: 'muted' as const },
+    { label: 'Community posts', value: stats.data?.posts, icon: GraduationCap, tone: 'muted' as const },
+    { label: 'Open reports', value: stats.data?.reports, icon: Flag, tone: 'destructive' as const },
   ]
 
   return (
@@ -53,21 +53,14 @@ export function AdminHomePage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
-          <Card key={card.label}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {card.label}
-              </CardTitle>
-              <card.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              {stats.isLoading ? (
-                <Skeleton className="h-8 w-12" />
-              ) : (
-                <p className="text-2xl font-semibold">{card.value ?? 0}</p>
-              )}
-            </CardContent>
-          </Card>
+          <StatCard
+            key={card.label}
+            label={card.label}
+            value={card.value}
+            icon={card.icon}
+            tone={card.tone}
+            isLoading={stats.isLoading}
+          />
         ))}
       </div>
 
@@ -75,7 +68,7 @@ export function AdminHomePage() {
         <CardHeader>
           <CardTitle className="text-base">Administrative tools</CardTitle>
           <CardDescription>
-            User management, moderation and audit logging arrive in the admin build phase.
+            Manage accounts and roles, review reported content, and read the audit trail.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">

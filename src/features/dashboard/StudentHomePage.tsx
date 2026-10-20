@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
+import { StatCard } from '@/components/common/StatCard'
 import { formatDate } from '@/lib/utils'
 
 const PROFILE_FIELDS = [
@@ -79,9 +80,9 @@ export function StudentHomePage() {
   })
 
   const cards = [
-    { label: 'Enrolled courses', value: stats.data?.courses, icon: BookOpen },
-    { label: 'Submissions', value: stats.data?.submissions, icon: ClipboardList },
-    { label: 'Points', value: stats.data?.points, icon: Trophy },
+    { label: 'Enrolled courses', value: stats.data?.courses, icon: BookOpen, tone: 'primary' as const },
+    { label: 'Submissions', value: stats.data?.submissions, icon: ClipboardList, tone: 'muted' as const },
+    { label: 'Points', value: stats.data?.points, icon: Trophy, tone: 'warning' as const },
   ]
 
   return (
@@ -100,21 +101,14 @@ export function StudentHomePage() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         {cards.map((card) => (
-          <Card key={card.label}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {card.label}
-              </CardTitle>
-              <card.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              {stats.isLoading ? (
-                <Skeleton className="h-8 w-16" />
-              ) : (
-                <p className="text-2xl font-semibold">{card.value ?? 0}</p>
-              )}
-            </CardContent>
-          </Card>
+          <StatCard
+            key={card.label}
+            label={card.label}
+            value={card.value}
+            icon={card.icon}
+            tone={card.tone}
+            isLoading={stats.isLoading}
+          />
         ))}
       </div>
 
