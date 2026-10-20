@@ -21,10 +21,24 @@
           var theme = stored === 'light' || stored === 'dark' ? stored : 'light'
           document.documentElement.classList.toggle('dark', theme === 'dark')
           document.documentElement.classList.toggle('light', theme === 'light')
-          // Accent preset; 'ember' is the base token set, so no rule targets it.
+          /*
+           * The accent key is VERSIONED on purpose.
+           *
+           * It used to be 'sharpoint-palette'. Visitors who picked a preset under
+           * an older design kept that value in localStorage, and it overrode the
+           * new default on every subsequent deploy — the site looked unchanged
+           * while the code had in fact shipped a whole new palette.
+           *
+           * Bump this suffix whenever the design direction changes.
+           */
+          try {
+            localStorage.removeItem('sharpoint-palette')
+          } catch (e) {
+            /* storage can be blocked; nothing to clean up */
+          }
           document.documentElement.setAttribute(
             'data-palette',
-            localStorage.getItem('sharpoint-palette') || 'nebula',
+            localStorage.getItem('sharpoint-accent.v1') || 'nebula',
           )
         } catch (e) {
           document.documentElement.classList.add('light')

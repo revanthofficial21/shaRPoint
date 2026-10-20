@@ -50,7 +50,14 @@ export const PALETTE_META: Record<Palette, PaletteMeta> = {
 }
 
 const THEME_KEY = 'sharpoint-theme'
-const PALETTE_KEY = 'sharpoint-palette'
+/*
+ * VERSIONED. A stored accent from an earlier design direction must not keep
+ * overriding the current default — that is exactly how a shipped redesign can
+ * look like "nothing changed" to every returning visitor. Bump the suffix when
+ * the design direction changes.
+ */
+const PALETTE_KEY = 'sharpoint-accent.v1'
+const LEGACY_PALETTE_KEYS = ['sharpoint-palette']
 
 interface ThemeContextValue {
   theme: Theme
@@ -86,6 +93,9 @@ function readInitialPalette(): Palette {
   const applied = document.documentElement.getAttribute('data-palette')
   if (isPalette(applied)) return applied
   try {
+    // Drop keys from earlier design directions so they cannot win.
+    for (const legacy of LEGACY_PALETTE_KEYS) localStorage.removeItem(legacy)
+
     const stored = localStorage.getItem(PALETTE_KEY)
     if (isPalette(stored)) return stored
   } catch {

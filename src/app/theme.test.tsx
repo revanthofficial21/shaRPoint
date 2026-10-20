@@ -93,11 +93,11 @@ describe('palette presets', () => {
       </ThemeProvider>,
     )
     fireEvent.click(screen.getByRole('button', { name: 'aurora' }))
-    expect(localStorage.getItem('sharpoint-palette')).toBe('aurora')
+    expect(localStorage.getItem('sharpoint-accent.v1')).toBe('aurora')
   })
 
   it('honours a stored palette', () => {
-    localStorage.setItem('sharpoint-palette', 'rose')
+    localStorage.setItem('sharpoint-accent.v1', 'rose')
     function Probe() {
       const { palette } = useTheme()
       return <span data-testid="palette">{palette}</span>
@@ -110,8 +110,28 @@ describe('palette presets', () => {
     expect(screen.getByTestId('palette')).toHaveTextContent('rose')
   })
 
+  it('ignores an accent stored under an earlier design direction', () => {
+    // This is the bug that made a shipped redesign look like "nothing changed":
+    // the visitor had picked a preset under the old palette, and that stored
+    // value kept overriding the new default on every deploy.
+    localStorage.setItem('sharpoint-palette', 'ember')
+    function Probe() {
+      const { palette } = useTheme()
+      return <span data-testid="palette">{palette}</span>
+    }
+    render(
+      <ThemeProvider>
+        <Probe />
+      </ThemeProvider>,
+    )
+    expect(screen.getByTestId('palette')).toHaveTextContent('nebula')
+    expect(document.documentElement.getAttribute('data-palette')).toBe('nebula')
+    // and the stale key is cleared so it cannot come back
+    expect(localStorage.getItem('sharpoint-palette')).toBeNull()
+  })
+
   it('ignores a garbage stored palette and falls back to nebula', () => {
-    localStorage.setItem('sharpoint-palette', 'neon')
+    localStorage.setItem('sharpoint-accent.v1', 'neon')
     function Probe() {
       const { palette } = useTheme()
       return <span data-testid="palette">{palette}</span>
