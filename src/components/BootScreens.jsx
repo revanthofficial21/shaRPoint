@@ -63,6 +63,12 @@ export function ConfigScreen({ missing }) {
           Local dev reads them from a <code style={codeStyle}>.env</code> file — copy{' '}
           <code style={codeStyle}>.env.example</code> to get started.
         </p>
+        <p style={{ color: '#6b7a90', fontSize: 12, margin: '12px 0 0' }}>
+          Note: Vite only exposes variables prefixed with{' '}
+          <code style={codeStyle}>VITE_</code>. The plain names{' '}
+          <code style={codeStyle}>SUPABASE_URL</code> /{' '}
+          <code style={codeStyle}>SUPABASE_ANON_KEY</code> are also accepted.
+        </p>
       </div>
     </div>
   )

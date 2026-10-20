@@ -1,7 +1,9 @@
 import { createClient } from "@supabase/supabase-js"
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// VITE_* is the standard Vite name; __SUPABASE_*__ is injected by
+// vite.config.js for hosts that store the values under a plain name.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || __SUPABASE_URL__
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || __SUPABASE_ANON_KEY__
 
 // createClient() throws if the URL is missing — which would blank the whole
 // app at import time. Fall back to harmless placeholders; main.jsx renders a
