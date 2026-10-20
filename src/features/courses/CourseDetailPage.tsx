@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, ClipboardList, FolderOpen, Megaphone, Users } from 'lucide-react'
+import { ArrowLeft, ClipboardList, Download, FolderOpen, Megaphone, Users } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
@@ -9,9 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatDate, relativeTime } from '@/lib/utils'
+import { toast } from 'sonner'
+import { publicUrlFor, signedUrlFor } from '@/lib/storage'
 import { useCourse, useCourseAnnouncements, useMyEnrollments } from './hooks'
 import { useAssignments } from '@/features/assignments/hooks'
 import { useResources } from '@/features/resources/hooks'
+import { extensionOf } from '@/lib/storage'
+import { supabase } from '@/integrations/supabase/client'
 
 export function CourseDetailPage() {
   const { courseId } = useParams<{ courseId: string }>()
@@ -20,6 +24,41 @@ export function CourseDetailPage() {
   const assignments = useAssignments(courseId)
   const resources = useResources({ courseId })
   const enrolled = useMyEnrollments()
+
+  /**
+   * Materials open the same way they do on the Resources page: a public file
+   * uses its public URL, a course-only file needs a signed one (and will fail
+   * closed for anyone not enrolled). The download counter is best-effort.
+   */
+  async function openMaterial(resource: {
+    id: string
+    storage_path: string | null
+    external_url: string | null
+    visibility: string
+  }) {
+    try {
+      if (resource.storage_path) {
+        const bucket = resource.visibility === 'public' ? 'community' : 'course-resources'
+        const url =
+          resource.visibility === 'public'
+            ? publicUrlFor(bucket, resource.storage_path)
+            : await signedUrlFor(bucket, resource.storage_path)
+        if (!url) {
+          toast.error('You are not authorized to download this file')
+          return
+        }
+        window.open(url, '_blank', 'noopener,noreferrer')
+      } else if (resource.external_url) {
+        window.open(resource.external_url, '_blank', 'noopener,noreferrer')
+      } else {
+        toast.error('This material has no file attached')
+        return
+      }
+      void supabase.rpc('increment_resource_downloads', { p_resource: resource.id })
+    } catch {
+      toast.error('Could not open that material')
+    }
+  }
 
   const isEnrolled = Boolean(courseId && (enrolled.data ?? []).includes(courseId))
 
@@ -122,7 +161,7 @@ export function CourseDetailPage() {
             <ClipboardList className="mr-2 h-4 w-4" /> Assignments
           </TabsTrigger>
           <TabsTrigger value="resources">
-            <FolderOpen className="mr-2 h-4 w-4" /> Resources
+            <FolderOpen className="mr-2 h-4 w-4" /> Materials
           </TabsTrigger>
           <TabsTrigger value="announcements">
             <Megaphone className="mr-2 h-4 w-4" /> Announcements
@@ -155,21 +194,49 @@ export function CourseDetailPage() {
         <TabsContent value="resources" className="space-y-3">
           {resources.isLoading && <Skeleton className="h-24 w-full" />}
           {!resources.isLoading && (resources.data ?? []).length === 0 && (
-            <EmptyState icon={FolderOpen} title="No resources shared for this course" />
+            <EmptyState icon={FolderOpen} title="No materials shared for this course" />
           )}
-          {(resources.data ?? []).map((resource) => (
-            <Card key={resource.id}>
-              <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{resource.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {resource.resource_type} · {resource.owner?.full_name ?? 'Unknown'}
-                  </p>
-                </div>
-                <Badge variant="muted">{resource.visibility}</Badge>
+
+          {(resources.data ?? []).length > 0 && (
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-base">Course Materials</CardTitle>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/app/resources">Browse all</Link>
+                </Button>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {(resources.data ?? []).map((resource) => (
+                  <div
+                    key={resource.id}
+                    className="flex items-center gap-3 rounded-xl border border-border/60 bg-background p-3"
+                  >
+                    <span className="ring-hairline grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-tile-pink/15 text-[10px] font-bold uppercase text-tile-pink">
+                      {extensionOf(resource.title)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{resource.title}</p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {resource.resource_type} · {resource.owner?.full_name ?? 'Unknown'}
+                      </p>
+                    </div>
+                    <Badge variant="muted" className="hidden shrink-0 sm:inline-flex">
+                      {resource.visibility}
+                    </Badge>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0"
+                      onClick={() => openMaterial(resource)}
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      Download
+                    </Button>
+                  </div>
+                ))}
               </CardContent>
             </Card>
-          ))}
+          )}
         </TabsContent>
 
         <TabsContent value="announcements" className="space-y-3">

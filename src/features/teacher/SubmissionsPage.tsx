@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
+import { UserAvatar } from '@/components/common/UserAvatar'
 import { useSearchParams } from 'react-router-dom'
 import { CheckCircle2, FileText, Loader2, Paperclip } from 'lucide-react'
 import { toast } from 'sonner'
 import { PageHeader } from '@/components/common/PageHeader'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
-import { formatDateTime, initials, toUserMessage } from '@/lib/utils'
+import { formatDateTime, toUserMessage } from '@/lib/utils'
 import { signedUrlFor } from '@/lib/storage'
 import {
   useCourseAssignments,
@@ -137,10 +137,7 @@ export function SubmissionsPage() {
           <Card key={submission.id}>
             <CardContent className="flex flex-wrap items-center justify-between gap-4 pt-6">
               <div className="flex min-w-0 items-center gap-3">
-                <Avatar>
-                  <AvatarImage src={submission.studentAvatar ?? undefined} />
-                  <AvatarFallback>{initials(submission.studentName)}</AvatarFallback>
-                </Avatar>
+                <UserAvatar name={submission.studentName} src={submission.studentAvatar} size={40} />
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-sm font-medium">{submission.studentName}</p>

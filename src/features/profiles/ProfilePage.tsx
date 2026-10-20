@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { UserAvatar } from '@/components/common/UserAvatar'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,14 +9,13 @@ import { toast } from 'sonner'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/features/auth/auth-context'
 import { useSessionContext } from '@/features/profiles/hooks'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
-import { initials, toUserMessage } from '@/lib/utils'
+import { toUserMessage } from '@/lib/utils'
 
 const schema = z.object({
   full_name: z.string().min(2, 'Name is required'),
@@ -148,10 +148,7 @@ export function ProfilePage() {
           <CardDescription>PNG or JPG, up to 5 MB.</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center gap-4">
-          <Avatar className="h-16 w-16">
-            <AvatarImage src={profile?.avatar_url ?? undefined} />
-            <AvatarFallback className="text-lg">{initials(profile?.full_name)}</AvatarFallback>
-          </Avatar>
+          <UserAvatar name={profile?.full_name} src={profile?.avatar_url} size={64} />
           <Button variant="outline" asChild disabled={uploading}>
             <label className="cursor-pointer">
               {uploading ? (

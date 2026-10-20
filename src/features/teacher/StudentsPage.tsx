@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
+import { UserAvatar } from '@/components/common/UserAvatar'
 import { Mail, Search, Users } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatDate, initials } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import { useManagedCourses, useRoster } from './hooks'
 
 export function StudentsPage() {
@@ -92,10 +92,7 @@ export function StudentsPage() {
                   <TableRow key={entry.enrollmentId}>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={entry.studentAvatar ?? undefined} />
-                          <AvatarFallback>{initials(entry.studentName)}</AvatarFallback>
-                        </Avatar>
+                        <UserAvatar name={entry.studentName} src={entry.studentAvatar} size={32} />
                         <span className="text-sm font-medium">{entry.studentName}</span>
                       </div>
                     </TableCell>

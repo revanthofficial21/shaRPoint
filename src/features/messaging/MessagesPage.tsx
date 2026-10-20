@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { UserAvatar } from '@/components/common/UserAvatar'
 import { useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { Loader2, MessageSquarePlus, MessagesSquare, Search, Send } from 'lucide-react'
@@ -6,7 +7,6 @@ import { toast } from 'sonner'
 import { PageHeader } from '@/components/common/PageHeader'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -22,7 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/features/auth/auth-context'
-import { initials, relativeTime, toUserMessage } from '@/lib/utils'
+import { relativeTime, toUserMessage } from '@/lib/utils'
 import {
   useConversations,
   useMarkConversationRead,
@@ -201,10 +201,7 @@ export function MessagesPage() {
             ) : (
               <>
                 <div className="flex items-center gap-3 border-b p-4">
-                  <Avatar className="h-9 w-9">
-                    <AvatarImage src={active?.other_avatar ?? undefined} />
-                    <AvatarFallback>{initials(active?.other_name ?? '?')}</AvatarFallback>
-                  </Avatar>
+                  <UserAvatar name={active?.other_name} src={active?.other_avatar} size={36} />
                   <div>
                     <p className="text-sm font-medium">{active?.other_name ?? 'Conversation'}</p>
                     <p className="text-xs text-muted-foreground">Direct message</p>
@@ -311,10 +308,7 @@ export function MessagesPage() {
                 onClick={() => openWith(person.id)}
                 disabled={startConversation.isPending}
               >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={person.avatar_url ?? undefined} />
-                  <AvatarFallback>{initials(person.full_name)}</AvatarFallback>
-                </Avatar>
+                <UserAvatar name={person.full_name} src={person.avatar_url} size={32} />
                 <span className="text-sm">{person.full_name}</span>
               </button>
             ))}
@@ -346,10 +340,7 @@ function ConversationRow({
           : 'flex w-full items-center gap-3 border-b p-3 text-left hover:bg-muted/50'
       }
     >
-      <Avatar className="h-9 w-9 shrink-0">
-        <AvatarImage src={conversation.other_avatar ?? undefined} />
-        <AvatarFallback>{initials(conversation.other_name ?? '?')}</AvatarFallback>
-      </Avatar>
+      <UserAvatar name={conversation.other_name} src={conversation.other_avatar} size={36} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <p className="truncate text-sm font-medium">{conversation.other_name ?? 'Unknown'}</p>

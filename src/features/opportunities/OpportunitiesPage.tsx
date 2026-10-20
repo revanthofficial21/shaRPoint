@@ -145,17 +145,29 @@ export function OpportunitiesPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <select
-          className="h-9 rounded-lg border border-input bg-background px-3 text-sm"
-          value={category}
-          onChange={(e) => setCategory(e.target.value as (typeof CATEGORIES)[number])}
-        >
-          {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c === 'all' ? 'All categories' : c}
-            </option>
-          ))}
-        </select>
+      </div>
+
+      {/* Category tabs, matching the reference's All / Internships / … row */}
+      <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Opportunity category">
+        {CATEGORIES.map((c) => {
+          const active = category === c
+          return (
+            <button
+              key={c}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => setCategory(c)}
+              className={
+                active
+                  ? 'bg-brand-gradient shadow-brand rounded-full px-3.5 py-1.5 text-xs font-medium capitalize text-primary-foreground'
+                  : 'rounded-full border border-border/70 bg-background px-3.5 py-1.5 text-xs font-medium capitalize text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground'
+              }
+            >
+              {c === 'all' ? 'All' : c}
+            </button>
+          )
+        })}
       </div>
 
       {opportunities.isLoading && (

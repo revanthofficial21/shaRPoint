@@ -4,13 +4,13 @@ import {
   ArrowRight,
   Bot,
   BookOpen,
-  Briefcase,
   CalendarClock,
   ClipboardList,
   FileUp,
   MessageSquare,
   Quote,
   Sparkles,
+  Trophy,
   Users,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -19,6 +19,7 @@ import { useAuth } from '@/features/auth/auth-context'
 import { useSessionContext } from '@/features/profiles/hooks'
 import { useJoinGroup, useMyGroups, useStudyGroups } from '@/features/study-groups/hooks'
 import { useNotifications } from '@/features/notifications/hooks'
+import { useLeaderboard } from '@/features/leaderboard/hooks'
 import { StatCard } from '@/components/common/StatCard'
 import { ProgressRing } from '@/components/common/ProgressRing'
 import { Badge } from '@/components/ui/badge'
@@ -56,6 +57,7 @@ export function StudentHomePage() {
   const myGroupIds = useMyGroups()
   const joinGroup = useJoinGroup()
   const notifications = useNotifications(4)
+  const leaderboard = useLeaderboard()
 
   const dashboard = useQuery({
     queryKey: ['student-dashboard', user?.id],
@@ -145,6 +147,10 @@ export function StudentHomePage() {
 
   const now = new Date()
 
+  // Position in the points table. 0 means the user has no rewards row yet.
+  const rankIndex = (leaderboard.data ?? []).findIndex((entry) => entry.user_id === user?.id)
+  const rank = rankIndex >= 0 ? rankIndex + 1 : 0
+
   return (
     <div className="space-y-6">
       {/* ── greeting ─────────────────────────────────────────────────────── */}
@@ -191,11 +197,11 @@ export function StudentHomePage() {
           isLoading={dashboard.isLoading}
         />
         <StatCard
-          label="New Opportunities"
-          value={data?.opportunities.length}
-          icon={Briefcase}
-          tone="pink"
-          isLoading={dashboard.isLoading}
+          label="Leaderboard"
+          value={rank ? `#${rank}` : '—'}
+          icon={Trophy}
+          tone="green"
+          isLoading={dashboard.isLoading || leaderboard.isLoading}
         />
       </div>
 
@@ -205,7 +211,7 @@ export function StudentHomePage() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="flex items-center gap-2 text-base">
               <CalendarClock className="h-4 w-4 text-tile-sky" aria-hidden="true" />
-              Today&apos;s Schedule
+              Upcoming Assignments
             </CardTitle>
             <Button variant="ghost" size="sm" asChild>
               <Link to="/app/assignments">View all</Link>
@@ -223,7 +229,10 @@ export function StudentHomePage() {
             {schedule.map((assignment) => {
               const course = courseById.get(assignment.course_id)
               const due = assignment.due_at ? new Date(assignment.due_at) : null
-              const dueToday = due ? due.toDateString() === now.toDateString() : false
+              const daysUntil = due
+                ? Math.ceil((due.getTime() - now.getTime()) / 86_400_000)
+                : null
+              const priority = daysUntil === null ? 'Low' : daysUntil <= 2 ? 'High' : daysUntil <= 7 ? 'Medium' : 'Low'
               return (
                 <Link
                   key={assignment.id}
@@ -239,8 +248,11 @@ export function StudentHomePage() {
                       {course?.code ?? course?.title ?? 'Course'} · due {formatDate(assignment.due_at)}
                     </span>
                   </span>
-                  <Badge variant={dueToday ? 'warning' : 'muted'} className="shrink-0 text-[10px]">
-                    {dueToday ? 'Due today' : 'Upcoming'}
+                  <Badge
+                    variant={priority === 'High' ? 'destructive' : priority === 'Medium' ? 'warning' : 'muted'}
+                    className="shrink-0 text-[10px]"
+                  >
+                    {priority}
                   </Badge>
                 </Link>
               )

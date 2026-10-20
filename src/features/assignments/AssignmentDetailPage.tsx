@@ -149,6 +149,25 @@ export function AssignmentDetailPage() {
         </Alert>
       )}
 
+      {/* Submission guidelines, as the reference lays them out */}
+      <Card>
+        <CardHeader className="space-y-0">
+          <CardTitle className="text-base">Submission Guidelines</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {[
+            `${UPLOAD_RULES.allowedExtensions.join(', ')} format only`,
+            `Maximum size ${UPLOAD_RULES.maxLabel}`,
+            'Full name and student ID required on the document',
+          ].map((rule) => (
+            <div key={rule} className="flex items-start gap-2 text-sm text-muted-foreground">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tile-green" aria-hidden="true" />
+              {rule}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
       {/* Submission */}
       <Card>
         <CardHeader>

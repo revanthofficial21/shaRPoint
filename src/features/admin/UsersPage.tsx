@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
+import { UserAvatar } from '@/components/common/UserAvatar'
 import { Ban, CheckCircle2, Search, ShieldCheck, UserCog, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { PageHeader } from '@/components/common/PageHeader'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import { ROLE_LABEL } from '@/lib/permissions'
-import { formatDate, initials, toUserMessage } from '@/lib/utils'
+import { formatDate, toUserMessage } from '@/lib/utils'
 import { useSessionContext } from '@/features/profiles/hooks'
 import {
   useGrantRole,
@@ -153,10 +153,7 @@ export function UsersPage() {
                   <TableRow key={user.id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.avatar_url ?? undefined} />
-                          <AvatarFallback>{initials(user.full_name)}</AvatarFallback>
-                        </Avatar>
+                        <UserAvatar name={user.full_name} src={user.avatar_url} size={32} />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-medium">
                             {user.full_name}
