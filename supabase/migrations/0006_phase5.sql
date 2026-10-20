@@ -21,13 +21,18 @@ begin
   select email into v_email from public.profiles where id = v_actor;
 
   if tg_table_name = 'user_roles' then
-    v_target := coalesce(new.user_id, old.user_id);
-    v_action := case tg_op
-      when 'INSERT' then 'role_granted'
-      when 'DELETE' then 'role_revoked'
-      else 'role_changed'
-    end;
-    v_meta := jsonb_build_object('role', coalesce(new.role, old.role));
+    -- Branch on the operation rather than coalescing: on DELETE, NEW is null and
+    -- reading a field from it is exactly the kind of thing that works until it
+    -- doesn't. This trigger has never been executed, so be explicit.
+    if tg_op = 'DELETE' then
+      v_target := old.user_id;
+      v_action := 'role_revoked';
+      v_meta := jsonb_build_object('role', old.role);
+    else
+      v_target := new.user_id;
+      v_action := case tg_op when 'INSERT' then 'role_granted' else 'role_changed' end;
+      v_meta := jsonb_build_object('role', new.role);
+    end if;
 
   elsif tg_table_name = 'account_statuses' then
     v_target := coalesce(new.user_id, old.user_id);
@@ -53,7 +58,9 @@ begin
   insert into public.audit_logs (actor_id, actor_email, action, target_table, target_id, metadata)
   values (v_actor, v_email, v_action, tg_table_name, v_target, v_meta);
 
-  return coalesce(new, old);
+  -- AFTER trigger: the return value is ignored, so return nothing rather than
+  -- coalescing two records of possibly-unassigned type.
+  return null;
 end;
 $$;
 
@@ -91,7 +98,8 @@ begin
       raise exception 'Cannot remove the last owner account';
     end if;
   end if;
-  return coalesce(new, old);
+  -- BEFORE DELETE: returning the OLD row proceeds with the delete.
+  return old;
 end;
 $$;
 
