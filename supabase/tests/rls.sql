@@ -85,12 +85,15 @@ begin
     ('teacher',   v_teacher),
     ('admin',     v_admin);
 
-  -- handle_new_user only grants student/teacher, so set roles explicitly.
+  -- handle_new_user has ALREADY granted student/teacher from the signup
+  -- metadata above, so this must be idempotent — a plain INSERT collides with
+  -- user_roles_user_id_role_key. Only the admin role is genuinely new here.
   insert into public.user_roles (user_id, role) values
     (v_student_a, 'student'),
     (v_student_b, 'student'),
     (v_teacher,   'teacher'),
-    (v_admin,     'admin');
+    (v_admin,     'admin')
+  on conflict (user_id, role) do nothing;
 end $$;
 
 -- Scenario: a course taught by the teacher, joined by student A only.
