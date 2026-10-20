@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#080b18" />
+    <meta name="theme-color" content="#f7f9fd" />
     <meta
       name="description"
       content="SHARPOINT — an AI-powered student collaboration and academic management platform."
@@ -18,7 +18,7 @@
       ;(function () {
         try {
           var stored = localStorage.getItem('sharpoint-theme')
-          var theme = stored === 'light' || stored === 'dark' ? stored : 'dark'
+          var theme = stored === 'light' || stored === 'dark' ? stored : 'light'
           document.documentElement.classList.toggle('dark', theme === 'dark')
           document.documentElement.classList.toggle('light', theme === 'light')
           // Accent preset; 'ember' is the base token set, so no rule targets it.
@@ -27,7 +27,7 @@
             localStorage.getItem('sharpoint-palette') || 'nebula',
           )
         } catch (e) {
-          document.documentElement.classList.add('dark')
+          document.documentElement.classList.add('light')
           document.documentElement.setAttribute('data-palette', 'nebula')
         }
       })()
@@ -38,11 +38,11 @@
       html,
       body {
         margin: 0;
-        background: #f8faff;
+        background: #f7f9fd;
       }
       html.dark,
       html.dark body {
-        background: #080b18;
+        background: #011032;
       }
       #boot {
         min-height: 100vh;
@@ -57,7 +57,7 @@
         padding: 24px;
       }
       html.dark #boot {
-        color: #8b8aa3;
+        color: #6b7699;
       }
       #boot .title {
         color: #0f172a;

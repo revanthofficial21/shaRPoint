@@ -9,18 +9,7 @@ function ThemeProbe() {
 }
 
 describe('ThemeProvider', () => {
-  it('defaults to dark', () => {
-    render(
-      <ThemeProvider>
-        <ThemeProbe />
-      </ThemeProvider>,
-    )
-    expect(screen.getByTestId('theme')).toHaveTextContent('dark')
-    expect(document.documentElement.classList.contains('dark')).toBe(true)
-  })
-
-  it('honours a stored light preference', () => {
-    localStorage.setItem('sharpoint-theme', 'light')
+  it('defaults to light', () => {
     render(
       <ThemeProvider>
         <ThemeProbe />
@@ -28,17 +17,28 @@ describe('ThemeProvider', () => {
     )
     expect(screen.getByTestId('theme')).toHaveTextContent('light')
     expect(document.documentElement.classList.contains('light')).toBe(true)
-    expect(document.documentElement.classList.contains('dark')).toBe(false)
   })
 
-  it('ignores a garbage stored value and falls back to dark', () => {
-    localStorage.setItem('sharpoint-theme', 'neon')
+  it('honours a stored dark preference', () => {
+    localStorage.setItem('sharpoint-theme', 'dark')
     render(
       <ThemeProvider>
         <ThemeProbe />
       </ThemeProvider>,
     )
     expect(screen.getByTestId('theme')).toHaveTextContent('dark')
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+    expect(document.documentElement.classList.contains('light')).toBe(false)
+  })
+
+  it('ignores a garbage stored value and falls back to light', () => {
+    localStorage.setItem('sharpoint-theme', 'neon')
+    render(
+      <ThemeProvider>
+        <ThemeProbe />
+      </ThemeProvider>,
+    )
+    expect(screen.getByTestId('theme')).toHaveTextContent('light')
   })
 
   it('persists the choice so the inline script in index.html can apply it', () => {
@@ -48,7 +48,7 @@ describe('ThemeProvider', () => {
       </ThemeProvider>,
     )
     fireEvent.click(screen.getByRole('button'))
-    expect(localStorage.getItem('sharpoint-theme')).toBe('light')
+    expect(localStorage.getItem('sharpoint-theme')).toBe('dark')
   })
 })
 
@@ -143,7 +143,7 @@ describe('palette presets', () => {
     fireEvent.click(screen.getByRole('button', { name: 'slate' }))
     expect(screen.getByTestId('palette')).toHaveTextContent('slate')
     // switching accent must not change light/dark
-    expect(screen.getByTestId('mode')).toHaveTextContent('dark')
+    expect(screen.getByTestId('mode')).toHaveTextContent('light')
   })
 })
 
@@ -154,8 +154,8 @@ describe('ThemeToggle', () => {
         <ThemeToggle />
       </ThemeProvider>,
     )
-    // In dark mode the button offers to switch to light.
-    expect(screen.getByRole('button')).toHaveAccessibleName(/switch to light theme/i)
+    // Light is the default, so the button offers the other mode.
+    expect(screen.getByRole('button')).toHaveAccessibleName(/switch to dark theme/i)
   })
 
   it('switches the document class and its own label when clicked', () => {
@@ -168,9 +168,9 @@ describe('ThemeToggle', () => {
 
     fireEvent.click(screen.getByRole('button'))
 
-    expect(screen.getByTestId('theme')).toHaveTextContent('light')
-    expect(document.documentElement.classList.contains('light')).toBe(true)
-    expect(document.documentElement.classList.contains('dark')).toBe(false)
-    expect(screen.getByRole('button')).toHaveAccessibleName(/switch to dark theme/i)
+    expect(screen.getByTestId('theme')).toHaveTextContent('dark')
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+    expect(document.documentElement.classList.contains('light')).toBe(false)
+    expect(screen.getByRole('button')).toHaveAccessibleName(/switch to light theme/i)
   })
 })

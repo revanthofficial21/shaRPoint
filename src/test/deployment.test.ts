@@ -72,7 +72,7 @@ describe('entry document', () => {
   it('applies the theme before first paint', () => {
     // Dark is the default; the class must be set by an inline script in <head>,
     // not by React, or the first paint flashes the wrong theme.
-    expect(html).toMatch(/class="dark"/)
+    expect(html).toMatch(/class="light"/)
     expect(html).toContain('sharpoint-theme')
     expect(html).toContain("classList.toggle('dark'")
   })

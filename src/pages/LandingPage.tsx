@@ -217,13 +217,25 @@ export function LandingPage() {
 
       {/* ── hero ─────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        {/* Night-campus backdrop, drawn as SVG — see CampusBackdrop for why. */}
-        <div className="pointer-events-none absolute inset-0 -z-20 h-full w-full" aria-hidden="true">
+        {/* Night-campus backdrop — dark mode only. On the light theme it would
+            read as a black smear behind a white page. */}
+        <div
+          className="pointer-events-none absolute inset-0 -z-20 hidden h-full w-full dark:block"
+          aria-hidden="true"
+        >
           <CampusBackdrop className="h-full w-full" />
         </div>
-        {/* Legibility scrim: the backdrop must never fight the headline. */}
         <div
-          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-background/55 via-background/75 to-background"
+          className="pointer-events-none absolute inset-0 -z-10 hidden bg-gradient-to-b from-background/55 via-background/75 to-background dark:block"
+          aria-hidden="true"
+        />
+        {/* Light mode gets soft colour blobs instead, as the reference does. */}
+        <div
+          className="pointer-events-none absolute -right-24 -top-24 -z-10 h-[28rem] w-[28rem] rounded-full bg-brand-to/25 blur-3xl dark:hidden"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -left-32 top-32 -z-10 h-96 w-96 rounded-full bg-brand-from/20 blur-3xl dark:hidden"
           aria-hidden="true"
         />
         <div className="glow-brand pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />

@@ -70,15 +70,15 @@ const isPalette = (value: unknown): value is Palette =>
  * the DOM agree on first render — no flash, no mismatch.
  */
 function readInitialTheme(): Theme {
-  if (typeof document === 'undefined') return 'dark'
-  if (document.documentElement.classList.contains('light')) return 'light'
+  if (typeof document === 'undefined') return 'light'
+  if (document.documentElement.classList.contains('dark')) return 'dark'
   try {
     const stored = localStorage.getItem(THEME_KEY)
     if (stored === 'light' || stored === 'dark') return stored
   } catch {
     /* storage can be blocked; fall through to the default */
   }
-  return 'dark'
+  return 'light'
 }
 
 function readInitialPalette(): Palette {

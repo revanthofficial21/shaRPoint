@@ -27,50 +27,50 @@
   /* ── nebula · light ────────────────────────────────────────────────────── */
   :root,
   .light {
-    /* Measured from the reference: content area #f1f6fd, cards pure white,
-       dividers #dae0ef. */
-    --background: 215 75% 97%;
-    --foreground: 222 60% 13%;
+    /* Measured from the LIGHT reference: page #f7f9fd, text #1c243a,
+       divider #dfe2ee, sidebar #f5f6f8, cards pure white. */
+    --background: 220 60% 98%;
+    --foreground: 224 35% 17%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 60% 13%;
+    --card-foreground: 224 35% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 60% 13%;
+    --popover-foreground: 224 35% 17%;
 
-    --primary: 231 92% 55%;
+    --primary: 228 85% 52%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 50% 95%;
-    --secondary-foreground: 222 60% 16%;
+    --secondary: 220 45% 96%;
+    --secondary-foreground: 224 35% 20%;
 
-    --muted: 215 45% 95%;
-    --muted-foreground: 220 20% 45%;
+    --muted: 220 40% 96%;
+    --muted-foreground: 226 18% 46%;
 
-    --accent: 228 90% 96%;
-    --accent-foreground: 231 80% 38%;
+    --accent: 231 90% 96%;
+    --accent-foreground: 228 80% 42%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 358 78% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 160 84% 32%;
+    --success: 152 58% 40%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 33 95% 42%;
+    --warning: 33 90% 46%;
     --warning-foreground: 30 80% 12%;
 
-    --border: 223 40% 90%;
-    --input: 223 40% 90%;
-    --ring: 231 92% 55%;
+    --border: 228 31% 90%;
+    --input: 228 31% 90%;
+    --ring: 228 85% 52%;
 
-    --chart-1: 231 92% 59%;
-    --chart-2: 256 95% 57%;
-    --chart-3: 199 90% 55%;
-    --chart-4: 332 85% 62%;
+    --chart-1: 222 94% 62%;
+    --chart-2: 262 88% 64%;
+    --chart-3: 152 58% 46%;
+    --chart-4: 358 88% 66%;
 
-    /* brand gradient — measured #3755f7 -> #5e27fa */
-    --brand-from: 231 92% 59%;
-    --brand-to: 256 95% 57%;
+    /* brand gradient — measured blue #1b46ec -> violet #a969f6 */
+    --brand-from: 228 85% 52%;
+    --brand-to: 262 84% 62%;
 
     --radius: 0.75rem;
   }
@@ -129,13 +129,13 @@
   :root,
   .light,
   .dark {
-    --tile-blue: 231 92% 59%;
-    --tile-violet: 256 95% 57%;
-    --tile-sky: 199 90% 58%;
-    --tile-green: 160 75% 42%;
-    --tile-amber: 33 95% 55%;
-    --tile-pink: 332 85% 62%;
-    --tile-purple: 269 79% 62%;
+    --tile-blue: 222 92% 58%;
+    --tile-violet: 262 86% 62%;
+    --tile-sky: 199 90% 50%;
+    --tile-green: 152 60% 40%;
+    --tile-amber: 33 92% 50%;
+    --tile-pink: 332 82% 58%;
+    --tile-purple: 269 80% 60%;
   }
 
   /* ── preset: ember (warm amber) ────────────────────────────────────────── */
@@ -295,8 +295,8 @@
   }
   .light body::before {
     background:
-      radial-gradient(60% 40% at 15% 0%, hsl(var(--brand-from) / 0.07) 0%, transparent 65%),
-      radial-gradient(50% 40% at 85% 5%, hsl(var(--brand-to) / 0.06) 0%, transparent 60%);
+      radial-gradient(55% 40% at 12% 0%, hsl(var(--brand-from) / 0.10) 0%, transparent 65%),
+      radial-gradient(50% 40% at 88% 4%, hsl(var(--brand-to) / 0.12) 0%, transparent 60%);
   }
 
   ::-webkit-scrollbar {
@@ -330,8 +330,8 @@
 @layer utilities {
   .shadow-card {
     box-shadow:
-      0 1px 2px 0 hsl(228 60% 4% / 0.06),
-      0 10px 30px -18px hsl(228 60% 4% / 0.28);
+      0 1px 2px 0 hsl(224 40% 20% / 0.05),
+      0 8px 24px -16px hsl(224 40% 20% / 0.16);
   }
   .dark .shadow-card {
     box-shadow:
