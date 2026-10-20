@@ -18,6 +18,43 @@ teachers and platform administrators**, built on React + TypeScript + Supabase.
 
 ---
 
+## Theme
+
+**Emerald brand on a teal secondary, dark by default.**
+
+Every colour is a CSS variable in `src/styles/globals.css` — there are no hardcoded
+colours in components, so the whole app restyles from that one file.
+
+| Token | Light | Dark | Used for |
+|---|---|---|---|
+| `--primary` | emerald `160 84% 30%` | emerald `158 64% 52%` | buttons, links, active nav, focus ring |
+| `--success` | teal `174 70% 32%` | teal `174 62% 44%` | “Enrolled”, “Submitted”, released grades |
+| `--warning` | amber `38 92% 50%` | amber `38 82% 54%` | drafts, pending grading, overdue |
+| `--destructive` | red `0 72% 51%` | red `0 63% 50%` | errors, suspensions, delete |
+| `--chart-1…4` | emerald / teal / amber / sky | brighter equivalents | Recharts series |
+
+Two deliberate choices worth knowing before you edit them:
+
+- **`success` is teal, not green.** The brand is green, so a green success badge would be
+  indistinguishable from a primary button. A cooler teal keeps them apart.
+- **Dark-mode primary is bright with *dark* text.** White on a light emerald fails
+  contrast; near-black on bright emerald passes comfortably.
+
+### Switching light/dark
+
+Dark is the default. The preference is applied by a small inline script in `index.html`
+*before first paint* (so there is no flash of the wrong theme), then owned by
+`ThemeProvider` in `src/app/theme.tsx` and persisted to `localStorage` under
+`sharpoint-theme`. A toggle sits in the app header and on the landing page.
+
+To change the default, edit the fallback in the inline script in `index.html` **and**
+`readInitialTheme()` in `src/app/theme.tsx` — both must agree.
+
+To swap the whole palette, change the HSL triples in `globals.css`; nothing else needs
+to move.
+
+---
+
 ## Stack
 
 | Layer | Choice |

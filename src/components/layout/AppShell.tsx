@@ -19,6 +19,7 @@ import {
 import { cn, initials } from '@/lib/utils'
 import { NotificationBell } from '@/features/notifications/NotificationBell'
 import { GlobalSearch } from '@/features/search/GlobalSearch'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 
 /**
  * Authenticated shell: collapsible sidebar, top bar, breadcrumb slot and the
@@ -117,6 +118,7 @@ export function AppShell() {
           </div>
 
           <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
             <NotificationBell />
 
             <DropdownMenu>

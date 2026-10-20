@@ -118,9 +118,9 @@ export function AnalyticsPage() {
                   <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="Enrolled" fill="hsl(243 75% 59%)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Submissions" fill="hsl(142 71% 45%)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Pending" fill="hsl(38 92% 50%)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Enrolled" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Submissions" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Pending" fill="hsl(var(--chart-3))" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -141,7 +141,7 @@ export function AnalyticsPage() {
                     <Tooltip />
                     <Bar dataKey="Average" radius={[4, 4, 0, 0]}>
                       {scoreData.map((entry) => (
-                        <Cell key={entry.name} fill="hsl(243 75% 59%)" />
+                        <Cell key={entry.name} fill="hsl(var(--chart-1))" />
                       ))}
                     </Bar>
                   </BarChart>

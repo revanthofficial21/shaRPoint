@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import {
   ArrowRight,
   BarChart3,
@@ -55,6 +56,7 @@ export function LandingPage() {
             SHARPOINT
           </Link>
           <nav className="flex items-center gap-2">
+            <ThemeToggle />
             <Button variant="ghost" asChild>
               <Link to="/sign-in">Sign in</Link>
             </Button>

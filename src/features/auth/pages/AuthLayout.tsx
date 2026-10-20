@@ -15,9 +15,9 @@ export function AuthLayout({
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Brand panel */}
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-slate-950 p-12 text-slate-100 lg:flex">
-        <div className="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-indigo-600/20 blur-3xl" />
-        <div className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-violet-600/20 blur-3xl" />
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-emerald-950 p-12 text-emerald-50 lg:flex">
+        <div className="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-emerald-500/25 blur-3xl" />
+        <div className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-teal-500/25 blur-3xl" />
 
         <Link to="/" className="relative flex items-center gap-2 font-semibold tracking-tight">
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">

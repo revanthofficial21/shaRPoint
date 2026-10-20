@@ -97,8 +97,8 @@ export function ReportsPage() {
                     <Area
                       type="monotone"
                       dataKey="count"
-                      stroke="hsl(243 75% 59%)"
-                      fill="hsl(243 75% 59% / 0.2)"
+                      stroke="hsl(var(--chart-1))"
+                      fill="hsl(var(--chart-1) / 0.2)"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -120,7 +120,7 @@ export function ReportsPage() {
                     <Tooltip />
                     <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                       {content.map((entry) => (
-                        <Cell key={entry.name} fill="hsl(243 75% 59%)" />
+                        <Cell key={entry.name} fill="hsl(var(--chart-1))" />
                       ))}
                     </Bar>
                   </BarChart>
