@@ -54,7 +54,8 @@ export function toUserMessage(error: unknown): string {
   if (/duplicate key|unique constraint/i.test(message)) return 'That already exists.'
   if (/row-level security|permission denied/i.test(message))
     return 'You do not have permission to do that.'
-  if (/JWT|not authenticated/i.test(message)) return 'Your session has expired. Please sign in again.'
+  if (/JWT|not authenticated/i.test(message))
+    return 'Your session has expired. Please sign in again.'
   if (/network|fetch/i.test(message)) return 'Network problem — please try again.'
   return message
 }

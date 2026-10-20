@@ -3,7 +3,19 @@ import { supabase } from '@/integrations/supabase/client'
 export const UPLOAD_RULES = {
   maxBytes: 20 * 1024 * 1024,
   maxLabel: '20 MB',
-  allowedExtensions: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'txt', 'md', 'png', 'jpg', 'jpeg', 'webp'],
+  allowedExtensions: [
+    'pdf',
+    'doc',
+    'docx',
+    'ppt',
+    'pptx',
+    'txt',
+    'md',
+    'png',
+    'jpg',
+    'jpeg',
+    'webp',
+  ],
   imageExtensions: ['png', 'jpg', 'jpeg', 'webp'],
 } as const
 
@@ -12,8 +24,18 @@ export interface UploadResult {
   publicUrl: string | null
 }
 
+/**
+ * Lowercased extension, or '' when there isn't one.
+ *
+ * Deliberately not `split('.').pop()`: for a name with no dot that returns the
+ * whole filename, so "README" would report an extension of "readme" and the
+ * no-extension branch in validateFile would never run. A leading-dot name like
+ * ".env" is treated as having no extension too.
+ */
 export function extensionOf(fileName: string) {
-  return fileName.split('.').pop()?.toLowerCase() ?? ''
+  const index = fileName.lastIndexOf('.')
+  if (index <= 0) return ''
+  return fileName.slice(index + 1).toLowerCase()
 }
 
 /** Validates size and extension before any bytes leave the browser. */
@@ -22,7 +44,9 @@ export function validateFile(file: File, opts?: { imagesOnly?: boolean }): strin
   if (!ext) return 'That file has no extension.'
 
   if (opts?.imagesOnly) {
-    if (!UPLOAD_RULES.imageExtensions.includes(ext as (typeof UPLOAD_RULES.imageExtensions)[number])) {
+    if (
+      !UPLOAD_RULES.imageExtensions.includes(ext as (typeof UPLOAD_RULES.imageExtensions)[number])
+    ) {
       return 'Please choose a PNG, JPG or WebP image.'
     }
   } else if (

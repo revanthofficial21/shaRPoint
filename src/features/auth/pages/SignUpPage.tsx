@@ -28,7 +28,12 @@ const schema = z
 type FormValues = z.infer<typeof schema>
 
 const roleOptions = [
-  { value: 'student' as const, label: 'Student', blurb: 'Join groups and coursework', icon: GraduationCap },
+  {
+    value: 'student' as const,
+    label: 'Student',
+    blurb: 'Join groups and coursework',
+    icon: GraduationCap,
+  },
   { value: 'teacher' as const, label: 'Teacher', blurb: 'Manage courses and grading', icon: Users },
 ]
 
@@ -141,14 +146,24 @@ export function SignUpPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" autoComplete="new-password" {...register('password')} />
+            <Input
+              id="password"
+              type="password"
+              autoComplete="new-password"
+              {...register('password')}
+            />
             {errors.password && (
               <p className="text-xs text-destructive">{errors.password.message}</p>
             )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirm">Confirm</Label>
-            <Input id="confirm" type="password" autoComplete="new-password" {...register('confirm')} />
+            <Input
+              id="confirm"
+              type="password"
+              autoComplete="new-password"
+              {...register('confirm')}
+            />
             {errors.confirm && <p className="text-xs text-destructive">{errors.confirm.message}</p>}
           </div>
         </div>

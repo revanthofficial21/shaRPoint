@@ -19,7 +19,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import { ROLE_LABEL } from '@/lib/permissions'
 import { formatDate, initials, toUserMessage } from '@/lib/utils'
@@ -52,9 +59,7 @@ export function UsersPage() {
     return (directory.data ?? []).filter((user) => {
       if (roleFilter !== 'all' && !user.roles.includes(roleFilter)) return false
       if (!term) return true
-      return (
-        user.full_name.toLowerCase().includes(term) || user.email.toLowerCase().includes(term)
-      )
+      return user.full_name.toLowerCase().includes(term) || user.email.toLowerCase().includes(term)
     })
   }, [directory.data, search, roleFilter])
 
@@ -256,7 +261,10 @@ export function UsersPage() {
         </CardContent>
       </Card>
 
-      <Dialog open={Boolean(suspendTarget)} onOpenChange={(open) => !open && setSuspendTarget(null)}>
+      <Dialog
+        open={Boolean(suspendTarget)}
+        onOpenChange={(open) => !open && setSuspendTarget(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Suspend account</DialogTitle>
@@ -281,7 +289,8 @@ export function UsersPage() {
             <Button
               variant="destructive"
               onClick={() =>
-                suspendTarget && handleStatus(suspendTarget.id, 'suspended', reason || 'No reason given')
+                suspendTarget &&
+                handleStatus(suspendTarget.id, 'suspended', reason || 'No reason given')
               }
               disabled={setStatus.isPending}
             >

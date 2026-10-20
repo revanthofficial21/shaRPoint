@@ -65,7 +65,9 @@ export function useUpdateCourse() {
       patch,
     }: {
       courseId: string
-      patch: Partial<Pick<CourseRow, 'title' | 'description' | 'objectives' | 'academic_year' | 'code'>>
+      patch: Partial<
+        Pick<CourseRow, 'title' | 'description' | 'objectives' | 'academic_year' | 'code'>
+      >
     }) => {
       const { error } = await supabase.from('courses').update(patch).eq('id', courseId)
       if (error) throw error
@@ -219,7 +221,13 @@ export function useCreateAssignment() {
 export function useUpdateAssignment() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ assignmentId, patch }: { assignmentId: string; patch: Partial<AssignmentInput> }) => {
+    mutationFn: async ({
+      assignmentId,
+      patch,
+    }: {
+      assignmentId: string
+      patch: Partial<AssignmentInput>
+    }) => {
       const { error } = await supabase
         .from('assignments')
         .update({
@@ -294,7 +302,12 @@ export function useCourseSubmissions(assignmentId?: string) {
           feedback: string | null
           results_released: boolean
           submitted_at: string
-          assignment: { id: string; title: string; max_score: number; course: { title: string } | null } | null
+          assignment: {
+            id: string
+            title: string
+            max_score: number
+            course: { title: string } | null
+          } | null
           student: { full_name: string; avatar_url: string | null } | null
         }[]
       >()
@@ -372,7 +385,9 @@ export function useManageAnnouncements(courseId?: string) {
     queryFn: async () => {
       let query = supabase
         .from('announcements')
-        .select('id, course_id, title, body, publish_at, is_archived, course:courses!announcements_course_id_fkey(title)')
+        .select(
+          'id, course_id, title, body, publish_at, is_archived, course:courses!announcements_course_id_fkey(title)',
+        )
         .order('publish_at', { ascending: false })
         .limit(200)
       if (courseId) query = query.eq('course_id', courseId)

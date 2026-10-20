@@ -31,8 +31,8 @@ export function AuthLayout({
             One platform for students, teachers and institutions.
           </h2>
           <p className="max-w-md text-sm text-slate-400">
-            Collaboration, coursework, opportunities and analytics — with role-based access
-            enforced in the database.
+            Collaboration, coursework, opportunities and analytics — with role-based access enforced
+            in the database.
           </p>
         </div>
 

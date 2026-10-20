@@ -216,7 +216,8 @@ export type OpportunityRow = {
   title: string
   company: string
   description: string | null
-  category: 'internship' | 'job' | 'hackathon' | 'competition' | 'event' | 'research' | 'scholarship'
+  category:
+    'internship' | 'job' | 'hackathon' | 'competition' | 'event' | 'research' | 'scholarship'
   location: string | null
   stipend: string | null
   deadline: string | null
@@ -236,12 +237,7 @@ export type OpportunityBookmarkRow = {
 }
 
 export type ApplicationStatus =
-  | 'saved'
-  | 'applied'
-  | 'interviewing'
-  | 'offered'
-  | 'rejected'
-  | 'withdrawn'
+  'saved' | 'applied' | 'interviewing' | 'offered' | 'rejected' | 'withdrawn'
 
 export type OpportunityApplicationRow = {
   id: string
@@ -379,28 +375,55 @@ export interface Database {
       post_comments: Table<PostCommentRow, { post_id: string; author_id: string; content: string }>
       post_likes: Table<PostLikeRow, { post_id: string; user_id: string }>
       user_connections: Table<UserConnectionRow>
-      study_groups: Table<StudyGroupRow, { name: string; created_by: string } & Partial<StudyGroupRow>>
+      study_groups: Table<
+        StudyGroupRow,
+        { name: string; created_by: string } & Partial<StudyGroupRow>
+      >
       study_group_members: Table<
         StudyGroupMemberRow,
         { group_id: string; user_id: string; role?: 'owner' | 'member' }
       >
       resources: Table<ResourceRow, { owner_id: string; title: string } & Partial<ResourceRow>>
-      assignments: Table<AssignmentRow, { course_id: string; created_by: string; title: string } & Partial<AssignmentRow>>
-      assignment_submissions: Table<SubmissionRow, { assignment_id: string; student_id: string } & Partial<SubmissionRow>>
-      announcements: Table<AnnouncementRow, { author_id: string; title: string } & Partial<AnnouncementRow>>
-      opportunities: Table<OpportunityRow, { posted_by: string; title: string } & Partial<OpportunityRow>>
-      opportunity_bookmarks: Table<OpportunityBookmarkRow, { opportunity_id: string; user_id: string }>
+      assignments: Table<
+        AssignmentRow,
+        { course_id: string; created_by: string; title: string } & Partial<AssignmentRow>
+      >
+      assignment_submissions: Table<
+        SubmissionRow,
+        { assignment_id: string; student_id: string } & Partial<SubmissionRow>
+      >
+      announcements: Table<
+        AnnouncementRow,
+        { author_id: string; title: string } & Partial<AnnouncementRow>
+      >
+      opportunities: Table<
+        OpportunityRow,
+        { posted_by: string; title: string } & Partial<OpportunityRow>
+      >
+      opportunity_bookmarks: Table<
+        OpportunityBookmarkRow,
+        { opportunity_id: string; user_id: string }
+      >
       opportunity_applications: Table<
         OpportunityApplicationRow,
         { opportunity_id: string; user_id: string; status?: ApplicationStatus }
       >
       resource_bookmarks: Table<ResourceBookmarkRow, { resource_id: string; user_id: string }>
       conversations: Table<ConversationRow, { created_by: string }>
-      conversation_members: Table<ConversationMemberRow, { conversation_id: string; user_id: string }>
+      conversation_members: Table<
+        ConversationMemberRow,
+        { conversation_id: string; user_id: string }
+      >
       messages: Table<MessageRow, { conversation_id: string; sender_id: string; body: string }>
-      notifications: Table<NotificationRow, { user_id: string; title: string } & Partial<NotificationRow>>
+      notifications: Table<
+        NotificationRow,
+        { user_id: string; title: string } & Partial<NotificationRow>
+      >
       rewards: Table<RewardRow>
-      reward_transactions: Table<RewardTransactionRow, { user_id: string; points: number; reason: string }>
+      reward_transactions: Table<
+        RewardTransactionRow,
+        { user_id: string; points: number; reason: string }
+      >
       reports: Table<
         ReportRow,
         {

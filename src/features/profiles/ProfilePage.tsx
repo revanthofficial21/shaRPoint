@@ -154,7 +154,11 @@ export function ProfilePage() {
           </Avatar>
           <Button variant="outline" asChild disabled={uploading}>
             <label className="cursor-pointer">
-              {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              {uploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Upload className="h-4 w-4" />
+              )}
               Upload photo
               <input type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
             </label>
@@ -171,7 +175,9 @@ export function ProfilePage() {
             <div className="space-y-2">
               <Label htmlFor="full_name">Full name</Label>
               <Input id="full_name" {...register('full_name')} />
-              {errors.full_name && <p className="text-xs text-destructive">{errors.full_name.message}</p>}
+              {errors.full_name && (
+                <p className="text-xs text-destructive">{errors.full_name.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -182,7 +188,11 @@ export function ProfilePage() {
             {isStaff ? (
               <div className="space-y-2">
                 <Label htmlFor="designation">Designation</Label>
-                <Input id="designation" placeholder="e.g. Assistant Professor" {...register('designation')} />
+                <Input
+                  id="designation"
+                  placeholder="e.g. Assistant Professor"
+                  {...register('designation')}
+                />
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
@@ -205,14 +215,22 @@ export function ProfilePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="github_url">GitHub</Label>
-                <Input id="github_url" placeholder="https://github.com/you" {...register('github_url')} />
+                <Input
+                  id="github_url"
+                  placeholder="https://github.com/you"
+                  {...register('github_url')}
+                />
                 {errors.github_url && (
                   <p className="text-xs text-destructive">{errors.github_url.message}</p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="portfolio_url">Portfolio</Label>
-                <Input id="portfolio_url" placeholder="https://you.dev" {...register('portfolio_url')} />
+                <Input
+                  id="portfolio_url"
+                  placeholder="https://you.dev"
+                  {...register('portfolio_url')}
+                />
                 {errors.portfolio_url && (
                   <p className="text-xs text-destructive">{errors.portfolio_url.message}</p>
                 )}

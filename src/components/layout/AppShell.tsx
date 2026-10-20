@@ -42,6 +42,14 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-screen bg-background">
+      {/* Keyboard users can jump past the sidebar instead of tabbing through it. */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground"
+      >
+        Skip to content
+      </a>
+
       {/* Sidebar */}
       <aside
         className={cn(
@@ -88,7 +96,9 @@ export function AppShell() {
             className="w-full justify-start gap-3 text-muted-foreground"
             onClick={() => setCollapsed((c) => !c)}
           >
-            <ChevronLeft className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')} />
+            <ChevronLeft
+              className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')}
+            />
             {!collapsed && <span>Collapse</span>}
           </Button>
         </div>
@@ -97,17 +107,26 @@ export function AppShell() {
       {mobileOpen && (
         <div
           className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          role="presentation"
+          aria-hidden="true"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Main */}
-      <div className={cn('flex flex-1 flex-col transition-all duration-200', collapsed ? 'lg:pl-[68px]' : 'lg:pl-64')}>
+      <div
+        className={cn(
+          'flex flex-1 flex-col transition-all duration-200',
+          collapsed ? 'lg:pl-[68px]' : 'lg:pl-64',
+        )}
+      >
         <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
           <Button
             variant="ghost"
             size="icon"
             className="lg:hidden"
+            aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
+            aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((o) => !o)}
           >
             <Menu className="h-5 w-5" />
@@ -125,7 +144,10 @@ export function AppShell() {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 rounded-full pr-2 hover:bg-muted">
                   <Avatar>
-                    <AvatarImage src={profile?.avatar_url ?? undefined} alt={profile?.full_name ?? ''} />
+                    <AvatarImage
+                      src={profile?.avatar_url ?? undefined}
+                      alt={profile?.full_name ?? ''}
+                    />
                     <AvatarFallback>{initials(profile?.full_name)}</AvatarFallback>
                   </Avatar>
                 </button>
@@ -133,7 +155,9 @@ export function AppShell() {
               <DropdownMenuContent align="end" className="w-60">
                 <DropdownMenuLabel>
                   <div className="space-y-1">
-                    <p className="truncate text-sm font-semibold">{profile?.full_name || 'Account'}</p>
+                    <p className="truncate text-sm font-semibold">
+                      {profile?.full_name || 'Account'}
+                    </p>
                     <p className="truncate text-xs font-normal text-muted-foreground">
                       {profile?.email}
                     </p>
@@ -162,11 +186,10 @@ export function AppShell() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6">
+        <main id="main-content" tabIndex={-1} className="flex-1 p-4 md:p-6 focus:outline-none">
           <Outlet />
         </main>
       </div>
     </div>
   )
 }
-

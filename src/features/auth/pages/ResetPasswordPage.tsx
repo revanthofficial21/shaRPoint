@@ -69,12 +69,22 @@ export function ResetPasswordPage() {
         )}
         <div className="space-y-2">
           <Label htmlFor="password">New password</Label>
-          <Input id="password" type="password" autoComplete="new-password" {...register('password')} />
+          <Input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            {...register('password')}
+          />
           {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
         </div>
         <div className="space-y-2">
           <Label htmlFor="confirm">Confirm password</Label>
-          <Input id="confirm" type="password" autoComplete="new-password" {...register('confirm')} />
+          <Input
+            id="confirm"
+            type="password"
+            autoComplete="new-password"
+            {...register('confirm')}
+          />
           {errors.confirm && <p className="text-xs text-destructive">{errors.confirm.message}</p>}
         </div>
         <Button type="submit" className="w-full" disabled={isSubmitting || !user}>

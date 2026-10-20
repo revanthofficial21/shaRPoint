@@ -111,7 +111,9 @@ export function NotificationBell() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{notification.title}</p>
                   {notification.body && (
-                    <p className="line-clamp-2 text-xs text-muted-foreground">{notification.body}</p>
+                    <p className="line-clamp-2 text-xs text-muted-foreground">
+                      {notification.body}
+                    </p>
                   )}
                   <p className="mt-0.5 text-[10px] text-muted-foreground">
                     {relativeTime(notification.created_at)}

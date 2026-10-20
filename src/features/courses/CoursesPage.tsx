@@ -124,7 +124,9 @@ export function CoursesPage() {
               <CardContent className="mt-auto space-y-4">
                 <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                   {course.code && <Badge variant="outline">{course.code}</Badge>}
-                  {course.department?.name && <Badge variant="muted">{course.department.name}</Badge>}
+                  {course.department?.name && (
+                    <Badge variant="muted">{course.department.name}</Badge>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">

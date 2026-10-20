@@ -163,7 +163,11 @@ export function SubmissionsPage() {
 
               <div className="flex flex-wrap gap-2">
                 {submission.storagePath && (
-                  <Button size="sm" variant="outline" onClick={() => openAttachment(submission.storagePath!)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openAttachment(submission.storagePath!)}
+                  >
                     <Paperclip className="h-3.5 w-3.5" /> Attachment
                   </Button>
                 )}

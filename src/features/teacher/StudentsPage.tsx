@@ -8,7 +8,14 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { formatDate, initials } from '@/lib/utils'
 import { useManagedCourses, useRoster } from './hooks'
 
@@ -31,10 +38,7 @@ export function StudentsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Students"
-        description="Everyone enrolled in the courses you teach."
-      />
+      <PageHeader title="Students" description="Everyone enrolled in the courses you teach." />
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative min-w-[220px] flex-1">

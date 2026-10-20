@@ -11,7 +11,14 @@ import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatDate } from '@/lib/utils'
 
-const PROFILE_FIELDS = ['full_name', 'bio', 'department_id', 'course', 'year', 'avatar_url'] as const
+const PROFILE_FIELDS = [
+  'full_name',
+  'bio',
+  'department_id',
+  'course',
+  'year',
+  'avatar_url',
+] as const
 
 export function StudentHomePage() {
   const { user } = useAuth()
@@ -95,7 +102,9 @@ export function StudentHomePage() {
         {cards.map((card) => (
           <Card key={card.label}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{card.label}</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {card.label}
+              </CardTitle>
               <card.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>

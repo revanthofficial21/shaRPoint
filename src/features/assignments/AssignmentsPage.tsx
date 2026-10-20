@@ -106,9 +106,7 @@ export function AssignmentsPage() {
                   </p>
                 </div>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to={`/app/assignments/${assignment.id}`}>
-                    {status ? 'View' : 'Open'}
-                  </Link>
+                  <Link to={`/app/assignments/${assignment.id}`}>{status ? 'View' : 'Open'}</Link>
                 </Button>
               </CardContent>
             </Card>

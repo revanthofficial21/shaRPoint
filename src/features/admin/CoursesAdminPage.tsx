@@ -163,7 +163,9 @@ export function CoursesAdminPage() {
                           { courseId: course.id, archived: !course.is_archived },
                           {
                             onSuccess: () =>
-                              toast.success(course.is_archived ? 'Course restored' : 'Course archived'),
+                              toast.success(
+                                course.is_archived ? 'Course restored' : 'Course archived',
+                              ),
                             onError: (e) => toast.error(toUserMessage(e)),
                           },
                         )

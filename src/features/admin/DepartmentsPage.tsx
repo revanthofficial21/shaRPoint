@@ -18,7 +18,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import { toUserMessage } from '@/lib/utils'
 import { useDeleteDepartment, useDepartments, useSaveDepartment } from './hooks'
@@ -38,7 +45,12 @@ export function DepartmentsPage() {
     setOpen(true)
   }
 
-  function openEdit(department: { id: string; name: string; code: string | null; description: string | null }) {
+  function openEdit(department: {
+    id: string
+    name: string
+    code: string | null
+    description: string | null
+  }) {
     setEditingId(department.id)
     setForm({
       name: department.name,
@@ -119,12 +131,18 @@ export function DepartmentsPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="ghost" onClick={() => openEdit(department)}>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          aria-label={`Edit ${department.name}`}
+                          onClick={() => openEdit(department)}
+                        >
                           <Pencil className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                           size="sm"
                           variant="ghost"
+                          aria-label={`Delete ${department.name}`}
                           onClick={() =>
                             remove.mutate(department.id, {
                               onSuccess: () => toast.success('Department deleted'),

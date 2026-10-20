@@ -3,11 +3,12 @@
 An AI-powered student collaboration and academic management platform for **students,
 teachers and platform administrators**, built on React + TypeScript + Supabase.
 
-> **Status: Phase 6 of 7 complete (code).** Foundation, student experience, teacher
-> experience, admin/owner console, and the advanced layer — realtime messaging,
-> notifications, global search and the AI study assistant. See [Roadmap](#roadmap).
-> Pages that are routed but not yet implemented say so explicitly rather than showing
-> fake data.
+> **Status: all 7 phases complete (code).** Foundation, student experience, teacher
+> experience, admin/owner console, the advanced layer (realtime messaging,
+> notifications, global search, AI assistant), and the quality pass — 65 tests, an RLS
+> verification suite, an accessibility pass and full deployment docs.
+>
+> **Start here:** [DEPLOYMENT.md](DEPLOYMENT.md) for the ordered setup walkthrough.
 >
 > ⚠️ **Migrations `0006_phase5.sql` and `0007_phase6.sql` have not been applied to the
 > hosted database yet** (the migration tool lost its authorization mid-session). Run
@@ -15,6 +16,38 @@ teachers and platform administrators**, built on React + TypeScript + Supabase.
 > and notification triggers all live there. Until then the admin console pages that call
 > `admin_user_directory()` / `admin_platform_stats()`, messaging and notifications will
 > not work.
+
+---
+
+## Testing
+
+```bash
+npm run test     # 65 tests, vitest + Testing Library
+npm run verify   # typecheck → lint → test → build
+```
+
+| Suite | Covers |
+|---|---|
+| `src/lib/permissions.test.ts` | Capability derivation per role, multi-role, empty |
+| `src/lib/storage.test.ts` | Upload validation — extension allow-list, size limit, dotfiles, images-only |
+| `src/lib/utils.test.ts` | Formatting, relative time, and error-message translation |
+| `src/features/auth/guards.test.tsx` | Route guards: anonymous redirect, suspended/deactivated blocks, role refusals |
+| `src/app/theme.test.tsx` | Dark default, stored preference, toggle persistence |
+| `src/components/common/states.test.tsx` | Empty and error states |
+
+`supabase/tests/rls.sql` is the security suite — run it in the Supabase SQL editor. It
+seeds a scenario, attempts to break each guarantee, prints PASS/FAIL, and rolls back.
+
+CI runs typecheck, lint, test and build on every push (`.github/workflows/ci.yml`).
+
+### Accessibility
+
+- A **skip-to-content** link is the first tab stop on every signed-in page.
+- Every icon-only control carries an accessible name; dialogs have `sr-only` titles.
+- One `:focus-visible` ring for all keyboard-reachable controls.
+- `prefers-reduced-motion` collapses animation.
+- Charts and status colours are semantic, not decorative, and the palette is checked
+  for contrast in both themes (see below).
 
 ---
 
@@ -156,6 +189,8 @@ Migrations live in `supabase/migrations/` and are applied in order:
 | `0005_phase4.sql` | Teacher course-edit policy, grading guard trigger, analytics RPC |
 | `0006_phase5.sql` | Audit triggers, last-owner guard, admin RPCs, moderation policy |
 | `0007_phase6.sql` | Realtime, notification triggers, messaging RPCs, AI usage quota |
+
+`supabase/tests/rls.sql` is not a migration — it is the RLS verification suite (see [Testing](#testing)).
 
 ### Apply them
 
@@ -346,7 +381,7 @@ cycle-free; a hand-written rule is not.
 | 4 | Teacher experience: course management, materials, grading, analytics | ✅ done |
 | 5 | Admin & owner: users, roles, moderation, reports, audit logs, settings | ✅ done |
 | 6 | Advanced: Realtime messaging & notifications, storage, AI assistant, search | ✅ done |
-| 7 | Quality: tests, RLS verification, accessibility, deployment docs | ⏳ next |
+| 7 | Quality: tests, RLS verification, accessibility, deployment docs | ✅ done |
 
 ---
 

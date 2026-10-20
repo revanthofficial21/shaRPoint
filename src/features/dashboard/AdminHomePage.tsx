@@ -42,7 +42,8 @@ export function AdminHomePage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Administration</h1>
           <p className="text-sm text-muted-foreground">
-            Platform-wide activity{profile?.full_name ? ` · signed in as ${profile.full_name}` : ''}.
+            Platform-wide activity{profile?.full_name ? ` · signed in as ${profile.full_name}` : ''}
+            .
           </p>
         </div>
         <Badge variant={capabilities.isOwner ? 'default' : 'muted'}>
@@ -54,7 +55,9 @@ export function AdminHomePage() {
         {cards.map((card) => (
           <Card key={card.label}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{card.label}</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {card.label}
+              </CardTitle>
               <card.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>

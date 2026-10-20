@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/button'
  * user always sees an explanation instead of a blank page.
  */
 
-const shell =
-  'flex min-h-screen items-center justify-center bg-background p-6 text-foreground'
+const shell = 'flex min-h-screen items-center justify-center bg-background p-6 text-foreground'
 
 export function ConfigScreen({ missing }: { missing: string[] }) {
   return (
@@ -17,9 +16,8 @@ export function ConfigScreen({ missing }: { missing: string[] }) {
         <Wrench className="mb-3 h-8 w-8 text-primary" />
         <h1 className="text-xl font-semibold">Configuration required</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          SHARPOINT loaded, but it can&apos;t reach its backend without these environment
-          variables. Set them in your host (Vercel / Netlify → Settings → Environment Variables)
-          and redeploy:
+          SHARPOINT loaded, but it can&apos;t reach its backend without these environment variables.
+          Set them in your host (Vercel / Netlify → Settings → Environment Variables) and redeploy:
         </p>
         <ul className="mt-4 space-y-2">
           {missing.map((name) => (

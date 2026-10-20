@@ -214,13 +214,13 @@ export function ResourcesPage() {
                   <CardTitle className="text-base leading-snug">{resource.title}</CardTitle>
                   <button
                     aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-                    onClick={() =>
-                      toggleBookmark.mutate({ resourceId: resource.id, bookmarked })
-                    }
+                    onClick={() => toggleBookmark.mutate({ resourceId: resource.id, bookmarked })}
                   >
                     <Bookmark
                       className={
-                        bookmarked ? 'h-4 w-4 fill-primary text-primary' : 'h-4 w-4 text-muted-foreground'
+                        bookmarked
+                          ? 'h-4 w-4 fill-primary text-primary'
+                          : 'h-4 w-4 text-muted-foreground'
                       }
                     />
                   </button>
@@ -238,7 +238,12 @@ export function ResourcesPage() {
                   {resource.owner?.full_name ?? 'Unknown'} · {relativeTime(resource.created_at)} ·{' '}
                   {resource.downloads} opens
                 </p>
-                <Button variant="outline" size="sm" className="w-full" onClick={() => handleOpen(resource)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => handleOpen(resource)}
+                >
                   {resource.external_url && !resource.storage_path ? (
                     <ExternalLink className="h-3.5 w-3.5" />
                   ) : (
@@ -288,7 +293,10 @@ export function ResourcesPage() {
                   className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm"
                   value={form.resourceType}
                   onChange={(e) =>
-                    setForm({ ...form, resourceType: e.target.value as ResourceRow['resource_type'] })
+                    setForm({
+                      ...form,
+                      resourceType: e.target.value as ResourceRow['resource_type'],
+                    })
                   }
                 >
                   {['document', 'notes', 'guide', 'link', 'video', 'other'].map((t) => (

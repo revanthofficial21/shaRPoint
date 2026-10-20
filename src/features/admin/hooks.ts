@@ -213,7 +213,9 @@ export function useSaveCourse() {
         const { error } = await supabase.from('courses').update(payload).eq('id', input.id)
         if (error) throw error
       } else {
-        const { error } = await supabase.from('courses').insert({ ...payload, created_by: user!.id })
+        const { error } = await supabase
+          .from('courses')
+          .insert({ ...payload, created_by: user!.id })
         if (error) throw error
       }
     },
@@ -260,7 +262,10 @@ export function useSetCourseArchived() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ courseId, archived }: { courseId: string; archived: boolean }) => {
-      const { error } = await supabase.from('courses').update({ is_archived: archived }).eq('id', courseId)
+      const { error } = await supabase
+        .from('courses')
+        .update({ is_archived: archived })
+        .eq('id', courseId)
       if (error) throw error
     },
     onSuccess: async () => {
@@ -368,7 +373,13 @@ export function useResolveReport() {
 
       const { error: actionError } = await supabase
         .from('moderation_actions')
-        .insert({ actor_id: user!.id, target_table: 'reports', target_id: reportId, action: status, reason })
+        .insert({
+          actor_id: user!.id,
+          target_table: 'reports',
+          target_id: reportId,
+          action: status,
+          reason,
+        })
       if (actionError) throw actionError
     },
     onSuccess: async () => {
@@ -426,7 +437,12 @@ export function useHiddenPosts() {
         .order('created_at', { ascending: false })
         .limit(100)
         .returns<
-          { id: string; content: string; created_at: string; author: { full_name: string } | null }[]
+          {
+            id: string
+            content: string
+            created_at: string
+            author: { full_name: string } | null
+          }[]
         >()
       if (error) throw error
       return data ?? []

@@ -85,7 +85,9 @@ export function CourseDetailPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Academic year</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Academic year
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-sm">{data.academic_year || '—'}</CardContent>
         </Card>

@@ -6,7 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { relativeTime } from '@/lib/utils'
 import { initials } from '@/lib/utils'
 import { useLeaderboard, useMyPointHistory, useMyRewards } from './hooks'
@@ -157,7 +164,9 @@ export function LeaderboardPage() {
                     {tx.points > 0 ? '+' : ''}
                     {tx.points}
                   </span>
-                  <span className="text-xs text-muted-foreground">{relativeTime(tx.created_at)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {relativeTime(tx.created_at)}
+                  </span>
                 </span>
               </div>
             ))}

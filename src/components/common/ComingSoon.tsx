@@ -19,8 +19,8 @@ export function ComingSoon({ title, phase }: { title: string; phase: string }) {
           <Construction className="h-8 w-8 text-muted-foreground" />
           <CardTitle className="text-base">Not implemented yet</CardTitle>
           <CardDescription className="max-w-md">
-            Routing and permissions for this page are in place. The feature itself is scheduled
-            for <strong>{phase}</strong>.
+            Routing and permissions for this page are in place. The feature itself is scheduled for{' '}
+            <strong>{phase}</strong>.
           </CardDescription>
           <Badge variant="muted">{phase}</Badge>
         </CardContent>

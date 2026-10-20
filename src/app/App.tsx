@@ -29,8 +29,14 @@ const AuthCallbackPage = page(
   'AuthCallbackPage',
 )
 
-const StudentHomePage = page(() => import('@/features/dashboard/StudentHomePage'), 'StudentHomePage')
-const TeacherHomePage = page(() => import('@/features/dashboard/TeacherHomePage'), 'TeacherHomePage')
+const StudentHomePage = page(
+  () => import('@/features/dashboard/StudentHomePage'),
+  'StudentHomePage',
+)
+const TeacherHomePage = page(
+  () => import('@/features/dashboard/TeacherHomePage'),
+  'TeacherHomePage',
+)
 const AdminHomePage = page(() => import('@/features/dashboard/AdminHomePage'), 'AdminHomePage')
 const CommunityPage = page(() => import('@/features/community/CommunityPage'), 'CommunityPage')
 const ProfilePage = page(() => import('@/features/profiles/ProfilePage'), 'ProfilePage')
@@ -71,10 +77,7 @@ const AssignmentsManagePage = page(
   () => import('@/features/teacher/AssignmentsManagePage'),
   'AssignmentsManagePage',
 )
-const SubmissionsPage = page(
-  () => import('@/features/teacher/SubmissionsPage'),
-  'SubmissionsPage',
-)
+const SubmissionsPage = page(() => import('@/features/teacher/SubmissionsPage'), 'SubmissionsPage')
 const AnnouncementsPage = page(
   () => import('@/features/teacher/AnnouncementsPage'),
   'AnnouncementsPage',
@@ -112,8 +115,7 @@ const roadmap: Record<string, string> = {
   '/teacher/settings': 'Phase 7 — Settings',
 }
 
-const label = (path: string, prefix: string) =>
-  path.replace(prefix, '').replace(/-/g, ' ')
+const label = (path: string, prefix: string) => path.replace(prefix, '').replace(/-/g, ' ')
 
 export default function App() {
   return (

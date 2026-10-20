@@ -20,8 +20,7 @@ const fromVite = (value: unknown) =>
 const buildFallback = (value: unknown) =>
   typeof value === 'string' && value.trim() ? value.trim() : undefined
 
-const url =
-  fromVite(import.meta.env.VITE_SUPABASE_URL) ?? buildFallback(__SUPABASE_URL__)
+const url = fromVite(import.meta.env.VITE_SUPABASE_URL) ?? buildFallback(__SUPABASE_URL__)
 const anonKey =
   fromVite(import.meta.env.VITE_SUPABASE_ANON_KEY) ?? buildFallback(__SUPABASE_ANON_KEY__)
 

@@ -65,7 +65,13 @@ export function SignInPage() {
 
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" autoComplete="email" placeholder="you@college.edu" {...register('email')} />
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@college.edu"
+            {...register('email')}
+          />
           {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
         </div>
 
@@ -76,7 +82,12 @@ export function SignInPage() {
               Forgot password?
             </Link>
           </div>
-          <Input id="password" type="password" autoComplete="current-password" {...register('password')} />
+          <Input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            {...register('password')}
+          />
           {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
         </div>
 

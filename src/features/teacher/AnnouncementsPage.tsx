@@ -116,6 +116,7 @@ export function AnnouncementsPage() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="Delete announcement"
                     onClick={() =>
                       remove.mutate(item.id, {
                         onSuccess: () => toast.success('Announcement removed'),
@@ -139,7 +140,9 @@ export function AnnouncementsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>New announcement</DialogTitle>
-            <DialogDescription>Students enrolled in the course will see this immediately.</DialogDescription>
+            <DialogDescription>
+              Students enrolled in the course will see this immediately.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">

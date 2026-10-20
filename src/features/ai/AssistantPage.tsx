@@ -147,6 +147,7 @@ export function AssistantPage() {
           <div className="flex items-end gap-2 border-t pt-4">
             <Textarea
               rows={2}
+              aria-label="Ask the assistant"
               placeholder={`Ask ${profile?.full_name?.split(' ')[0] ?? 'a question'}…  (Enter to send, Shift+Enter for a new line)`}
               value={draft}
               maxLength={4000}
@@ -161,10 +162,15 @@ export function AssistantPage() {
             />
             <Button
               size="icon"
+              aria-label="Send message"
               onClick={() => send(draft)}
               disabled={ask.isPending || !draft.trim()}
             >
-              {ask.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {ask.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
 

@@ -69,7 +69,12 @@ export function MessagesPage() {
       .channel(`messages:${activeId}`)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeId}` },
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${activeId}`,
+        },
         () => {
           queryClient.invalidateQueries({ queryKey: ['messages', activeId] })
           queryClient.invalidateQueries({ queryKey: ['conversations'] })
@@ -133,7 +138,12 @@ export function MessagesPage() {
     setDraft('')
     send.mutate(
       { conversationId: activeId, body },
-      { onError: (error) => { setDraft(body); toast.error(toUserMessage(error)) } },
+      {
+        onError: (error) => {
+          setDraft(body)
+          toast.error(toUserMessage(error))
+        },
+      },
     )
   }
 
@@ -209,7 +219,10 @@ export function MessagesPage() {
                   {(messages.data ?? []).map((message) => {
                     const mine = message.sender_id === user?.id
                     return (
-                      <div key={message.id} className={mine ? 'flex justify-end' : 'flex justify-start'}>
+                      <div
+                        key={message.id}
+                        className={mine ? 'flex justify-end' : 'flex justify-start'}
+                      >
                         <div
                           className={
                             mine
@@ -237,6 +250,7 @@ export function MessagesPage() {
                 <div className="flex items-end gap-2 border-t p-3">
                   <Textarea
                     rows={1}
+                    aria-label="Message"
                     placeholder="Write a message…"
                     value={draft}
                     maxLength={4000}
@@ -249,8 +263,17 @@ export function MessagesPage() {
                       }
                     }}
                   />
-                  <Button size="icon" onClick={handleSend} disabled={send.isPending || !draft.trim()}>
-                    {send.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  <Button
+                    size="icon"
+                    aria-label="Send message"
+                    onClick={handleSend}
+                    disabled={send.isPending || !draft.trim()}
+                  >
+                    {send.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </>

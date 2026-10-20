@@ -79,7 +79,9 @@ export function CommunityPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('post_comments')
-        .select('id, content, created_at, author_id, author:profiles!post_comments_author_id_fkey(full_name, avatar_url)')
+        .select(
+          'id, content, created_at, author_id, author:profiles!post_comments_author_id_fkey(full_name, avatar_url)',
+        )
         .eq('post_id', openComments!)
         .order('created_at', { ascending: true })
         .returns<CommentRow[]>()
@@ -90,7 +92,9 @@ export function CommunityPage() {
 
   const createPost = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from('posts').insert({ author_id: user!.id, content: content.trim() })
+      const { error } = await supabase
+        .from('posts')
+        .insert({ author_id: user!.id, content: content.trim() })
       if (error) throw error
       await supabase.rpc('award_activity_points', { p_activity: 'post_created' })
     },
@@ -177,7 +181,11 @@ export function CommunityPage() {
               disabled={createPost.isPending || content.trim().length === 0}
               onClick={() => createPost.mutate()}
             >
-              {createPost.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {createPost.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
               Post
             </Button>
           </div>
@@ -244,7 +252,9 @@ export function CommunityPage() {
                       className="flex items-center gap-1.5 hover:text-foreground"
                       onClick={() => toggleLike.mutate({ postId: post.id, liked })}
                     >
-                      <Heart className={liked ? 'h-4 w-4 fill-destructive text-destructive' : 'h-4 w-4'} />
+                      <Heart
+                        className={liked ? 'h-4 w-4 fill-destructive text-destructive' : 'h-4 w-4'}
+                      />
                       {post.post_likes.length}
                     </button>
                     <button

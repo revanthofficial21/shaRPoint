@@ -31,7 +31,16 @@ import {
 } from './hooks'
 import type { ApplicationStatus, OpportunityRow } from '@/types/database'
 
-const CATEGORIES = ['all', 'internship', 'job', 'hackathon', 'competition', 'event', 'research', 'scholarship'] as const
+const CATEGORIES = [
+  'all',
+  'internship',
+  'job',
+  'hackathon',
+  'competition',
+  'event',
+  'research',
+  'scholarship',
+] as const
 
 const STATUS_LABEL: Record<ApplicationStatus, string> = {
   saved: 'Saved',
@@ -184,16 +193,22 @@ export function OpportunitiesPage() {
                     <CardDescription>
                       {opportunity.company}
                       {opportunity.location ? ` · ${opportunity.location}` : ''}
-                      {opportunity.deadline ? ` · apply by ${formatDate(opportunity.deadline)}` : ''}
+                      {opportunity.deadline
+                        ? ` · apply by ${formatDate(opportunity.deadline)}`
+                        : ''}
                     </CardDescription>
                   </div>
                   <button
                     aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark'}
-                    onClick={() => toggleBookmark.mutate({ opportunityId: opportunity.id, bookmarked })}
+                    onClick={() =>
+                      toggleBookmark.mutate({ opportunityId: opportunity.id, bookmarked })
+                    }
                   >
                     <Bookmark
                       className={
-                        bookmarked ? 'h-4 w-4 fill-primary text-primary' : 'h-4 w-4 text-muted-foreground'
+                        bookmarked
+                          ? 'h-4 w-4 fill-primary text-primary'
+                          : 'h-4 w-4 text-muted-foreground'
                       }
                     />
                   </button>
@@ -210,7 +225,11 @@ export function OpportunitiesPage() {
                   {opportunity.stipend && <Badge variant="outline">{opportunity.stipend}</Badge>}
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" onClick={() => apply(opportunity)} disabled={setStatus.isPending}>
+                  <Button
+                    size="sm"
+                    onClick={() => apply(opportunity)}
+                    disabled={setStatus.isPending}
+                  >
                     {opportunity.apply_url && <ExternalLink className="h-3.5 w-3.5" />}
                     Apply
                   </Button>

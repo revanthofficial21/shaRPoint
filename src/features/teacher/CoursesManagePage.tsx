@@ -21,7 +21,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { toUserMessage } from '@/lib/utils'
 import { useSessionContext } from '@/features/profiles/hooks'
-import { useManagedCourses, useSetCourseArchived, useUpdateCourse, type ManagedCourse } from './hooks'
+import {
+  useManagedCourses,
+  useSetCourseArchived,
+  useUpdateCourse,
+  type ManagedCourse,
+} from './hooks'
 
 export function CoursesManagePage() {
   const { capabilities } = useSessionContext()
@@ -30,7 +35,13 @@ export function CoursesManagePage() {
   const setArchived = useSetCourseArchived()
 
   const [editing, setEditing] = useState<ManagedCourse | null>(null)
-  const [form, setForm] = useState({ title: '', code: '', description: '', objectives: '', academicYear: '' })
+  const [form, setForm] = useState({
+    title: '',
+    code: '',
+    description: '',
+    objectives: '',
+    academicYear: '',
+  })
 
   function openEdit(course: ManagedCourse) {
     setEditing(course)
@@ -136,7 +147,9 @@ export function CoursesManagePage() {
                           { courseId: course.id, archived: !course.is_archived },
                           {
                             onSuccess: () =>
-                              toast.success(course.is_archived ? 'Course restored' : 'Course archived'),
+                              toast.success(
+                                course.is_archived ? 'Course restored' : 'Course archived',
+                              ),
                             onError: (e) => toast.error(toUserMessage(e)),
                           },
                         )

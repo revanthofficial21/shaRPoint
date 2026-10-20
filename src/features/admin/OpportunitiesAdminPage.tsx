@@ -85,7 +85,9 @@ export function OpportunitiesAdminPage() {
                         {
                           onSuccess: () =>
                             toast.success(
-                              opportunity.is_featured ? 'Removed from featured' : 'Marked as featured',
+                              opportunity.is_featured
+                                ? 'Removed from featured'
+                                : 'Marked as featured',
                             ),
                           onError: (e) => toast.error(toUserMessage(e)),
                         },
@@ -114,6 +116,7 @@ export function OpportunitiesAdminPage() {
                   <Button
                     size="sm"
                     variant="ghost"
+                    aria-label={`Delete ${opportunity.title}`}
                     onClick={() =>
                       remove.mutate(opportunity.id, {
                         onSuccess: () => toast.success('Opportunity deleted'),

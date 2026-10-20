@@ -116,7 +116,9 @@ export function useCourseAnnouncements(courseId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('announcements')
-        .select('id, title, body, publish_at, author:profiles!announcements_author_id_fkey(full_name)')
+        .select(
+          'id, title, body, publish_at, author:profiles!announcements_author_id_fkey(full_name)',
+        )
         .eq('course_id', courseId!)
         .eq('is_archived', false)
         .order('publish_at', { ascending: false })

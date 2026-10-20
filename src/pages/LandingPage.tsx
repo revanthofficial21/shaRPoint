@@ -18,11 +18,19 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const features = [
-  { icon: MessageSquare, title: 'Collaboration', body: 'Community feed, study groups and private messaging.' },
+  {
+    icon: MessageSquare,
+    title: 'Collaboration',
+    body: 'Community feed, study groups and private messaging.',
+  },
   { icon: BookOpen, title: 'Courses', body: 'Structured courses, materials and announcements.' },
   { icon: ClipboardList, title: 'Assignments', body: 'Set, submit, grade and track coursework.' },
   { icon: Briefcase, title: 'Opportunities', body: 'Internships, hackathons and career openings.' },
-  { icon: Bot, title: 'AI Study Assistant', body: 'Concept help and revision aids via a secure proxy.' },
+  {
+    icon: Bot,
+    title: 'AI Study Assistant',
+    body: 'Concept help and revision aids via a secure proxy.',
+  },
   { icon: BarChart3, title: 'Analytics', body: 'Engagement and performance insight per role.' },
 ]
 

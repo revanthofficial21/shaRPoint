@@ -3,7 +3,12 @@ import { supabase } from '@/integrations/supabase/client'
 import type { RewardRow } from '@/types/database'
 
 export interface LeaderboardEntry extends RewardRow {
-  profile: { id: string; full_name: string; avatar_url: string | null; college: string | null } | null
+  profile: {
+    id: string
+    full_name: string
+    avatar_url: string | null
+    college: string | null
+  } | null
 }
 
 /**

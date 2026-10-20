@@ -15,7 +15,14 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { useTeacherStats } from './hooks'
 
 export function AnalyticsPage() {
@@ -172,7 +179,9 @@ export function AnalyticsPage() {
                       <TableCell className="font-medium">
                         {row.course_title}
                         {row.course_code ? (
-                          <span className="ml-2 text-xs text-muted-foreground">{row.course_code}</span>
+                          <span className="ml-2 text-xs text-muted-foreground">
+                            {row.course_code}
+                          </span>
                         ) : null}
                       </TableCell>
                       <TableCell className="text-right">{row.enrolled}</TableCell>

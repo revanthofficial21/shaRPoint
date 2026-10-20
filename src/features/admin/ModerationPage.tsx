@@ -90,8 +90,8 @@ export function ModerationPage() {
                       </Badge>
                     </div>
                     <CardDescription>
-                      {report.target_table} · reported by {report.reporter?.full_name ?? 'unknown'} ·{' '}
-                      {relativeTime(report.created_at)}
+                      {report.target_table} · reported by {report.reporter?.full_name ?? 'unknown'}{' '}
+                      · {relativeTime(report.created_at)}
                     </CardDescription>
                   </div>
                   {report.status === 'open' && (
@@ -118,7 +118,9 @@ export function ModerationPage() {
                 </div>
               </CardHeader>
               {report.details && (
-                <CardContent className="text-sm text-muted-foreground">{report.details}</CardContent>
+                <CardContent className="text-sm text-muted-foreground">
+                  {report.details}
+                </CardContent>
               )}
             </Card>
           ))}
@@ -142,7 +144,10 @@ export function ModerationPage() {
             </p>
           )}
           {(hidden.data ?? []).map((post) => (
-            <div key={post.id} className="flex items-start justify-between gap-3 rounded-lg border p-3">
+            <div
+              key={post.id}
+              className="flex items-start justify-between gap-3 rounded-lg border p-3"
+            >
               <div className="min-w-0">
                 <p className="text-xs text-muted-foreground">
                   {post.author?.full_name ?? 'Unknown'} · {relativeTime(post.created_at)}

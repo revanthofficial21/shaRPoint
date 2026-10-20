@@ -15,7 +15,14 @@ import { PageHeader } from '@/components/common/PageHeader'
 import { ErrorState } from '@/components/common/ErrorState'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { useAdminStats } from './hooks'
 
 export function ReportsPage() {

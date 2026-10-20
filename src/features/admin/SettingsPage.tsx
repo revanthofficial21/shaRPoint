@@ -13,7 +13,11 @@ import { usePlatformSettings, useUpdateSetting } from './hooks'
 
 type Branding = { name?: string; tagline?: string }
 type Uploads = { maxFileSizeMb?: number; allowedTypes?: string[] }
-type Registration = { allowStudentSignup?: boolean; allowTeacherSignup?: boolean; requireApproval?: boolean }
+type Registration = {
+  allowStudentSignup?: boolean
+  allowTeacherSignup?: boolean
+  requireApproval?: boolean
+}
 type Ai = { enabled?: boolean; dailyRequestLimit?: number }
 
 export function SettingsPage() {
@@ -85,7 +89,11 @@ export function SettingsPage() {
             </div>
           </div>
           <Button onClick={() => saveSection('branding', branding)} disabled={update.isPending}>
-            {update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {update.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
             Save branding
           </Button>
         </CardContent>
@@ -126,7 +134,11 @@ export function SettingsPage() {
             </div>
           </div>
           <Button onClick={() => saveSection('uploads', uploads)} disabled={update.isPending}>
-            {update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {update.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
             Save upload rules
           </Button>
         </CardContent>
@@ -158,8 +170,15 @@ export function SettingsPage() {
               </label>
             ))}
           </div>
-          <Button onClick={() => saveSection('registration', registration)} disabled={update.isPending}>
-            {update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          <Button
+            onClick={() => saveSection('registration', registration)}
+            disabled={update.isPending}
+          >
+            {update.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
             Save registration policy
           </Button>
         </CardContent>
@@ -195,7 +214,11 @@ export function SettingsPage() {
             />
           </div>
           <Button onClick={() => saveSection('ai', ai)} disabled={update.isPending}>
-            {update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {update.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
             Save AI settings
           </Button>
         </CardContent>

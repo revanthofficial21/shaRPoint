@@ -3,7 +3,14 @@ import { PageHeader } from '@/components/common/PageHeader'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { ROLE_LABEL } from '@/lib/permissions'
 import { useUserDirectory } from './hooks'
 import type { AppRole } from '@/types/database'
@@ -15,8 +22,14 @@ const ROLES: AppRole[] = ['student', 'teacher', 'admin', 'owner']
  * read-only because the rules are enforced in Postgres, not configured here.
  */
 const MATRIX: { capability: string; roles: AppRole[] }[] = [
-  { capability: 'View community feed, courses and resources', roles: ['student', 'teacher', 'admin', 'owner'] },
-  { capability: 'Create posts, comments and study groups', roles: ['student', 'teacher', 'admin', 'owner'] },
+  {
+    capability: 'View community feed, courses and resources',
+    roles: ['student', 'teacher', 'admin', 'owner'],
+  },
+  {
+    capability: 'Create posts, comments and study groups',
+    roles: ['student', 'teacher', 'admin', 'owner'],
+  },
   { capability: 'Submit assignments', roles: ['student'] },
   { capability: 'Upload learning resources', roles: ['student', 'teacher', 'admin', 'owner'] },
   { capability: 'Post opportunities', roles: ['teacher', 'admin', 'owner'] },
@@ -111,8 +124,8 @@ export function RolesPage() {
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <div className="space-y-1">
             <p>
-              Roles are stored in <code className="rounded bg-muted px-1.5 py-0.5">user_roles</code>,
-              separate from profile data, and can only be written by an administrator.
+              Roles are stored in <code className="rounded bg-muted px-1.5 py-0.5">user_roles</code>
+              , separate from profile data, and can only be written by an administrator.
             </p>
             <p>
               A database trigger rejects any attempt to self-grant a role, and a second trigger

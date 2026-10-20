@@ -122,4 +122,28 @@
   html:not(.dark) {
     color-scheme: light;
   }
+
+  /*
+   * One visible focus ring for every keyboard-reachable control, including the
+   * ones Radix renders. `:focus-visible` keeps it off mouse clicks while
+   * guaranteeing it on Tab.
+   */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+/*
+ * Respect the OS "reduce motion" setting. Animations are reduced to a single
+ * frame rather than removed, so state changes still settle correctly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

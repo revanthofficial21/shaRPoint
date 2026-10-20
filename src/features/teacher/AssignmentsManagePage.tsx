@@ -145,7 +145,11 @@ export function AssignmentsManagePage() {
           title="No assignments yet"
           description="Create your first assignment and publish it when you are ready."
           action={
-            <Button variant="outline" onClick={openCreate} disabled={(courses.data ?? []).length === 0}>
+            <Button
+              variant="outline"
+              onClick={openCreate}
+              disabled={(courses.data ?? []).length === 0}
+            >
               Create an assignment
             </Button>
           }
@@ -183,12 +187,18 @@ export function AssignmentsManagePage() {
                       <Eye className="h-3.5 w-3.5" /> Submissions
                     </Link>
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => openEdit(assignment)}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    aria-label={`Edit ${assignment.title}`}
+                    onClick={() => openEdit(assignment)}
+                  >
                     <Pencil className="h-3.5 w-3.5" />
                   </Button>
                   <Button
                     size="sm"
                     variant="ghost"
+                    aria-label={`Delete ${assignment.title}`}
                     onClick={() =>
                       remove.mutate(assignment.id, {
                         onSuccess: () => toast.success('Assignment deleted'),
@@ -321,7 +331,9 @@ export function AssignmentsManagePage() {
               Cancel
             </Button>
             <Button onClick={handleSave} disabled={create.isPending || update.isPending}>
-              {(create.isPending || update.isPending) && <Loader2 className="h-4 w-4 animate-spin" />}
+              {(create.isPending || update.isPending) && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
               {editingId ? 'Save changes' : 'Create'}
             </Button>
           </DialogFooter>
