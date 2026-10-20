@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
+import { authErrorMessage } from '@/lib/auth-errors'
 import { AuthContext, type AuthContextValue, type SignUpInput } from './auth-context'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -28,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback<AuthContextValue['signIn']>(async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return { error: error?.message ?? null }
+    return { error: authErrorMessage(error) }
   }, [])
 
   const signUp = useCallback<AuthContextValue['signUp']>(async (input: SignUpInput) => {
@@ -42,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     })
     return {
-      error: error?.message ?? null,
+      error: authErrorMessage(error),
       needsVerification: Boolean(data.user && !data.session),
     }
   }, [])
@@ -56,14 +57,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       })
-      return { error: error?.message ?? null }
+      return { error: authErrorMessage(error) }
     },
     [],
   )
 
   const updatePassword = useCallback<AuthContextValue['updatePassword']>(async (password) => {
     const { error } = await supabase.auth.updateUser({ password })
-    return { error: error?.message ?? null }
+    return { error: authErrorMessage(error) }
   }, [])
 
   const value = useMemo<AuthContextValue>(

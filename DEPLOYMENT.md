@@ -94,6 +94,34 @@ Supabase → **Authentication → Providers → Email**
 paste its client ID and secret. No code change is needed — the buttons are already
 wired to Supabase Auth.
 
+### Email delivery — read this before testing sign-up
+
+Supabase's **built-in** email service is a development convenience, not a production
+one. It sends only a handful of messages per hour, and once you exceed that every
+sign-up fails with:
+
+```
+email rate limit exceeded
+```
+
+That is a project-level limit, not something the user did wrong — but the raw string
+gives no hint of that, so the app now translates it into an explanation with the fix.
+
+**While testing**, the quickest way past it is to stop sending mail at all:
+
+> Supabase → **Authentication → Providers → Email** → turn **Confirm email** off.
+
+Sign-up then completes immediately with no email, and the account is usable at once.
+
+**For production**, connect a real SMTP provider so the limit does not apply:
+
+> Supabase → **Project Settings → Auth → SMTP Settings**
+
+Any transactional provider works — Resend, SendGrid, Postmark, Amazon SES. Set the
+sender address to a domain you control, and keep *Confirm email* **on**.
+
+The same applies to password-reset emails, which are rate-limited identically.
+
 ---
 
 ## 5. Storage buckets
@@ -229,6 +257,7 @@ Run through this on the live site:
 | Blank page with "failed to start" | A JavaScript error at boot. The message is shown on screen by the safety net in `index.html`. |
 | `Cannot read properties of undefined (reading 'forwardRef')` | Chunk initialisation order — almost always a `manualChunks` rule splitting React from its dependants. This project deliberately has none; see `vite.config.ts`. |
 | Clicking the confirmation link shows a host 404 | Either the SPA fallback is missing (`vercel.json` / `_redirects`), or the origin isn't in Supabase → Authentication → URL Configuration → Redirect URLs. Both are required. |
+| `email rate limit exceeded` on sign-up | Supabase's built-in email service is capped at a few messages per hour. Turn **Confirm email** off while testing, or configure your own SMTP provider for production (see step 4). |
 | Can't sign in after registering | Email confirmation is on. Confirm via the link, or disable it for testing. |
 | Messages don't arrive live | `0007_phase6.sql` hasn't run, so the tables aren't in the `supabase_realtime` publication. |
 | Admin pages error on load | `0006_phase5.sql` hasn't run — `admin_user_directory()` and `admin_platform_stats()` are missing. |
