@@ -4,8 +4,10 @@ import { cleanup } from '@testing-library/react'
 
 afterEach(() => {
   cleanup()
-  // ThemeProvider writes a class onto <html>; don't let it leak between tests.
+  // ThemeProvider writes a class and a data attribute onto <html>; don't let
+  // either leak between tests.
   document.documentElement.className = ''
+  document.documentElement.removeAttribute('data-palette')
   localStorage.clear()
 })
 

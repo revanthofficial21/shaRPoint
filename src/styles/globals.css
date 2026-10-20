@@ -2,117 +2,251 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * SHARPOINT colour system — bold amber on deep navy.
+/* ============================================================================
+ * SHARPOINT DESIGN SYSTEM
+ * ============================================================================
  *
- * Restores the original brand direction: a near-black navy canvas with a vivid
- * amber/orange accent, rather than the muted emerald that briefly replaced it.
+ * Two things live here: the colour tokens, and the craft — elevation,
+ * typography, gradients and motion that make the surfaces feel considered
+ * rather than flat.
  *
- * Notes on the choices:
- *  - Dark-mode primary is BRIGHT amber with near-black text. White on orange
- *    fails contrast badly (~2.6:1); near-black on the same orange is ~8:1. This
- *    is why the buttons read as confident rather than washed out.
- *  - `success` is green and `warning` is yellow. Amber is now the brand, so
- *    those two have to be pulled apart from it to stay legible in badges.
- *  - Dark is the default (see the inline script in index.html).
- */
+ * PALETTES
+ *   The default is "ember": a warm near-black canvas with a golden amber accent.
+ *   It keeps the brand you already had, and it is deliberately NOT indigo or
+ *   violet — every second SaaS product is, which is what made the earlier
+ *   version feel generic.
+ *
+ *   Three accent presets ship alongside it and are switchable at runtime from
+ *   Settings → Appearance. Each only overrides the tokens that carry the
+ *   personality (accent, ring, charts, canvas tint) and inherits everything
+ *   else, so adding a fourth is about ten lines.
+ *
+ *   To change the default, edit DEFAULT_PALETTE in src/app/theme.tsx.
+ *
+ * CONTRAST
+ *   Dark-mode primary is bright amber with near-black text on purpose: white on
+ *   orange measures ~2.6:1 and fails, near-black on the same orange is ~8:1.
+ *   `warning` is yellow rather than amber so a warning badge never reads as a
+ *   button now that amber is the brand.
+ * ========================================================================== */
 
 @layer base {
+  /* ── ember · light ─────────────────────────────────────────────────────── */
   :root,
   .light {
-    --background: 30 25% 99%;
-    --foreground: 234 30% 12%;
+    --background: 36 30% 99%;
+    --foreground: 24 25% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 234 30% 12%;
+    --card-foreground: 24 25% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 234 30% 12%;
+    --popover-foreground: 24 25% 10%;
 
-    --primary: 22 90% 44%;
+    --primary: 24 90% 42%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 20% 96%;
-    --secondary-foreground: 234 30% 14%;
+    --secondary: 36 22% 96%;
+    --secondary-foreground: 24 25% 14%;
 
-    --muted: 30 18% 96%;
-    --muted-foreground: 234 12% 44%;
+    --muted: 36 20% 96%;
+    --muted-foreground: 24 12% 44%;
 
-    --accent: 30 92% 95%;
-    --accent-foreground: 22 85% 30%;
+    --accent: 36 92% 94%;
+    --accent-foreground: 24 85% 28%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 152 62% 34%;
+    --success: 156 60% 34%;
     --success-foreground: 0 0% 100%;
 
-    /* yellower than the brand amber, so warning badges don't read as buttons */
     --warning: 45 93% 44%;
     --warning-foreground: 30 80% 12%;
 
-    --border: 30 15% 90%;
-    --input: 30 15% 90%;
-    --ring: 22 90% 44%;
+    --border: 32 18% 90%;
+    --input: 32 18% 90%;
+    --ring: 24 90% 42%;
 
-    --chart-1: 24 95% 50%;
-    --chart-2: 174 62% 38%;
-    --chart-3: 258 70% 58%;
+    --chart-1: 26 94% 50%;
+    --chart-2: 174 60% 38%;
+    --chart-3: 262 68% 58%;
     --chart-4: 199 80% 46%;
 
     --radius: 0.75rem;
   }
 
+  /* ── ember · dark (default) ────────────────────────────────────────────── */
   .dark {
-    --background: 234 42% 6%;
-    --foreground: 30 25% 96%;
+    --background: 26 14% 5%;
+    --foreground: 34 24% 96%;
 
-    --card: 234 38% 9%;
-    --card-foreground: 30 25% 96%;
+    --card: 26 12% 8%;
+    --card-foreground: 34 24% 96%;
 
-    --popover: 234 38% 9%;
-    --popover-foreground: 30 25% 96%;
+    --popover: 26 12% 9%;
+    --popover-foreground: 34 24% 96%;
 
-    --primary: 28 96% 56%;
-    --primary-foreground: 24 85% 8%;
+    --primary: 32 98% 58%;
+    --primary-foreground: 26 85% 7%;
 
-    --secondary: 234 28% 15%;
-    --secondary-foreground: 30 25% 96%;
+    --secondary: 26 10% 15%;
+    --secondary-foreground: 34 24% 96%;
 
-    --muted: 234 28% 14%;
-    --muted-foreground: 30 12% 66%;
+    --muted: 26 10% 14%;
+    --muted-foreground: 32 12% 66%;
 
-    --accent: 28 55% 18%;
-    --accent-foreground: 32 95% 72%;
+    --accent: 26 55% 17%;
+    --accent-foreground: 36 95% 72%;
 
-    --destructive: 0 70% 52%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 152 58% 44%;
-    --success-foreground: 150 60% 8%;
+    --success: 156 55% 45%;
+    --success-foreground: 156 60% 7%;
 
-    --warning: 45 90% 58%;
+    --warning: 48 96% 58%;
     --warning-foreground: 30 80% 10%;
 
-    --border: 234 25% 17%;
-    --input: 234 25% 17%;
-    --ring: 28 96% 56%;
+    --border: 26 12% 16%;
+    --input: 26 12% 16%;
+    --ring: 32 98% 58%;
 
-    --chart-1: 28 96% 58%;
-    --chart-2: 174 62% 48%;
-    --chart-3: 258 75% 66%;
-    --chart-4: 199 80% 56%;
+    --chart-1: 32 98% 58%;
+    --chart-2: 174 58% 48%;
+    --chart-3: 262 72% 68%;
+    --chart-4: 199 80% 58%;
+  }
+
+  /* ── preset: violet ────────────────────────────────────────────────────── */
+  .light[data-palette='violet'] {
+    --background: 270 40% 99%;
+    --primary: 262 83% 48%;
+    --accent: 268 80% 95%;
+    --accent-foreground: 262 75% 32%;
+    --ring: 262 83% 48%;
+    --border: 268 20% 91%;
+    --input: 268 20% 91%;
+    --chart-1: 262 80% 58%;
+  }
+  .dark[data-palette='violet'] {
+    --background: 268 24% 5%;
+    --card: 268 20% 8%;
+    --popover: 268 20% 9%;
+    --primary: 264 90% 68%;
+    --primary-foreground: 268 80% 8%;
+    --accent: 268 40% 18%;
+    --accent-foreground: 266 90% 82%;
+    --ring: 264 90% 68%;
+    --border: 268 18% 16%;
+    --input: 268 18% 16%;
+    --chart-1: 264 88% 68%;
+  }
+
+  /* ── preset: teal ──────────────────────────────────────────────────────── */
+  .light[data-palette='teal'] {
+    --background: 180 30% 99%;
+    --primary: 178 80% 30%;
+    --accent: 178 60% 94%;
+    --accent-foreground: 178 80% 22%;
+    --ring: 178 80% 30%;
+    --border: 178 20% 90%;
+    --input: 178 20% 90%;
+    --chart-1: 176 74% 40%;
+  }
+  .dark[data-palette='teal'] {
+    --background: 182 22% 5%;
+    --card: 182 20% 8%;
+    --popover: 182 20% 9%;
+    --primary: 174 80% 52%;
+    --primary-foreground: 182 80% 7%;
+    --accent: 178 40% 17%;
+    --accent-foreground: 174 80% 78%;
+    --ring: 174 80% 52%;
+    --border: 182 16% 16%;
+    --input: 182 16% 16%;
+    --chart-1: 174 78% 52%;
+  }
+
+  /* ── preset: rose ──────────────────────────────────────────────────────── */
+  .light[data-palette='rose'] {
+    --background: 350 40% 99%;
+    --primary: 346 80% 47%;
+    --accent: 348 90% 96%;
+    --accent-foreground: 346 80% 30%;
+    --ring: 346 80% 47%;
+    --border: 348 22% 91%;
+    --input: 348 22% 91%;
+    --chart-1: 346 80% 56%;
+  }
+  .dark[data-palette='rose'] {
+    --background: 340 20% 5%;
+    --card: 340 18% 8%;
+    --popover: 340 18% 9%;
+    --primary: 348 92% 68%;
+    --primary-foreground: 340 80% 8%;
+    --accent: 344 40% 18%;
+    --accent-foreground: 348 90% 84%;
+    --ring: 348 92% 68%;
+    --border: 340 16% 16%;
+    --input: 340 16% 16%;
+    --chart-1: 348 90% 68%;
+  }
+
+  /* ── preset: slate (neutral, accentless) ───────────────────────────────── */
+  .light[data-palette='slate'] {
+    --background: 220 25% 99%;
+    --primary: 222 30% 22%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 220 20% 95%;
+    --accent-foreground: 222 30% 20%;
+    --ring: 222 30% 22%;
+    --border: 220 16% 90%;
+    --input: 220 16% 90%;
+    --chart-1: 222 30% 40%;
+  }
+  .dark[data-palette='slate'] {
+    --background: 222 22% 5%;
+    --card: 222 18% 8%;
+    --popover: 222 18% 9%;
+    --primary: 220 25% 92%;
+    --primary-foreground: 222 30% 8%;
+    --accent: 222 18% 17%;
+    --accent-foreground: 220 25% 90%;
+    --ring: 220 25% 92%;
+    --border: 222 16% 16%;
+    --input: 222 16% 16%;
+    --chart-1: 220 25% 70%;
   }
 }
 
+/* ─── craft: typography, canvas, focus ───────────────────────────────────── */
 @layer base {
   * {
     @apply border-border;
   }
 
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    text-rendering: optimizeLegibility;
+  }
+
+  /*
+   * Optical tightening on headings. Large text set at default tracking looks
+   * loose; this is most of what separates "designed" from "default".
+   */
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.022em;
+  }
+  h1 {
+    letter-spacing: -0.03em;
   }
 
   html.dark {
@@ -123,35 +257,110 @@
     color-scheme: light;
   }
 
-  /*
-   * One visible focus ring for every keyboard-reachable control, including the
-   * ones Radix renders. `:focus-visible` keeps it off mouse clicks while
-   * guaranteeing it on Tab.
-   */
+  /* A faint accent wash at the top of the page gives the flat canvas depth. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 420px;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(
+      80% 100% at 50% 0%,
+      hsl(var(--primary) / 0.07) 0%,
+      transparent 70%
+    );
+  }
+  .light body::before {
+    background: radial-gradient(
+      80% 100% at 50% 0%,
+      hsl(var(--primary) / 0.05) 0%,
+      transparent 70%
+    );
+  }
+
+  /* Scrollbars, so long tables don't look like a browser default. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.25);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.45);
+    background-clip: content-box;
+  }
+
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
-}
 
-/*
- * Respect the OS "reduce motion" setting. Animations are reduced to a single
- * frame rather than removed, so state changes still settle correctly.
- */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  ::selection {
+    background: hsl(var(--primary) / 0.28);
   }
 }
 
-/* ─── brand accents used by the landing page ─────────────────────────────── */
+/* ─── craft: elevation + brand utilities ─────────────────────────────────── */
 @layer utilities {
+  /* Cards lift off the canvas instead of sitting flat on it. */
+  .shadow-card {
+    box-shadow:
+      0 1px 2px 0 hsl(24 40% 10% / 0.04),
+      0 10px 30px -18px hsl(24 40% 10% / 0.22);
+  }
+  .dark .shadow-card {
+    box-shadow:
+      0 1px 2px 0 hsl(0 0% 0% / 0.45),
+      0 14px 40px -22px hsl(0 0% 0% / 0.7);
+  }
+
+  .shadow-pop {
+    box-shadow:
+      0 4px 12px -4px hsl(24 40% 10% / 0.12),
+      0 24px 48px -24px hsl(24 40% 10% / 0.3);
+  }
+  .dark .shadow-pop {
+    box-shadow:
+      0 4px 12px -4px hsl(0 0% 0% / 0.5),
+      0 28px 56px -28px hsl(0 0% 0% / 0.85);
+  }
+
+  /* A hairline highlight along the top edge — the "lit from above" cue. */
+  .surface-highlight {
+    position: relative;
+  }
+  .surface-highlight::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(0 0% 100% / 0.08) 20%,
+      hsl(0 0% 100% / 0.08) 80%,
+      transparent
+    );
+    pointer-events: none;
+  }
+  .light .surface-highlight::after {
+    background: linear-gradient(90deg, transparent, hsl(24 40% 10% / 0.06), transparent);
+  }
+
   .text-brand-gradient {
-    background: linear-gradient(100deg, hsl(28 96% 58%), hsl(45 95% 60%) 55%, hsl(14 90% 56%));
+    background: linear-gradient(
+      100deg,
+      hsl(var(--primary)),
+      hsl(calc(var(--primary) + 14) 96% 62%) 55%,
+      hsl(var(--primary)) 100%
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -160,8 +369,8 @@
   .glow-brand {
     background: radial-gradient(
       60% 60% at 50% 40%,
-      hsl(28 96% 56% / 0.28) 0%,
-      hsl(28 96% 56% / 0.06) 45%,
+      hsl(var(--primary) / 0.26) 0%,
+      hsl(var(--primary) / 0.06) 45%,
       transparent 75%
     );
   }
@@ -170,7 +379,7 @@
     border: 1px solid transparent;
     background:
       linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
-      linear-gradient(140deg, hsl(28 96% 56% / 0.55), hsl(28 96% 56% / 0.05)) border-box;
+      linear-gradient(140deg, hsl(var(--primary) / 0.5), hsl(var(--primary) / 0.04)) border-box;
   }
 
   .animate-pulse-dot {
@@ -188,5 +397,20 @@
   50% {
     opacity: 0.45;
     transform: scale(0.82);
+  }
+}
+
+/*
+ * Respect the OS "reduce motion" setting. Animations are reduced to a single
+ * frame rather than removed, so state changes still settle correctly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

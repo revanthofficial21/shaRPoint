@@ -104,10 +104,28 @@ CI runs typecheck, lint, test and build on every push (`.github/workflows/ci.yml
 
 ## Theme
 
-**Bold amber on deep navy, dark by default.**
+**Ember — warm amber on a near-black canvas. Dark by default. Five accents to choose from.**
 
 Every colour is a CSS variable in `src/styles/globals.css` — there are no hardcoded
 colours in components, so the whole app restyles from that one file.
+
+### Accent presets
+
+Five presets ship, switchable live from **Settings → Appearance**. Each overrides only the
+tokens that carry the personality (accent, ring, charts, canvas tint) and inherits the
+rest, so adding a sixth is about ten lines of CSS.
+
+| Preset | Feel |
+|---|---|
+| **Ember** *(default)* | Warm amber on near-black. The brand look. |
+| **Violet** | Deep plum with an electric violet accent. |
+| **Teal** | Cool teal on a dark marine canvas. |
+| **Rose** | Crimson rose. Bold and sporty. |
+| **Slate** | Neutral and monochrome, with no accent colour. |
+
+To change the default for everyone, edit `DEFAULT_PALETTE` in `src/app/theme.tsx`.
+The choice is applied by the inline script in `index.html` before first paint, so there
+is no flash of the wrong palette.
 
 | Token | Light | Dark | Used for |
 |---|---|---|---|
@@ -126,9 +144,24 @@ Two deliberate choices worth knowing before you edit them:
 - **`warning` is yellow, not amber.** The brand is amber now, so a warning badge in the
   brand colour would be indistinguishable from a primary button.
 
-The landing page uses three brand utilities defined alongside the tokens:
-`.text-brand-gradient` (gradient headline), `.glow-brand` (the radial glow behind the
-hero) and `.border-brand-gradient` (the gradient-bordered product panel).
+### Craft, not just colour
+
+What makes the surfaces feel designed rather than flat:
+
+- **Elevation.** `shadow-card` and `shadow-pop` replace the default Tailwind shadows —
+  layered, low-opacity, larger blur, with a heavier variant for dark mode. Cards lift off
+  the canvas instead of sitting on it.
+- **A hairline top highlight.** `.surface-highlight` draws a 1px gradient along a card's
+  top edge — the "lit from above" cue that reads as depth.
+- **Optical type.** Headings get `letter-spacing: -0.03em`. Large text at default tracking
+  looks loose; this is most of what separates "designed" from "default".
+- **A faint accent wash.** A fixed radial gradient behind the page content gives the flat
+  canvas depth without any extra markup.
+- **Subtle borders.** Cards, dialogs and menus use `border-border/70` rather than full
+  strength, so structure is implied rather than outlined.
+- **Brand utilities.** `.text-brand-gradient` (gradient headline), `.glow-brand` (the
+  radial glow behind the hero) and `.border-brand-gradient` (the gradient-bordered panel)
+  all read from `--primary`, so they follow whichever accent is selected.
 
 ### Switching light/dark
 

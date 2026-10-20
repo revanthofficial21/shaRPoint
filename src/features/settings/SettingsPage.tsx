@@ -28,7 +28,7 @@ import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/features/auth/auth-context'
 import { useSessionContext } from '@/features/profiles/hooks'
 import { useMyRewards } from '@/features/leaderboard/hooks'
-import { useTheme } from '@/app/theme'
+import { PALETTE_META, PALETTES, useTheme } from '@/app/theme'
 import { ROLE_LABEL } from '@/lib/permissions'
 import { formatDate } from '@/lib/utils'
 
@@ -48,7 +48,7 @@ export function SettingsPage() {
   const { user, updatePassword, signOutEverywhere } = useAuth()
   const { profile, roles, capabilities } = useSessionContext()
   const rewards = useMyRewards()
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, palette, setPalette } = useTheme()
   const [saved, setSaved] = useState(false)
 
   const {
@@ -235,19 +235,68 @@ export function SettingsPage() {
           </CardTitle>
           <CardDescription>Applied immediately and remembered on this device.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          <Button
-            variant={theme === 'dark' ? 'default' : 'outline'}
-            onClick={() => setTheme('dark')}
-          >
-            <Moon className="h-4 w-4" /> Dark
-          </Button>
-          <Button
-            variant={theme === 'light' ? 'default' : 'outline'}
-            onClick={() => setTheme('light')}
-          >
-            <Sun className="h-4 w-4" /> Light
-          </Button>
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <p className="text-sm font-medium">Mode</p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={theme === 'dark' ? 'default' : 'outline'}
+                onClick={() => setTheme('dark')}
+              >
+                <Moon className="h-4 w-4" /> Dark
+              </Button>
+              <Button
+                variant={theme === 'light' ? 'default' : 'outline'}
+                onClick={() => setTheme('light')}
+              >
+                <Sun className="h-4 w-4" /> Light
+              </Button>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm font-medium">Accent colour</p>
+              <p className="text-xs text-muted-foreground">
+                Changes the whole interface instantly. Remembered on this device.
+              </p>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {PALETTES.map((name) => {
+                const meta = PALETTE_META[name]
+                const active = palette === name
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => setPalette(name)}
+                    aria-pressed={active}
+                    className={
+                      active
+                        ? 'flex items-start gap-3 rounded-xl border border-primary/60 bg-primary/5 p-3 text-left'
+                        : 'flex items-start gap-3 rounded-xl border border-border p-3 text-left transition-colors hover:border-primary/40 hover:bg-muted/50'
+                    }
+                  >
+                    <span
+                      className="mt-0.5 h-6 w-6 shrink-0 rounded-full ring-1 ring-inset ring-black/10"
+                      style={{ background: meta.swatch }}
+                      aria-hidden="true"
+                    />
+                    <span className="min-w-0">
+                      <span className="flex items-center gap-1.5 text-sm font-medium">
+                        {meta.label}
+                        {active && <CheckCircle2 className="h-3.5 w-3.5 text-primary" />}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">{meta.blurb}</span>
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </CardContent>
       </Card>
 

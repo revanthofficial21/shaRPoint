@@ -52,6 +52,101 @@ describe('ThemeProvider', () => {
   })
 })
 
+describe('palette presets', () => {
+  it('defaults to ember and applies it to the document', () => {
+    render(
+      <ThemeProvider>
+        <ThemeProbe />
+      </ThemeProvider>,
+    )
+    expect(document.documentElement.getAttribute('data-palette')).toBe('ember')
+  })
+
+  it('applies a chosen palette to the document', () => {
+    function Picker() {
+      const { palette, setPalette } = useTheme()
+      return (
+        <>
+          <span data-testid="palette">{palette}</span>
+          <button onClick={() => setPalette('violet')}>violet</button>
+        </>
+      )
+    }
+    render(
+      <ThemeProvider>
+        <Picker />
+      </ThemeProvider>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'violet' }))
+    expect(screen.getByTestId('palette')).toHaveTextContent('violet')
+    expect(document.documentElement.getAttribute('data-palette')).toBe('violet')
+  })
+
+  it('persists the choice for the inline script to apply on reload', () => {
+    function Picker() {
+      const { setPalette } = useTheme()
+      return <button onClick={() => setPalette('teal')}>teal</button>
+    }
+    render(
+      <ThemeProvider>
+        <Picker />
+      </ThemeProvider>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'teal' }))
+    expect(localStorage.getItem('sharpoint-palette')).toBe('teal')
+  })
+
+  it('honours a stored palette', () => {
+    localStorage.setItem('sharpoint-palette', 'rose')
+    function Probe() {
+      const { palette } = useTheme()
+      return <span data-testid="palette">{palette}</span>
+    }
+    render(
+      <ThemeProvider>
+        <Probe />
+      </ThemeProvider>,
+    )
+    expect(screen.getByTestId('palette')).toHaveTextContent('rose')
+  })
+
+  it('ignores a garbage stored palette and falls back to ember', () => {
+    localStorage.setItem('sharpoint-palette', 'neon')
+    function Probe() {
+      const { palette } = useTheme()
+      return <span data-testid="palette">{palette}</span>
+    }
+    render(
+      <ThemeProvider>
+        <Probe />
+      </ThemeProvider>,
+    )
+    expect(screen.getByTestId('palette')).toHaveTextContent('ember')
+  })
+
+  it('keeps the mode and the palette independent', () => {
+    function Probe() {
+      const { theme, palette, setPalette } = useTheme()
+      return (
+        <>
+          <span data-testid="mode">{theme}</span>
+          <span data-testid="palette">{palette}</span>
+          <button onClick={() => setPalette('slate')}>slate</button>
+        </>
+      )
+    }
+    render(
+      <ThemeProvider>
+        <Probe />
+      </ThemeProvider>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'slate' }))
+    expect(screen.getByTestId('palette')).toHaveTextContent('slate')
+    // switching accent must not change light/dark
+    expect(screen.getByTestId('mode')).toHaveTextContent('dark')
+  })
+})
+
 describe('ThemeToggle', () => {
   it('describes the action it will perform, not the current state', () => {
     render(
