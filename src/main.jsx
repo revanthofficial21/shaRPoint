@@ -10,9 +10,9 @@ import './index.css'
 /* --------------------------------------------------------------------------
  * Boot configuration
  *
- * Only two variables are needed now that Supabase Auth replaces Clerk. If
- * either is missing we render a clear explanation instead of throwing — a
- * thrown error at module scope is what turns the app into a blank white page.
+ * Only two variables are needed. If either is missing we render a clear
+ * explanation instead of throwing — a thrown error at module scope is what
+ * turns the app into a blank white page.
  * ------------------------------------------------------------------------ */
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL

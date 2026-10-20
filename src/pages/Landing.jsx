@@ -102,7 +102,7 @@ export default function Landing() {
 
       <footer style={{ borderTop:'1px solid rgba(255,255,255,.06)', padding:'24px 5%', display:'flex', justifyContent:'space-between', alignItems:'center', color:'#3a4455', fontSize:13, flexWrap:'wrap', gap:12 }}>
         <span className="font-serif font-bold" style={{ color:'#5a6478' }}>shaRPoint</span>
-        <span>Built by Revanth Kumar · Clerk + Supabase + React · 2025</span>
+        <span>Built by Revanth Kumar · Supabase + React · 2025</span>
         <a href="/owner" className="no-underline" style={{ color:'#3a4455', fontSize:12 }}>Owner Console</a>
       </footer>
     </div>

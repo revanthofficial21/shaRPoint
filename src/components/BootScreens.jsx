@@ -59,8 +59,8 @@ export function ConfigScreen({ missing }) {
           ))}
         </ul>
         <p style={{ color: '#8a96aa', fontSize: 13, margin: 0 }}>
-          Values come from Clerk (API Keys) and Supabase (Settings → API). Local dev
-          reads them from a <code style={codeStyle}>.env</code> file — copy{' '}
+          Both values come from your Supabase project → <strong>Settings → API</strong>.
+          Local dev reads them from a <code style={codeStyle}>.env</code> file — copy{' '}
           <code style={codeStyle}>.env.example</code> to get started.
         </p>
       </div>

@@ -5,9 +5,8 @@ import { supabase } from './supabase.js'
 /*
  * Supabase Auth session provider.
  *
- * Replaces Clerk entirely: Supabase is both the identity provider and the
- * database, so the signed-in user is available to RLS as auth.uid() with no
- * bridging layer.
+ * Supabase is both the identity provider and the database, so the signed-in
+ * user is available to RLS as auth.uid() with no bridging layer.
  */
 
 const AuthContext = createContext(null)
