@@ -250,6 +250,14 @@ for that table and action in `0002_rls.sql`.
 **Uploads fail** — confirm the buckets exist and the `storage.objects` policies from
 `0003_storage.sql` were applied.
 
+**`Cannot read properties of undefined (reading 'forwardRef')` on startup** — the JS
+chunks are initialising in the wrong order. This is almost always caused by a
+`manualChunks` rule that splits React into its own chunk while libraries that depend on
+it (or that React depends on, like `scheduler`) land elsewhere: the two chunks then
+import each other. This project deliberately does **not** hand-roll chunk boundaries —
+see the note in `vite.config.ts` before adding any. Rollup's automatic splitting is
+cycle-free; a hand-written rule is not.
+
 ---
 
 ## Roadmap

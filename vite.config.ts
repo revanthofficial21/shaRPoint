@@ -13,21 +13,23 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  build: {
-    // Split large vendor libraries so the first load stays small.
-    rollupOptions: {
-      output: {
-        manualChunks(id: string) {
-          if (!id.includes('node_modules')) return undefined
-          if (id.includes('recharts') || id.includes('d3-')) return 'charts'
-          if (id.includes('@supabase')) return 'supabase'
-          if (id.includes('@tanstack')) return 'query'
-          if (id.includes('@radix-ui')) return 'radix'
-          if (id.includes('react-dom') || id.includes('/react/') || id.includes('react-router'))
-            return 'react'
-          return 'vendor'
-        },
-      },
-    },
-  },
+  /*
+   * Deliberately no `manualChunks`.
+   *
+   * Hand-rolling chunk boundaries here once shipped a broken site. Splitting
+   * React into its own chunk while leaving `scheduler` (a React dependency) in
+   * a "vendor" chunk made the two chunks import each other. Rollup emits that
+   * circular graph happily, and at runtime whichever chunk initialises first
+   * sees `React` as undefined:
+   *
+   *     TypeError: Cannot read properties of undefined (reading 'forwardRef')
+   *
+   * Rollup's automatic splitting is cycle-free by construction and is better
+   * at this than a hand-written rule: modules only reachable from a lazy route
+   * (Zod, React Hook Form, Recharts) stay in that route's chunk instead of
+   * being forced into the first load.
+   *
+   * Route-level code splitting via React.lazy is what keeps the initial bundle
+   * small, and that lives in src/app/App.tsx.
+   */
 })
