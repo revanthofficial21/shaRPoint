@@ -89,7 +89,17 @@ VITE_SUPABASE_ANON_KEY=<anon / publishable key>
 > belong in Supabase Edge Function secrets (`supabase secrets set ...`).
 
 Vite only exposes variables prefixed with `VITE_`. Anything else is invisible to
-the browser bundle.
+the browser bundle — so the build also accepts the equivalent names many hosts are
+already configured with, and picks the first one it finds:
+
+- **URL:** `VITE_SUPABASE_URL` → `SUPABASE_URL` → `NEXT_PUBLIC_SUPABASE_URL`
+- **Key:** `VITE_SUPABASE_ANON_KEY` → `SUPABASE_ANON_KEY` →
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY` → `SUPABASE_PUBLISHABLE_KEY`
+
+You do not have to rename anything. The build prints which variable name each value
+came from (never the value itself), so a misconfiguration is visible in the build log.
+Only publishable values are considered — `SUPABASE_SERVICE_ROLE_KEY` and
+`SUPABASE_SECRET_KEY` are deliberately excluded and must never be added to those lists.
 
 ---
 
