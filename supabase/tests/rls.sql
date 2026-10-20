@@ -1,32 +1,55 @@
 -- ============================================================================
 -- SHARPOINT — RLS verification suite
 --
--- Purpose: prove the security guarantees actually hold, rather than trusting
--- that the policies "look right". Run the whole file in the Supabase SQL editor.
+-- HOW TO RUN
+--   Supabase -> SQL Editor -> New query -> paste this whole file -> Run.
 --
--- Everything happens inside ONE transaction that ROLLBACKs at the end, so no
--- test data survives. Safe to run on a live project.
+-- WHAT IT DOES
+--   Seeds a throwaway scenario, tries to break each security guarantee, prints a
+--   PASS/FAIL table, then removes everything it created.
 --
--- How it works: it seeds a small scenario as the superuser, then repeatedly
--- drops to the `authenticated` role with a forged JWT `sub` claim so that
--- auth.uid() returns the acting user — which is what the policies evaluate.
+--   The LAST statement is the results table, because the SQL editor only shows
+--   the result of the final statement. (An earlier version ended in ROLLBACK,
+--   which is why it reported "Success. No rows returned" and showed nothing.)
 --
--- NOTE: this suite has NOT been executed against a live database. It was
--- written while the Supabase connection was unavailable and no local Postgres
--- server exists in the build environment. If a seed statement errors on your
--- Supabase version, tell me the message and I will correct it.
+-- SAFE TO RUN, AND SAFE TO RE-RUN
+--   It starts by deleting any leftovers from a previous run and cleans up after
+--   itself. All seeded accounts use the domain @example.test.
+--
+-- HOW TO READ IT
+--   Every row should say PASS, and the final SUMMARY row gives the count.
+--   A FAIL row names the guarantee that is NOT holding — do not launch until
+--   every row passes.
 -- ============================================================================
 
-begin;
+-- ─── reset any leftovers from a previous run ────────────────────────────────
+do $$
+begin
+  begin
+    delete from public.courses where title = 'RLS Test Course';
+    delete from auth.users     where email like 'rls-%@example.test';
+  exception when others then
+    -- Only reachable if a previous run left the test owner behind: the
+    -- last-owner guard blocks that cascade. Lift it just for the cleanup.
+    execute 'alter table public.user_roles disable trigger user_roles_last_owner';
+    delete from public.courses where title = 'RLS Test Course';
+    delete from auth.users     where email like 'rls-%@example.test';
+    execute 'alter table public.user_roles enable trigger user_roles_last_owner';
+  end;
+end $$;
 
-create temp table rls_ids (label text primary key, id uuid) on commit drop;
+drop table if exists rls_ids;
+drop table if exists rls_results;
+drop function if exists pg_temp.record(text, boolean, text);
+
+create temp table rls_ids (label text primary key, id uuid);
 
 create temp table rls_results (
   n         serial,
   assertion text,
   passed    boolean,
   detail    text
-) on commit drop;
+);
 
 -- ─── seed ───────────────────────────────────────────────────────────────────
 -- Inserting into auth.users fires handle_new_user(), which creates the matching
@@ -62,7 +85,7 @@ begin
     ('teacher',   v_teacher),
     ('admin',     v_admin);
 
-  -- Roles: handle_new_user only grants student/teacher, so set them explicitly.
+  -- handle_new_user only grants student/teacher, so set roles explicitly.
   insert into public.user_roles (user_id, role) values
     (v_student_a, 'student'),
     (v_student_b, 'student'),
@@ -73,9 +96,9 @@ end $$;
 -- Scenario: a course taught by the teacher, joined by student A only.
 do $$
 declare
-  v_course uuid := gen_random_uuid();
-  v_assign uuid := gen_random_uuid();
-  v_conv   uuid := gen_random_uuid();
+  v_course  uuid := gen_random_uuid();
+  v_assign  uuid := gen_random_uuid();
+  v_conv    uuid := gen_random_uuid();
   v_teacher uuid; v_student_a uuid; v_student_b uuid;
 begin
   select id into v_teacher   from rls_ids where label = 'teacher';
@@ -93,12 +116,10 @@ begin
   values (v_assign, v_course, v_teacher, 'RLS Test Assignment', 'published', 100);
   insert into rls_ids (label, id) values ('assignment', v_assign);
 
-  -- Student A submits; the grade columns are set by the "teacher" here.
   insert into public.assignment_submissions
     (assignment_id, student_id, content, status, score, feedback, results_released)
   values (v_assign, v_student_a, 'My answer', 'graded', 80, 'Good', false);
 
-  -- A private conversation between the teacher and student A.
   insert into public.conversations (id, created_by) values (v_conv, v_teacher);
   insert into rls_ids (label, id) values ('conversation', v_conv);
   insert into public.conversation_members (conversation_id, user_id)
@@ -109,7 +130,6 @@ begin
   insert into public.posts (author_id, content) values (v_student_b, 'Student B post');
 end $$;
 
--- ─── helper: record a result ────────────────────────────────────────────────
 create or replace function pg_temp.record(p_assertion text, p_passed boolean, p_detail text)
 returns void language sql as $$
   insert into rls_results (assertion, passed, detail) values (p_assertion, p_passed, p_detail);
@@ -117,17 +137,14 @@ $$;
 
 -- ─── 1. a student cannot see another student's submissions ──────────────────
 do $$
-declare v_me uuid; v_other uuid; n int;
+declare v_other uuid; n int;
 begin
   reset role;
-  select id into v_me    from rls_ids where label = 'student_a';
   select id into v_other from rls_ids where label = 'student_b';
-
   perform set_config('request.jwt.claims',
     json_build_object('sub', v_other::text, 'role', 'authenticated')::text, true);
   perform set_config('role', 'authenticated', true);
 
-  -- student_b is not enrolled, so they must see nothing at all
   select count(*) into n from public.assignment_submissions;
   perform pg_temp.record(
     'student cannot read submissions for a course they are not in',
@@ -174,7 +191,7 @@ end $$;
 
 -- ─── 4. a student cannot write their own grade (guard trigger) ──────────────
 do $$
-declare v_me uuid; v_assign uuid; v_before numeric; v_after numeric;
+declare v_me uuid; v_assign uuid; v_after numeric;
 begin
   reset role;
   select id into v_me     from rls_ids where label = 'student_a';
@@ -264,32 +281,38 @@ begin
 end $$;
 
 -- ─── 8. the last owner cannot be removed ────────────────────────────────────
+-- The owner created here is rolled back rather than deleted. guard_last_owner has
+-- no trusted-context exemption, so an owner left behind could not be cleaned up
+-- afterwards — which is the guarantee working, but makes tidying up impossible.
+-- Raising inside the block triggers its EXCEPTION handler, which rolls back the
+-- block's own work; the handler then runs outside that rollback and records the
+-- result.
 do $$
-declare v_owner uuid := gen_random_uuid(); blocked boolean := false;
+declare
+  v_owner   uuid := gen_random_uuid();
+  v_blocked boolean := false;
+  v_reason  text := '';
 begin
-  reset role;
   insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
     email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
   values (v_owner, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated',
     'rls-owner@example.test', '', now(), '{}', '{"full_name":"RLS Owner"}', now(), now());
+
   insert into public.user_roles (user_id, role) values (v_owner, 'owner');
 
   begin
     delete from public.user_roles where user_id = v_owner and role = 'owner';
   exception when others then
-    blocked := true;
+    v_blocked := true;
+    v_reason := sqlerrm;
   end;
 
-  reset role;
-  perform pg_temp.record('the last owner cannot be removed', blocked,
-    case when blocked then 'blocked' else 'ALLOWED — platform left ownerless!' end);
-
-  -- clean up so the check below is unaffected
-  delete from public.user_roles where user_id = v_owner;
-  delete from public.account_statuses where user_id = v_owner;
-  delete from public.rewards where user_id = v_owner;
-  delete from public.profiles where id = v_owner;
-  delete from auth.users where id = v_owner;
+  raise exception 'RLS_ROLLBACK_OWNER_TEST';
+exception when others then
+  perform pg_temp.record(
+    'the last owner cannot be removed',
+    v_blocked and v_reason ilike '%last owner%',
+    case when v_blocked then v_reason else 'ALLOWED — platform left ownerless!' end);
 end $$;
 
 -- ─── 9. a student cannot delete a course or read the audit log ──────────────
@@ -371,23 +394,45 @@ begin
   get diagnostics changed = row_count;
   reset role;
 
-  perform pg_temp.record("student cannot edit another user's post", changed = 0,
+  perform pg_temp.record('student cannot edit another user''s post', changed = 0,
     'rows changed: ' || changed);
 end $$;
 
--- ─── results ────────────────────────────────────────────────────────────────
-select
-  n,
-  case when passed then 'PASS' else 'FAIL' end as result,
-  assertion,
-  detail
-from rls_results
+-- ─── clean up everything this script created ────────────────────────────────
+do $$
+begin
+  begin
+    delete from public.courses where title = 'RLS Test Course';
+    delete from auth.users     where email like 'rls-%@example.test';
+  exception when others then
+    execute 'alter table public.user_roles disable trigger user_roles_last_owner';
+    begin
+      delete from public.courses where title = 'RLS Test Course';
+      delete from auth.users     where email like 'rls-%@example.test';
+    exception when others then
+      execute 'alter table public.user_roles enable trigger user_roles_last_owner';
+      raise;
+    end;
+    execute 'alter table public.user_roles enable trigger user_roles_last_owner';
+  end;
+end $$;
+reset role;
+
+-- ─── results (last statement, so the editor displays it) ────────────────────
+select n, result, assertion, detail
+from (
+  select
+    n,
+    case when passed then 'PASS' else 'FAIL' end as result,
+    assertion,
+    detail
+  from rls_results
+  union all
+  select
+    9999,
+    case when count(*) filter (where not passed) = 0 then 'ALL PASS' else 'FAILURES' end,
+    'SUMMARY — ' || count(*) filter (where passed) || ' of ' || count(*) || ' assertions passed',
+    ''
+  from rls_results
+) t
 order by n;
-
-select
-  count(*) filter (where passed) as passed,
-  count(*) filter (where not passed) as failed,
-  count(*) as total
-from rls_results;
-
-rollback;
