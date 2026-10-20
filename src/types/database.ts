@@ -235,6 +235,31 @@ export type OpportunityBookmarkRow = {
   created_at: string
 }
 
+export type ApplicationStatus =
+  | 'saved'
+  | 'applied'
+  | 'interviewing'
+  | 'offered'
+  | 'rejected'
+  | 'withdrawn'
+
+export type OpportunityApplicationRow = {
+  id: string
+  opportunity_id: string
+  user_id: string
+  status: ApplicationStatus
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type ResourceBookmarkRow = {
+  id: string
+  resource_id: string
+  user_id: string
+  created_at: string
+}
+
 export type ConversationRow = {
   id: string
   created_by: string
@@ -344,13 +369,21 @@ export interface Database {
       post_likes: Table<PostLikeRow, { post_id: string; user_id: string }>
       user_connections: Table<UserConnectionRow>
       study_groups: Table<StudyGroupRow, { name: string; created_by: string } & Partial<StudyGroupRow>>
-      study_group_members: Table<StudyGroupMemberRow, { group_id: string; user_id: string }>
+      study_group_members: Table<
+        StudyGroupMemberRow,
+        { group_id: string; user_id: string; role?: 'owner' | 'member' }
+      >
       resources: Table<ResourceRow, { owner_id: string; title: string } & Partial<ResourceRow>>
       assignments: Table<AssignmentRow, { course_id: string; created_by: string; title: string } & Partial<AssignmentRow>>
       assignment_submissions: Table<SubmissionRow, { assignment_id: string; student_id: string } & Partial<SubmissionRow>>
       announcements: Table<AnnouncementRow, { author_id: string; title: string } & Partial<AnnouncementRow>>
       opportunities: Table<OpportunityRow, { posted_by: string; title: string } & Partial<OpportunityRow>>
       opportunity_bookmarks: Table<OpportunityBookmarkRow, { opportunity_id: string; user_id: string }>
+      opportunity_applications: Table<
+        OpportunityApplicationRow,
+        { opportunity_id: string; user_id: string; status?: ApplicationStatus }
+      >
+      resource_bookmarks: Table<ResourceBookmarkRow, { resource_id: string; user_id: string }>
       conversations: Table<ConversationRow, { created_by: string }>
       conversation_members: Table<ConversationMemberRow, { conversation_id: string; user_id: string }>
       messages: Table<MessageRow, { conversation_id: string; sender_id: string; body: string }>
@@ -372,6 +405,7 @@ export interface Database {
         Args: { p_activity: string; p_ref_table?: string | null; p_ref_id?: string | null }
         Returns: undefined
       }
+      increment_resource_downloads: { Args: { p_resource: string }; Returns: undefined }
     }
     Enums: {
       app_role: AppRole

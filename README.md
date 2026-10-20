@@ -3,11 +3,11 @@
 An AI-powered student collaboration and academic management platform for **students,
 teachers and platform administrators**, built on React + TypeScript + Supabase.
 
-> **Status: Phase 2 of 7 complete.** The foundation — schema, RLS, authentication,
-> role-based routing and the application shell — is built, verified and deployed-ready.
-> Feature modules are being delivered in the phases described in [Roadmap](#roadmap).
-> Pages that are routed but not yet implemented say so explicitly rather than showing
-> fake data.
+> **Status: Phase 3 of 7 complete.** Foundation (schema, RLS, auth, role routing, app
+> shell) plus the full student experience — courses, assignments, resources, study
+> groups, opportunities and the leaderboard. Remaining modules are delivered in the
+> phases described in [Roadmap](#roadmap). Pages that are routed but not yet
+> implemented say so explicitly rather than showing fake data.
 
 ---
 
@@ -98,6 +98,7 @@ Migrations live in `supabase/migrations/` and are applied in order:
 | `0001_schema.sql` | 28+ tables, enums, indexes, constraints, seed settings |
 | `0002_rls.sql` | Helper functions, escalation guards, and 83 RLS policies |
 | `0003_storage.sql` | New-user provisioning trigger + storage buckets and policies |
+| `0004_phase3.sql` | Resource bookmarks, opportunity applications, protected download counter |
 
 ### Apply them
 
@@ -247,8 +248,8 @@ for that table and action in `0002_rls.sql`.
 |---|---|---|
 | 1 | Inspect repository, confirm clean slate | ✅ done |
 | 2 | Foundation: toolchain, schema, RLS, auth, role routing, shell | ✅ done |
-| 3 | Student experience: courses, assignments, resources, groups, opportunities, leaderboard | ⏳ next |
-| 4 | Teacher experience: course management, materials, grading, analytics | ⏳ |
+| 3 | Student experience: courses, assignments, resources, groups, opportunities, leaderboard | ✅ done |
+| 4 | Teacher experience: course management, materials, grading, analytics | ⏳ next |
 | 5 | Admin & owner: users, roles, moderation, reports, audit logs, settings | ⏳ |
 | 6 | Advanced: Realtime messaging & notifications, storage, AI assistant, search | ⏳ |
 | 7 | Quality: tests, RLS verification, accessibility, deployment docs | ⏳ |

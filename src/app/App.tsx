@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, type ComponentType } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 
@@ -8,35 +8,58 @@ import { RedirectIfAuthenticated, RequireAuth, RequireRole } from '@/features/au
 import { AppShell } from '@/components/layout/AppShell'
 import { ComingSoon } from '@/components/common/ComingSoon'
 
-const SignInPage = lazy(() =>
-  import('@/features/auth/pages/SignInPage').then((m) => ({ default: m.SignInPage })),
+const page = <T extends Record<string, unknown>>(loader: () => Promise<T>, name: keyof T) =>
+  lazy(async () => {
+    const mod = await loader()
+    return { default: mod[name] as ComponentType }
+  })
+
+const SignInPage = page(() => import('@/features/auth/pages/SignInPage'), 'SignInPage')
+const SignUpPage = page(() => import('@/features/auth/pages/SignUpPage'), 'SignUpPage')
+const ForgotPasswordPage = page(
+  () => import('@/features/auth/pages/ForgotPasswordPage'),
+  'ForgotPasswordPage',
 )
-const SignUpPage = lazy(() =>
-  import('@/features/auth/pages/SignUpPage').then((m) => ({ default: m.SignUpPage })),
+const ResetPasswordPage = page(
+  () => import('@/features/auth/pages/ResetPasswordPage'),
+  'ResetPasswordPage',
 )
-const ForgotPasswordPage = lazy(() =>
-  import('@/features/auth/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })),
+const AuthCallbackPage = page(
+  () => import('@/features/auth/pages/AuthCallbackPage'),
+  'AuthCallbackPage',
 )
-const ResetPasswordPage = lazy(() =>
-  import('@/features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })),
+
+const StudentHomePage = page(() => import('@/features/dashboard/StudentHomePage'), 'StudentHomePage')
+const TeacherHomePage = page(() => import('@/features/dashboard/TeacherHomePage'), 'TeacherHomePage')
+const AdminHomePage = page(() => import('@/features/dashboard/AdminHomePage'), 'AdminHomePage')
+const CommunityPage = page(() => import('@/features/community/CommunityPage'), 'CommunityPage')
+const ProfilePage = page(() => import('@/features/profiles/ProfilePage'), 'ProfilePage')
+
+const CoursesPage = page(() => import('@/features/courses/CoursesPage'), 'CoursesPage')
+const CourseDetailPage = page(
+  () => import('@/features/courses/CourseDetailPage'),
+  'CourseDetailPage',
 )
-const AuthCallbackPage = lazy(() =>
-  import('@/features/auth/pages/AuthCallbackPage').then((m) => ({ default: m.AuthCallbackPage })),
+const AssignmentsPage = page(
+  () => import('@/features/assignments/AssignmentsPage'),
+  'AssignmentsPage',
 )
-const StudentHomePage = lazy(() =>
-  import('@/features/dashboard/StudentHomePage').then((m) => ({ default: m.StudentHomePage })),
+const AssignmentDetailPage = page(
+  () => import('@/features/assignments/AssignmentDetailPage'),
+  'AssignmentDetailPage',
 )
-const TeacherHomePage = lazy(() =>
-  import('@/features/dashboard/TeacherHomePage').then((m) => ({ default: m.TeacherHomePage })),
+const ResourcesPage = page(() => import('@/features/resources/ResourcesPage'), 'ResourcesPage')
+const StudyGroupsPage = page(
+  () => import('@/features/study-groups/StudyGroupsPage'),
+  'StudyGroupsPage',
 )
-const AdminHomePage = lazy(() =>
-  import('@/features/dashboard/AdminHomePage').then((m) => ({ default: m.AdminHomePage })),
+const OpportunitiesPage = page(
+  () => import('@/features/opportunities/OpportunitiesPage'),
+  'OpportunitiesPage',
 )
-const CommunityPage = lazy(() =>
-  import('@/features/community/CommunityPage').then((m) => ({ default: m.CommunityPage })),
-)
-const ProfilePage = lazy(() =>
-  import('@/features/profiles/ProfilePage').then((m) => ({ default: m.ProfilePage })),
+const LeaderboardPage = page(
+  () => import('@/features/leaderboard/LeaderboardPage'),
+  'LeaderboardPage',
 )
 
 function RouteFallback() {
@@ -50,14 +73,9 @@ function RouteFallback() {
 
 /** Routes wired but whose feature ships in a later phase. */
 const roadmap: Record<string, string> = {
-  '/app/courses': 'Phase 3 — Courses',
-  '/app/assignments': 'Phase 3 — Assignments',
-  '/app/resources': 'Phase 3 — Resources',
-  '/app/groups': 'Phase 3 — Study groups',
-  '/app/opportunities': 'Phase 3 — Opportunities',
   '/app/messages': 'Phase 6 — Realtime messaging',
-  '/app/leaderboard': 'Phase 6 — Rewards & leaderboard',
   '/app/assistant': 'Phase 6 — AI study assistant',
+  '/app/settings': 'Phase 7 — Settings',
   '/teacher/courses': 'Phase 4 — Course management',
   '/teacher/students': 'Phase 4 — Student roster',
   '/teacher/assignments': 'Phase 4 — Assignment management',
@@ -74,10 +92,12 @@ const roadmap: Record<string, string> = {
   '/admin/moderation': 'Phase 5 — Content moderation',
   '/admin/reports': 'Phase 5 — Reports & analytics',
   '/admin/audit': 'Phase 5 — Audit logs',
-  '/app/settings': 'Phase 7 — Settings',
   '/teacher/settings': 'Phase 7 — Settings',
   '/admin/settings': 'Phase 7 — Platform settings',
 }
+
+const label = (path: string, prefix: string) =>
+  path.replace(prefix, '').replace(/-/g, ' ')
 
 export default function App() {
   return (
@@ -91,18 +111,27 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
-        {/* Auth pages, hidden once signed in */}
         <Route element={<RedirectIfAuthenticated />}>
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
         </Route>
 
-        {/* Any signed-in user */}
+        {/* Signed-in */}
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
             <Route path="/app" element={<StudentHomePage />} />
             <Route path="/app/community" element={<CommunityPage />} />
             <Route path="/app/profile" element={<ProfilePage />} />
+
+            {/* Phase 3 — student experience */}
+            <Route path="/app/courses" element={<CoursesPage />} />
+            <Route path="/app/courses/:courseId" element={<CourseDetailPage />} />
+            <Route path="/app/assignments" element={<AssignmentsPage />} />
+            <Route path="/app/assignments/:assignmentId" element={<AssignmentDetailPage />} />
+            <Route path="/app/resources" element={<ResourcesPage />} />
+            <Route path="/app/groups" element={<StudyGroupsPage />} />
+            <Route path="/app/opportunities" element={<OpportunitiesPage />} />
+            <Route path="/app/leaderboard" element={<LeaderboardPage />} />
 
             {Object.entries(roadmap)
               .filter(([path]) => path.startsWith('/app/'))
@@ -110,12 +139,11 @@ export default function App() {
                 <Route
                   key={path}
                   path={path}
-                  element={<ComingSoon title={path.replace('/app/', '').replace(/-/g, ' ')} phase={phase} />}
+                  element={<ComingSoon title={label(path, '/app/')} phase={phase} />}
                 />
               ))}
           </Route>
 
-          {/* Teacher area */}
           <Route element={<RequireRole allow={['teacher', 'admin', 'owner']} />}>
             <Route element={<AppShell />}>
               <Route path="/teacher" element={<TeacherHomePage />} />
@@ -125,15 +153,12 @@ export default function App() {
                   <Route
                     key={path}
                     path={path}
-                    element={
-                      <ComingSoon title={path.replace('/teacher/', '').replace(/-/g, ' ')} phase={phase} />
-                    }
+                    element={<ComingSoon title={label(path, '/teacher/')} phase={phase} />}
                   />
                 ))}
             </Route>
           </Route>
 
-          {/* Admin / owner area */}
           <Route element={<RequireRole allow={['admin', 'owner']} />}>
             <Route element={<AppShell />}>
               <Route path="/admin" element={<AdminHomePage />} />
@@ -143,7 +168,7 @@ export default function App() {
                   <Route
                     key={path}
                     path={path}
-                    element={<ComingSoon title={path.replace('/admin/', '').replace(/-/g, ' ')} phase={phase} />}
+                    element={<ComingSoon title={label(path, '/admin/')} phase={phase} />}
                   />
                 ))}
             </Route>
