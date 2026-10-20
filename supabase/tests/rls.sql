@@ -149,6 +149,7 @@ begin
   perform set_config('role', 'authenticated', true);
 
   select count(*) into n from public.assignment_submissions;
+  reset role;
   perform pg_temp.record(
     'student cannot read submissions for a course they are not in',
     n = 0, 'rows visible: ' || n);
@@ -168,6 +169,7 @@ begin
 
   select count(*) into total from public.assignment_submissions;
   select count(*) into n from public.assignment_submissions where student_id = v_me;
+  reset role;
   perform pg_temp.record(
     'student sees exactly their own submission',
     total = n and n = 1, 'own: ' || n || ', visible: ' || total);
@@ -186,6 +188,7 @@ begin
   perform set_config('role', 'authenticated', true);
 
   select count(*) into n from public.assignment_submissions;
+  reset role;
   perform pg_temp.record('course teacher can read submissions for their course', n = 1,
     'rows visible: ' || n);
 
@@ -218,6 +221,7 @@ begin
   select score into v_after from public.assignment_submissions
    where assignment_id = v_assign and student_id = v_me;
 
+  reset role;
   perform pg_temp.record(
     'student cannot write their own score or release results',
     v_after is null, 'score after attempted tamper: ' || coalesce(v_after::text, 'null'));
@@ -234,6 +238,7 @@ begin
   perform set_config('role', 'authenticated', true);
 
   select count(*) into n from public.messages;
+  reset role;
   perform pg_temp.record('outsider cannot read a private conversation', n = 0,
     'messages visible: ' || n);
 
@@ -257,6 +262,7 @@ begin
   end;
 
   reset role;
+  reset role;
   perform pg_temp.record('student cannot self-grant the admin role', blocked,
     case when blocked then 'blocked' else 'ALLOWED — privilege escalation!' end);
 end $$;
@@ -278,6 +284,7 @@ begin
     blocked := true;
   end;
 
+  reset role;
   reset role;
   perform pg_temp.record('administrator cannot grant the owner role', blocked,
     case when blocked then 'blocked' else 'ALLOWED — owner escalation!' end);
@@ -312,6 +319,7 @@ begin
 
   raise exception 'RLS_ROLLBACK_OWNER_TEST';
 exception when others then
+  reset role;
   perform pg_temp.record(
     'the last owner cannot be removed',
     v_blocked and v_reason ilike '%last owner%',
@@ -334,8 +342,10 @@ begin
   reset role;
 
   select count(*) into remaining from public.courses where id = v_course;
+  reset role;
   perform pg_temp.record('student cannot delete a course', remaining = 1,
     'course rows remaining: ' || remaining);
+  reset role;
   perform pg_temp.record('student cannot read the audit log', n = 0,
     'audit rows visible: ' || n);
 end $$;
@@ -359,6 +369,7 @@ begin
   end;
 
   reset role;
+  reset role;
   perform pg_temp.record('a suspended account cannot create a post', blocked,
     case when blocked then 'blocked' else 'ALLOWED — suspension not enforced!' end);
 
@@ -377,8 +388,10 @@ begin
   select count(*) into n_courses  from public.courses;
   reset role;
 
+  reset role;
   perform pg_temp.record('anonymous visitor cannot read profiles', n_profiles = 0,
     'profiles visible: ' || n_profiles);
+  reset role;
   perform pg_temp.record('anonymous visitor cannot read courses', n_courses = 0,
     'courses visible: ' || n_courses);
 end $$;
@@ -397,6 +410,7 @@ begin
   get diagnostics changed = row_count;
   reset role;
 
+  reset role;
   perform pg_temp.record('student cannot edit another user''s post', changed = 0,
     'rows changed: ' || changed);
 end $$;
