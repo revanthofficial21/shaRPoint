@@ -104,25 +104,31 @@ CI runs typecheck, lint, test and build on every push (`.github/workflows/ci.yml
 
 ## Theme
 
-**Emerald brand on a teal secondary, dark by default.**
+**Bold amber on deep navy, dark by default.**
 
 Every colour is a CSS variable in `src/styles/globals.css` — there are no hardcoded
 colours in components, so the whole app restyles from that one file.
 
 | Token | Light | Dark | Used for |
 |---|---|---|---|
-| `--primary` | emerald `160 84% 30%` | emerald `158 64% 52%` | buttons, links, active nav, focus ring |
-| `--success` | teal `174 70% 32%` | teal `174 62% 44%` | “Enrolled”, “Submitted”, released grades |
-| `--warning` | amber `38 92% 50%` | amber `38 82% 54%` | drafts, pending grading, overdue |
-| `--destructive` | red `0 72% 51%` | red `0 63% 50%` | errors, suspensions, delete |
-| `--chart-1…4` | emerald / teal / amber / sky | brighter equivalents | Recharts series |
+| `--primary` | orange `22 90% 44%` | amber `28 96% 56%` | buttons, links, active nav, focus ring |
+| `--background` | warm off-white `30 25% 99%` | deep navy `234 42% 6%` | page canvas |
+| `--success` | green `152 62% 34%` | green `152 58% 44%` | “Enrolled”, “Submitted”, released grades |
+| `--warning` | yellow `45 93% 44%` | yellow `45 90% 58%` | drafts, pending grading, overdue |
+| `--destructive` | red `0 72% 51%` | red `0 70% 52%` | errors, suspensions, delete |
+| `--chart-1…4` | amber / teal / violet / sky | brighter equivalents | Recharts series |
 
 Two deliberate choices worth knowing before you edit them:
 
-- **`success` is teal, not green.** The brand is green, so a green success badge would be
-  indistinguishable from a primary button. A cooler teal keeps them apart.
-- **Dark-mode primary is bright with *dark* text.** White on a light emerald fails
-  contrast; near-black on bright emerald passes comfortably.
+- **Dark-mode primary is bright amber with *dark* text.** White on orange fails
+  contrast badly (~2.6:1); near-black on the same orange is ~8:1. This is what makes
+  the buttons read as confident rather than washed out.
+- **`warning` is yellow, not amber.** The brand is amber now, so a warning badge in the
+  brand colour would be indistinguishable from a primary button.
+
+The landing page uses three brand utilities defined alongside the tokens:
+`.text-brand-gradient` (gradient headline), `.glow-brand` (the radial glow behind the
+hero) and `.border-brand-gradient` (the gradient-bordered product panel).
 
 ### Switching light/dark
 

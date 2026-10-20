@@ -3,104 +3,105 @@
 @tailwind utilities;
 
 /*
- * SHARPOINT colour system — emerald brand with a teal secondary green.
+ * SHARPOINT colour system — bold amber on deep navy.
+ *
+ * Restores the original brand direction: a near-black navy canvas with a vivid
+ * amber/orange accent, rather than the muted emerald that briefly replaced it.
  *
  * Notes on the choices:
- *  - The brand accent is emerald rather than the usual indigo/violet.
- *  - Because the brand is green, `success` uses a COOLER teal so a "Submitted"
- *    or "Enrolled" badge never reads as a primary button.
- *  - Dark is the default theme (see the inline script in index.html); `.light`
- *    is the opt-out applied by the theme toggle.
- *  - Contrast: light-mode primary is emerald-700 with white text (~5.9:1).
- *    Dark-mode primary is a bright emerald with near-black text, which is what
- *    keeps buttons legible on a dark surface.
+ *  - Dark-mode primary is BRIGHT amber with near-black text. White on orange
+ *    fails contrast badly (~2.6:1); near-black on the same orange is ~8:1. This
+ *    is why the buttons read as confident rather than washed out.
+ *  - `success` is green and `warning` is yellow. Amber is now the brand, so
+ *    those two have to be pulled apart from it to stay legible in badges.
+ *  - Dark is the default (see the inline script in index.html).
  */
 
 @layer base {
   :root,
   .light {
-    --background: 160 20% 99%;
-    --foreground: 180 30% 10%;
+    --background: 30 25% 99%;
+    --foreground: 234 30% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 180 30% 10%;
+    --card-foreground: 234 30% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 180 30% 10%;
+    --popover-foreground: 234 30% 12%;
 
-    --primary: 160 84% 30%;
+    --primary: 22 90% 44%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 165 20% 96%;
-    --secondary-foreground: 180 30% 12%;
+    --secondary: 30 20% 96%;
+    --secondary-foreground: 234 30% 14%;
 
-    --muted: 165 18% 96%;
-    --muted-foreground: 180 12% 42%;
+    --muted: 30 18% 96%;
+    --muted-foreground: 234 12% 44%;
 
-    --accent: 168 55% 94%;
-    --accent-foreground: 168 80% 20%;
+    --accent: 30 92% 95%;
+    --accent-foreground: 22 85% 30%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    /* cooler than the emerald brand, deliberately */
-    --success: 174 70% 32%;
+    --success: 152 62% 34%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 26 83% 14%;
+    /* yellower than the brand amber, so warning badges don't read as buttons */
+    --warning: 45 93% 44%;
+    --warning-foreground: 30 80% 12%;
 
-    --border: 165 16% 90%;
-    --input: 165 16% 90%;
-    --ring: 160 84% 30%;
+    --border: 30 15% 90%;
+    --input: 30 15% 90%;
+    --ring: 22 90% 44%;
 
-    --chart-1: 160 84% 34%;
-    --chart-2: 174 70% 38%;
-    --chart-3: 38 92% 50%;
+    --chart-1: 24 95% 50%;
+    --chart-2: 174 62% 38%;
+    --chart-3: 258 70% 58%;
     --chart-4: 199 80% 46%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 180 26% 6%;
-    --foreground: 160 16% 95%;
+    --background: 234 42% 6%;
+    --foreground: 30 25% 96%;
 
-    --card: 180 22% 9%;
-    --card-foreground: 160 16% 95%;
+    --card: 234 38% 9%;
+    --card-foreground: 30 25% 96%;
 
-    --popover: 180 22% 9%;
-    --popover-foreground: 160 16% 95%;
+    --popover: 234 38% 9%;
+    --popover-foreground: 30 25% 96%;
 
-    --primary: 158 64% 52%;
-    --primary-foreground: 162 84% 7%;
+    --primary: 28 96% 56%;
+    --primary-foreground: 24 85% 8%;
 
-    --secondary: 180 18% 15%;
-    --secondary-foreground: 160 16% 95%;
+    --secondary: 234 28% 15%;
+    --secondary-foreground: 30 25% 96%;
 
-    --muted: 180 18% 14%;
-    --muted-foreground: 165 12% 66%;
+    --muted: 234 28% 14%;
+    --muted-foreground: 30 12% 66%;
 
-    --accent: 170 40% 18%;
-    --accent-foreground: 158 70% 86%;
+    --accent: 28 55% 18%;
+    --accent-foreground: 32 95% 72%;
 
-    --destructive: 0 63% 50%;
+    --destructive: 0 70% 52%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 174 62% 44%;
-    --success-foreground: 180 60% 7%;
+    --success: 152 58% 44%;
+    --success-foreground: 150 60% 8%;
 
-    --warning: 38 82% 54%;
-    --warning-foreground: 26 83% 12%;
+    --warning: 45 90% 58%;
+    --warning-foreground: 30 80% 10%;
 
-    --border: 180 16% 17%;
-    --input: 180 16% 17%;
-    --ring: 158 64% 52%;
+    --border: 234 25% 17%;
+    --input: 234 25% 17%;
+    --ring: 28 96% 56%;
 
-    --chart-1: 158 64% 52%;
+    --chart-1: 28 96% 58%;
     --chart-2: 174 62% 48%;
-    --chart-3: 38 82% 54%;
-    --chart-4: 199 78% 56%;
+    --chart-3: 258 75% 66%;
+    --chart-4: 199 80% 56%;
   }
 }
 
@@ -114,7 +115,6 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
-  /* Keep native controls (scrollbars, form widgets) in step with the theme. */
   html.dark {
     color-scheme: dark;
   }
@@ -145,5 +145,48 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ─── brand accents used by the landing page ─────────────────────────────── */
+@layer utilities {
+  .text-brand-gradient {
+    background: linear-gradient(100deg, hsl(28 96% 58%), hsl(45 95% 60%) 55%, hsl(14 90% 56%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glow-brand {
+    background: radial-gradient(
+      60% 60% at 50% 40%,
+      hsl(28 96% 56% / 0.28) 0%,
+      hsl(28 96% 56% / 0.06) 45%,
+      transparent 75%
+    );
+  }
+
+  .border-brand-gradient {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+      linear-gradient(140deg, hsl(28 96% 56% / 0.55), hsl(28 96% 56% / 0.05)) border-box;
+  }
+
+  .animate-pulse-dot {
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+}
+
+/* Kept outside @layer so it is never tree-shaken or reordered. */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
   }
 }
