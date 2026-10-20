@@ -94,6 +94,9 @@ const ReportsPage = page(() => import('@/features/admin/ReportsPage'), 'ReportsP
 const AuditLogsPage = page(() => import('@/features/admin/AuditLogsPage'), 'AuditLogsPage')
 const AdminSettingsPage = page(() => import('@/features/admin/SettingsPage'), 'SettingsPage')
 
+const MessagesPage = page(() => import('@/features/messaging/MessagesPage'), 'MessagesPage')
+const AssistantPage = page(() => import('@/features/ai/AssistantPage'), 'AssistantPage')
+
 function RouteFallback() {
   return (
     <div className="flex min-h-[40vh] items-center justify-center gap-3 text-muted-foreground">
@@ -105,10 +108,7 @@ function RouteFallback() {
 
 /** Routes wired but whose feature ships in a later phase. */
 const roadmap: Record<string, string> = {
-  '/app/messages': 'Phase 6 — Realtime messaging',
-  '/app/assistant': 'Phase 6 — AI study assistant',
   '/app/settings': 'Phase 7 — Settings',
-  '/teacher/messages': 'Phase 6 — Realtime messaging',
   '/teacher/settings': 'Phase 7 — Settings',
 }
 
@@ -148,6 +148,10 @@ export default function App() {
             <Route path="/app/groups" element={<StudyGroupsPage />} />
             <Route path="/app/opportunities" element={<OpportunitiesPage />} />
             <Route path="/app/leaderboard" element={<LeaderboardPage />} />
+
+            {/* Phase 6 — messaging, assistant */}
+            <Route path="/app/messages" element={<MessagesPage />} />
+            <Route path="/app/assistant" element={<AssistantPage />} />
 
             {Object.entries(roadmap)
               .filter(([path]) => path.startsWith('/app/'))

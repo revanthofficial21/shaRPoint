@@ -3,15 +3,18 @@
 An AI-powered student collaboration and academic management platform for **students,
 teachers and platform administrators**, built on React + TypeScript + Supabase.
 
-> **Status: Phase 5 of 7 complete (code).** Foundation, student experience, teacher
-> experience, and the admin/owner console — user management, role assignment, moderation,
-> reports, audit logging and platform settings. Remaining modules are delivered in the
-> phases described in [Roadmap](#roadmap). Pages that are routed but not yet implemented
-> say so explicitly rather than showing fake data.
+> **Status: Phase 6 of 7 complete (code).** Foundation, student experience, teacher
+> experience, admin/owner console, and the advanced layer — realtime messaging,
+> notifications, global search and the AI study assistant. See [Roadmap](#roadmap).
+> Pages that are routed but not yet implemented say so explicitly rather than showing
+> fake data.
 >
-> ⚠️ **`0006_phase5.sql` has not been applied to the hosted database yet** (the
-> migration tool lost its authorization mid-session). Run it in the Supabase SQL editor
-> before using the admin console — the audit triggers and admin RPCs live there.
+> ⚠️ **Migrations `0006_phase5.sql` and `0007_phase6.sql` have not been applied to the
+> hosted database yet** (the migration tool lost its authorization mid-session). Run
+> both in the Supabase SQL editor — the audit triggers, admin RPCs, realtime publication
+> and notification triggers all live there. Until then the admin console pages that call
+> `admin_user_directory()` / `admin_platform_stats()`, messaging and notifications will
+> not work.
 
 ---
 
@@ -115,6 +118,7 @@ Migrations live in `supabase/migrations/` and are applied in order:
 | `0004_phase3.sql` | Resource bookmarks, opportunity applications, protected download counter |
 | `0005_phase4.sql` | Teacher course-edit policy, grading guard trigger, analytics RPC |
 | `0006_phase5.sql` | Audit triggers, last-owner guard, admin RPCs, moderation policy |
+| `0007_phase6.sql` | Realtime, notification triggers, messaging RPCs, AI usage quota |
 
 ### Apply them
 
@@ -207,6 +211,31 @@ npm run test       # vitest
 Without those two variables the app renders a **“Configuration required”** screen
 naming exactly what is missing — it will not show a blank page.
 
+### AI assistant (optional)
+
+The assistant runs as a Supabase Edge Function. The provider key lives in the
+function's environment and never reaches the browser.
+
+```bash
+supabase functions deploy ai-assistant
+supabase secrets set AI_API_KEY=sk-... AI_PROVIDER=openai AI_MODEL=gpt-4o-mini
+# optional:
+#   AI_BASE_URL   — any OpenAI-compatible endpoint
+#   APP_ORIGIN    — lock CORS to your deployed origin
+```
+
+Without `AI_API_KEY` the function returns **503 `not_configured`** and the assistant page
+says so plainly instead of hanging. Each user's daily quota comes from the `ai` setting
+in Platform settings and is enforced server-side by `consume_ai_quota()`, so it cannot be
+bypassed from the client.
+
+### Realtime
+
+`messages`, `conversations`, `conversation_members` and `notifications` are added to the
+`supabase_realtime` publication by `0007_phase6.sql`. If messages don't arrive live,
+confirm that migration ran — Realtime silently does nothing for tables outside the
+publication.
+
 ### Supabase Auth settings
 
 - **URL Configuration** — set the Site URL to your deployed origin and add it (plus
@@ -279,8 +308,8 @@ cycle-free; a hand-written rule is not.
 | 3 | Student experience: courses, assignments, resources, groups, opportunities, leaderboard | ✅ done |
 | 4 | Teacher experience: course management, materials, grading, analytics | ✅ done |
 | 5 | Admin & owner: users, roles, moderation, reports, audit logs, settings | ✅ done |
-| 6 | Advanced: Realtime messaging & notifications, storage, AI assistant, search | ⏳ next |
-| 7 | Quality: tests, RLS verification, accessibility, deployment docs | ⏳ |
+| 6 | Advanced: Realtime messaging & notifications, storage, AI assistant, search | ✅ done |
+| 7 | Quality: tests, RLS verification, accessibility, deployment docs | ⏳ next |
 
 ---
 

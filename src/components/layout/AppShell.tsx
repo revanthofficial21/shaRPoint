@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Bell, ChevronLeft, LogOut, Menu, Search, Settings, User as UserIcon } from 'lucide-react'
+import { ChevronLeft, LogOut, Menu, Settings, User as UserIcon } from 'lucide-react'
 import { useAuth } from '@/features/auth/auth-context'
 import { useSessionContext } from '@/features/profiles/hooks'
 import { ROLE_LABEL } from '@/lib/permissions'
@@ -16,8 +16,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import { cn, initials } from '@/lib/utils'
+import { NotificationBell } from '@/features/notifications/NotificationBell'
+import { GlobalSearch } from '@/features/search/GlobalSearch'
 
 /**
  * Authenticated shell: collapsible sidebar, top bar, breadcrumb slot and the
@@ -111,15 +112,12 @@ export function AppShell() {
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="relative hidden max-w-sm flex-1 md:block">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search…" className="pl-9" disabled />
+          <div className="hidden flex-1 md:block">
+            <GlobalSearch />
           </div>
 
           <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="icon" disabled title="Notifications (phase 6)">
-              <Bell className="h-5 w-5" />
-            </Button>
+            <NotificationBell />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

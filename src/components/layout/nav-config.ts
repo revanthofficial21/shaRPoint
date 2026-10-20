@@ -49,7 +49,8 @@ const teacherNav: NavItem[] = [
   { to: '/teacher/resources', label: 'Resources', icon: FolderOpen },
   { to: '/teacher/announcements', label: 'Announcements', icon: Megaphone },
   { to: '/teacher/analytics', label: 'Analytics', icon: BarChart3 },
-  { to: '/teacher/messages', label: 'Messages', icon: MessageSquare },
+  // Messaging is one route for every role — the sidebar is chosen by role, not path.
+  { to: '/app/messages', label: 'Messages', icon: MessageSquare },
   { to: '/teacher/profile', label: 'Profile', icon: GraduationCap },
   { to: '/teacher/settings', label: 'Settings', icon: Settings },
 ]

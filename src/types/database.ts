@@ -441,6 +441,28 @@ export interface Database {
         Returns: undefined
       }
       increment_resource_downloads: { Args: { p_resource: string }; Returns: undefined }
+      my_conversations: {
+        Args: Record<string, never>
+        Returns: {
+          conversation_id: string
+          last_message_at: string
+          last_read_at: string
+          other_user_id: string | null
+          other_name: string | null
+          other_avatar: string | null
+          last_body: string | null
+          last_sender: string | null
+          unread: number
+        }[]
+      }
+      unread_message_count: { Args: Record<string, never>; Returns: number }
+      start_direct_conversation: { Args: { p_other: string }; Returns: string }
+      mark_conversation_read: { Args: { p_conversation: string }; Returns: undefined }
+      mark_all_notifications_read: { Args: Record<string, never>; Returns: undefined }
+      consume_ai_quota: {
+        Args: { p_limit?: number }
+        Returns: { allowed: boolean; used: number; limit_value: number }[]
+      }
       admin_platform_stats: {
         Args: Record<string, never>
         Returns: {
