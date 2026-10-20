@@ -14,34 +14,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 /*
- * Auth bridge: Clerk -> Supabase.
- *
- * Supabase has native third-party auth for Clerk. When configured, Clerk
- * mints a JWT (template name: "supabase") whose `sub` claim is the Clerk
- * user id, and Supabase verifies it. Every Supabase request below then runs
- * as that user, so Row-Level-Security policies can identify them.
- *
- * If the template is not configured yet, getToken() throws and we fall back
- * to an anonymous request (null token). With the recommended RLS schema that
- * means the request is denied — which is the safe failure mode. See
- * SETUP_GUIDE.md ("Clerk -> Supabase auth") for the 3 steps to turn it on.
+ * Authentication is handled by Supabase Auth itself. The client persists the
+ * session in localStorage and attaches it to every request, so Row-Level
+ * Security policies can identify the caller through auth.uid().
  */
-async function clerkAccessToken() {
-  try {
-    const session = typeof window !== "undefined" ? window.Clerk?.session : null
-    if (!session) return null
-    return (await session.getToken({ template: "supabase" })) ?? null
-  } catch {
-    return null
-  }
-}
-
 export const supabase = createClient(
   supabaseUrl || "https://placeholder.supabase.co",
   supabaseAnonKey || "placeholder-anon-key",
   {
-    auth: { persistSession: false, autoRefreshToken: false },
-    accessToken: clerkAccessToken,
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
   }
 )
 
@@ -49,11 +34,12 @@ export const supabase = createClient(
  * USERS
  * ====================================================================== */
 
-export async function getUserByClerkId(clerkUserId) {
+/** The app-user row is keyed by the Supabase auth user id. */
+export async function getUserById(id) {
   const { data, error } = await supabase
     .from("users")
     .select("*")
-    .eq("clerk_user_id", clerkUserId)
+    .eq("id", id)
     .maybeSingle()
   if (error) throw error
   return data

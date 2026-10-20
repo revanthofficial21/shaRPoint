@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom"
-import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react"
 
 import Landing from "./pages/Landing.jsx"
 import Dashboard from "./pages/Dashboard.jsx"
@@ -15,38 +14,46 @@ import AuthPage from "./pages/AuthPage.jsx"
 import OwnerLogin from "./pages/OwnerLogin.jsx"
 import { Spinner } from "./components/UI.jsx"
 import { useUserRole } from "./hooks/useUserRole.js"
+import { useAuth } from "./lib/auth.jsx"
+
+function FullScreenSpinner() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <Spinner />
+    </div>
+  )
+}
 
 /* Signed-in shell: navbar + padded main. */
 function Protected({ children }) {
+  const { user, loading } = useAuth()
+
+  if (loading) return <FullScreenSpinner />
+  if (!user) return <Navigate to="/sign-in" replace />
+
   return (
     <>
-      <SignedIn>
-        <Navbar />
-        <main className="min-h-screen bg-gray-50 pt-16">{children}</main>
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn redirectUrl="/feed" />
-      </SignedOut>
+      <Navbar />
+      <main className="min-h-screen bg-gray-50 pt-16">{children}</main>
     </>
   )
 }
 
-/*
- * Admin-only guard. The old app had NO guard on /admin — it relied on a stub
- * hook that always reported "not admin", so the route was unreachable for
- * everyone. This checks the real role and bounces non-admins to the feed.
- */
+/* Owner-only guard. */
 function AdminRoute({ children }) {
   const { isAdmin, loading } = useUserRole()
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-24">
-        <Spinner />
-      </div>
-    )
-  }
+  if (loading) return <FullScreenSpinner />
   if (!isAdmin) return <Navigate to="/feed" replace />
+  return children
+}
+
+/* Already signed in? Don't show the auth pages again. */
+function PublicOnly({ children }) {
+  const { user, loading } = useAuth()
+
+  if (loading) return <FullScreenSpinner />
+  if (user) return <Navigate to="/feed" replace />
   return children
 }
 
@@ -55,9 +62,8 @@ export default function App() {
     <Routes>
       {/* Public */}
       <Route path="/" element={<Landing />} />
-      <Route path="/sign-in" element={<AuthPage mode="sign-in" />} />
-      <Route path="/sign-up" element={<AuthPage mode="sign-up" />} />
-      {/* Separate, unlisted owner sign-in */}
+      <Route path="/sign-in" element={<PublicOnly><AuthPage mode="sign-in" /></PublicOnly>} />
+      <Route path="/sign-up" element={<PublicOnly><AuthPage mode="sign-up" /></PublicOnly>} />
       <Route path="/owner" element={<OwnerLogin />} />
 
       {/* Protected (any signed-in user) */}
@@ -69,7 +75,7 @@ export default function App() {
       <Route path="/resources" element={<Protected><Resources /></Protected>} />
       <Route path="/groups" element={<Protected><StudyGroups /></Protected>} />
 
-      {/* Admin only */}
+      {/* Owner only */}
       <Route
         path="/admin"
         element={

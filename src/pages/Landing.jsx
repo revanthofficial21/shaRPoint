@@ -1,13 +1,14 @@
-import { useNavigate } from 'react-router-dom'
-import { SignInButton, SignUpButton, useUser } from '@clerk/clerk-react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import AnimatedBackground from '../components/AnimatedBackground.jsx'
 import FeatureCards from '../components/FeatureCards.jsx'
+import { useAuth } from '../lib/auth.jsx'
 
 const STATS = [['12,400+','Students'],['380+','Colleges'],['8,900+','Resources'],['2,100+','Opportunities']]
 
 export default function Landing() {
-  const { isSignedIn } = useUser()
+  const { user } = useAuth()
+  const isSignedIn = Boolean(user)
   const navigate = useNavigate()
 
   // Redirect if already signed in
@@ -28,12 +29,12 @@ export default function Landing() {
           </span>
         </div>
         <div className="flex gap-3">
-          <SignInButton mode="modal">
+          <Link to="/sign-in" className="no-underline">
             <button className="btn-secondary text-sm">Sign In</button>
-          </SignInButton>
-          <SignUpButton mode="modal">
+          </Link>
+          <Link to="/sign-up" className="no-underline">
             <button className="btn-primary text-sm glow-gold">Join Free →</button>
-          </SignUpButton>
+          </Link>
         </div>
       </nav>
 
@@ -57,12 +58,12 @@ export default function Landing() {
         </p>
 
         <div className="flex gap-3 mt-9 animate-fade-up" style={{ animationDelay:'.4s' }}>
-          <SignUpButton mode="modal">
+          <Link to="/sign-up" className="no-underline">
             <button className="btn-primary glow-gold text-base px-8 py-3">Get Started Free</button>
-          </SignUpButton>
-          <SignInButton mode="modal">
+          </Link>
+          <Link to="/sign-in" className="no-underline">
             <button className="btn-secondary text-base px-8 py-3">Sign In</button>
-          </SignInButton>
+          </Link>
         </div>
 
         {/* Stats */}
@@ -93,9 +94,9 @@ export default function Landing() {
           <p style={{ color:'#8a96aa', fontSize:16, marginBottom:28, lineHeight:1.65 }}>
             Join 12,000+ students already on shaRPoint. Free, forever.
           </p>
-          <SignUpButton mode="modal">
+          <Link to="/sign-up" className="no-underline">
             <button className="btn-primary glow-gold text-base px-10 py-3">Create Your Account →</button>
-          </SignUpButton>
+          </Link>
         </div>
       </section>
 

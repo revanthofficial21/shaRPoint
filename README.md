@@ -5,16 +5,17 @@ with AI translation, an opportunities board, a resource library, study groups, a
 points leaderboard, and an admin moderation console.
 
 Built by Revanth Kumar.
-Stack: **React + Vite · Clerk (auth) · Supabase (Postgres, Realtime, Storage) · Vercel**
+Stack: **React + Vite · Supabase (Auth, Postgres, Realtime, Storage) · Vercel**
 
 Live: https://sharpoint.vercel.app
+
 ---
 
 ## Features
 
 | Area | What it does |
 |------|--------------|
-| Auth | Clerk — email/password, Google, GitHub |
+| Auth | Supabase Auth — email/password, Google, GitHub |
 | Feed | Post with tags, like, comment |
 | Chat | 1:1 real-time messaging with per-message AI translation |
 | Opportunities | Internships, jobs, research, fellowships — post & apply |
@@ -37,7 +38,6 @@ Open http://localhost:3000.
 
 | Variable | Where to find it |
 |----------|------------------|
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk Dashboard → API Keys |
 | `VITE_SUPABASE_URL` | Supabase → Settings → API |
 | `VITE_SUPABASE_ANON_KEY` | Supabase → Settings → API |
 | `VITE_AI_ENDPOINT` | (optional) URL of your AI proxy function |
@@ -48,11 +48,9 @@ Open http://localhost:3000.
 
 ### Database
 
-Run `supabase-schema.sql` in the Supabase SQL editor, then create two public
-Storage buckets: `avatars` and `resources`.
-
-The schema uses Row-Level Security keyed to the Clerk identity, so you must also
-enable the Clerk → Supabase third-party auth bridge. See `SETUP_GUIDE.md`.
+Run `supabase-schema.sql` in the Supabase SQL editor. It creates the tables, the
+`avatars` and `resources` Storage buckets, and Row-Level Security keyed to
+`auth.uid()`. See `SETUP_GUIDE.md`.
 
 ## Scripts
 

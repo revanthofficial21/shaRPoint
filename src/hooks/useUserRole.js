@@ -1,28 +1,31 @@
 import { useCallback, useEffect, useState } from "react"
-import { useUser } from "@clerk/clerk-react"
-import { getUserByClerkId, createUser, logActivity } from "../lib/supabase.js"
+import { useAuth } from "../lib/auth.jsx"
+import { getUserById, createUser, logActivity } from "../lib/supabase.js"
 
 /**
  * Single source of truth for "who is this user and what can they do".
  *
- * Roles (stored in users.role):
+ * Identity comes from Supabase Auth; the app profile lives in public.users
+ * keyed by the auth user id.
+ *
+ * Roles (users.role):
  *   user     -> Student   (self-selectable at signup)
  *   teacher  -> Teacher   (self-selectable at signup; more tools)
- *   admin    -> Owner     (granted manually only; full console + audit trail)
+ *   admin    -> Owner     (granted manually only; console + audit trail)
  *
- * The owner role can NEVER be set from signup metadata — that would be a
- * privilege-escalation hole. It is assigned by hand in the database.
+ * The owner role can never be set from signup metadata — the database
+ * rejects it — so nobody can promote themselves.
  */
 export function useUserRole() {
-  const { user, isLoaded, isSignedIn } = useUser()
+  const { user, loading: authLoading } = useAuth()
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   const sync = useCallback(async () => {
-    if (!isLoaded) return
+    if (authLoading) return
 
-    if (!isSignedIn || !user) {
+    if (!user) {
       setProfile(null)
       setError(null)
       setLoading(false)
@@ -31,24 +34,21 @@ export function useUserRole() {
 
     setLoading(true)
     try {
-      let row = await getUserByClerkId(user.id)
+      let row = await getUserById(user.id)
 
       if (!row) {
-        const email =
-          user.primaryEmailAddress?.emailAddress ||
-          user.emailAddresses?.[0]?.emailAddress ||
-          `${user.id}@users.noreply.clerk`
-
-        const name = user.fullName || user.username || email.split("@")[0] || "Student"
-
-        // Only student/teacher are self-selectable. Anything else -> student.
-        const requested = user.unsafeMetadata?.role === "teacher" ? "teacher" : "user"
+        const meta = user.user_metadata || {}
+        const requested = meta.role === "teacher" ? "teacher" : "user"
+        const name =
+          meta.full_name ||
+          meta.name ||
+          (user.email ? user.email.split("@")[0] : "Student")
 
         row = await createUser({
-          clerk_user_id: user.id,
+          id: user.id,
           name,
-          email,
-          avatar_url: user.imageUrl || null,
+          email: user.email || `${user.id}@sharpoint.local`,
+          avatar_url: meta.avatar_url || null,
           role: requested,
         })
 
@@ -65,13 +65,12 @@ export function useUserRole() {
       setProfile(row)
       setError(null)
     } catch (err) {
-      // Most commonly: RLS blocked the insert/select. Surface it, don't fail mute.
       setError(err)
       setProfile(null)
     } finally {
       setLoading(false)
     }
-  }, [isLoaded, isSignedIn, user])
+  }, [user, authLoading])
 
   useEffect(() => {
     sync()
