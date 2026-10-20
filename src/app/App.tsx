@@ -81,6 +81,19 @@ const AnnouncementsPage = page(
 )
 const AnalyticsPage = page(() => import('@/features/teacher/AnalyticsPage'), 'AnalyticsPage')
 
+const UsersPage = page(() => import('@/features/admin/UsersPage'), 'UsersPage')
+const RolesPage = page(() => import('@/features/admin/RolesPage'), 'RolesPage')
+const DepartmentsPage = page(() => import('@/features/admin/DepartmentsPage'), 'DepartmentsPage')
+const CoursesAdminPage = page(() => import('@/features/admin/CoursesAdminPage'), 'CoursesAdminPage')
+const OpportunitiesAdminPage = page(
+  () => import('@/features/admin/OpportunitiesAdminPage'),
+  'OpportunitiesAdminPage',
+)
+const ModerationPage = page(() => import('@/features/admin/ModerationPage'), 'ModerationPage')
+const ReportsPage = page(() => import('@/features/admin/ReportsPage'), 'ReportsPage')
+const AuditLogsPage = page(() => import('@/features/admin/AuditLogsPage'), 'AuditLogsPage')
+const AdminSettingsPage = page(() => import('@/features/admin/SettingsPage'), 'SettingsPage')
+
 function RouteFallback() {
   return (
     <div className="flex min-h-[40vh] items-center justify-center gap-3 text-muted-foreground">
@@ -96,16 +109,7 @@ const roadmap: Record<string, string> = {
   '/app/assistant': 'Phase 6 — AI study assistant',
   '/app/settings': 'Phase 7 — Settings',
   '/teacher/messages': 'Phase 6 — Realtime messaging',
-  '/admin/users': 'Phase 5 — User management',
-  '/admin/roles': 'Phase 5 — Roles & permissions',
-  '/admin/departments': 'Phase 5 — Departments',
-  '/admin/courses': 'Phase 5 — Academic management',
-  '/admin/opportunities': 'Phase 5 — Opportunity management',
-  '/admin/moderation': 'Phase 5 — Content moderation',
-  '/admin/reports': 'Phase 5 — Reports & analytics',
-  '/admin/audit': 'Phase 5 — Audit logs',
   '/teacher/settings': 'Phase 7 — Settings',
-  '/admin/settings': 'Phase 7 — Platform settings',
 }
 
 const label = (path: string, prefix: string) =>
@@ -185,6 +189,18 @@ export default function App() {
           <Route element={<RequireRole allow={['admin', 'owner']} />}>
             <Route element={<AppShell />}>
               <Route path="/admin" element={<AdminHomePage />} />
+
+              {/* Phase 5 — admin & owner console */}
+              <Route path="/admin/users" element={<UsersPage />} />
+              <Route path="/admin/roles" element={<RolesPage />} />
+              <Route path="/admin/departments" element={<DepartmentsPage />} />
+              <Route path="/admin/courses" element={<CoursesAdminPage />} />
+              <Route path="/admin/opportunities" element={<OpportunitiesAdminPage />} />
+              <Route path="/admin/moderation" element={<ModerationPage />} />
+              <Route path="/admin/reports" element={<ReportsPage />} />
+              <Route path="/admin/audit" element={<AuditLogsPage />} />
+              <Route path="/admin/settings" element={<AdminSettingsPage />} />
+
               {Object.entries(roadmap)
                 .filter(([path]) => path.startsWith('/admin/'))
                 .map(([path, phase]) => (

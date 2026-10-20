@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Heart, Loader2, MessageCircle, Send, Trash2 } from 'lucide-react'
+import { Flag, Heart, Loader2, MessageCircle, Send, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/features/auth/auth-context'
@@ -11,6 +11,16 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { useReportContent } from '@/features/admin/hooks'
 import { initials, relativeTime, toUserMessage } from '@/lib/utils'
 
 const PAGE_SIZE = 10
@@ -41,6 +51,10 @@ export function CommunityPage() {
   const [content, setContent] = useState('')
   const [openComments, setOpenComments] = useState<string | null>(null)
   const [commentDraft, setCommentDraft] = useState('')
+  const [reporting, setReporting] = useState<FeedPost | null>(null)
+  const [reportReason, setReportReason] = useState('')
+  const [reportDetails, setReportDetails] = useState('')
+  const reportContent = useReportContent()
 
   const feed = useQuery({
     queryKey: ['community-feed'],
@@ -240,14 +254,30 @@ export function CommunityPage() {
                       <MessageCircle className="h-4 w-4" />
                       {post.post_comments?.[0]?.count ?? 0}
                     </button>
-                    {canDelete && (
-                      <button
-                        className="ml-auto flex items-center gap-1.5 hover:text-destructive"
-                        onClick={() => deletePost.mutate(post.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    )}
+                    <div className="ml-auto flex items-center gap-3">
+                      {post.author_id !== user?.id && (
+                        <button
+                          className="flex items-center gap-1.5 hover:text-foreground"
+                          onClick={() => {
+                            setReporting(post)
+                            setReportReason('')
+                            setReportDetails('')
+                          }}
+                          aria-label="Report this post"
+                        >
+                          <Flag className="h-4 w-4" />
+                        </button>
+                      )}
+                      {canDelete && (
+                        <button
+                          className="flex items-center gap-1.5 hover:text-destructive"
+                          onClick={() => deletePost.mutate(post.id)}
+                          aria-label="Delete post"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -288,6 +318,75 @@ export function CommunityPage() {
           </Card>
         )
       })}
+
+      <Dialog open={Boolean(reporting)} onOpenChange={(open) => !open && setReporting(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Report this post</DialogTitle>
+            <DialogDescription>
+              Reports go to the platform moderators. Abuse of reporting is itself a violation.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="report-reason">Reason</Label>
+              <select
+                id="report-reason"
+                className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm"
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+              >
+                <option value="">Choose a reason…</option>
+                <option value="Harassment or bullying">Harassment or bullying</option>
+                <option value="Spam or advertising">Spam or advertising</option>
+                <option value="Hate speech">Hate speech</option>
+                <option value="Misinformation">Misinformation</option>
+                <option value="Inappropriate content">Inappropriate content</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="report-details">Additional details (optional)</Label>
+              <Textarea
+                id="report-details"
+                value={reportDetails}
+                onChange={(e) => setReportDetails(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReporting(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={!reportReason || reportContent.isPending}
+              onClick={() => {
+                if (!reporting || !reportReason) return
+                reportContent.mutate(
+                  {
+                    targetTable: 'posts',
+                    targetId: reporting.id,
+                    reason: reportReason,
+                    details: reportDetails.trim(),
+                  },
+                  {
+                    onSuccess: () => {
+                      toast.success('Report submitted — thank you')
+                      setReporting(null)
+                    },
+                    onError: (error) => toast.error(toUserMessage(error)),
+                  },
+                )
+              }}
+            >
+              Submit report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

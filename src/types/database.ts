@@ -359,8 +359,19 @@ export interface Database {
     Tables: {
       profiles: Table<ProfileRow, Partial<ProfileRow> & { id: string; email: string }>
       user_roles: Table<UserRoleRow, { user_id: string; role: AppRole; granted_by?: string | null }>
-      account_statuses: Table<AccountStatusRow, { user_id: string; status?: AccountStatus }>
-      departments: Table<DepartmentRow, { name: string; code?: string | null }>
+      account_statuses: Table<
+        AccountStatusRow,
+        {
+          user_id: string
+          status?: AccountStatus
+          reason?: string | null
+          changed_by?: string | null
+        }
+      >
+      departments: Table<
+        DepartmentRow,
+        { name: string; code?: string | null; description?: string }
+      >
       courses: Table<CourseRow, { title: string } & Partial<CourseRow>>
       course_teachers: Table<CourseTeacherRow, { course_id: string; teacher_id: string }>
       course_enrollments: Table<CourseEnrollmentRow, { course_id: string; student_id: string }>
@@ -390,9 +401,33 @@ export interface Database {
       notifications: Table<NotificationRow, { user_id: string; title: string } & Partial<NotificationRow>>
       rewards: Table<RewardRow>
       reward_transactions: Table<RewardTransactionRow, { user_id: string; points: number; reason: string }>
-      reports: Table<ReportRow, { reporter_id: string; target_table: string; target_id: string; reason: string }>
-      moderation_actions: Table<ModerationActionRow, { target_table: string; action: string }>
-      platform_settings: Table<PlatformSettingRow, { key: string; value: unknown }>
+      reports: Table<
+        ReportRow,
+        {
+          reporter_id: string
+          target_table: string
+          target_id: string
+          reason: string
+          details?: string
+          status?: ReportStatus
+          resolved_by?: string | null
+          resolved_at?: string | null
+        }
+      >
+      moderation_actions: Table<
+        ModerationActionRow,
+        {
+          actor_id?: string | null
+          target_table: string
+          target_id?: string | null
+          action: string
+          reason?: string | null
+        }
+      >
+      platform_settings: Table<
+        PlatformSettingRow,
+        { key: string; value: unknown; updated_by?: string | null }
+      >
       audit_logs: Table<AuditLogRow, { action: string }>
     }
     Views: Record<string, never>
@@ -406,6 +441,37 @@ export interface Database {
         Returns: undefined
       }
       increment_resource_downloads: { Args: { p_resource: string }; Returns: undefined }
+      admin_platform_stats: {
+        Args: Record<string, never>
+        Returns: {
+          users?: number
+          students?: number
+          teachers?: number
+          admins?: number
+          suspended?: number
+          courses?: number
+          assignments?: number
+          submissions?: number
+          posts?: number
+          resources?: number
+          groups?: number
+          opportunities?: number
+          open_reports?: number
+          registrations?: { day: string; count: number }[]
+        }
+      }
+      admin_user_directory: {
+        Args: Record<string, never>
+        Returns: {
+          id: string
+          full_name: string
+          email: string
+          avatar_url: string | null
+          status: AccountStatus
+          roles: AppRole[]
+          created_at: string
+        }[]
+      }
       teacher_course_stats: {
         Args: Record<string, never>
         Returns: {
