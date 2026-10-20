@@ -59,15 +59,20 @@ function formatCount(value: number) {
   return String(value)
 }
 
+/** "1 Student", not "1 Students". Small counts are the honest ones. */
+function pluralise(count: number, singular: string, plural = `${singular}s`) {
+  return count === 1 ? singular : plural
+}
+
 export function LandingPage() {
   const stats = usePublicStats()
 
   const statTiles = stats.data
     ? [
-        { label: 'Students', value: stats.data.students, icon: Users },
-        { label: 'Teachers', value: stats.data.teachers, icon: GraduationCap },
-        { label: 'Courses', value: stats.data.courses, icon: BookOpen },
-        { label: 'Opportunities', value: stats.data.opportunities, icon: Briefcase },
+        { label: 'Students', singular: 'Student', value: stats.data.students, icon: Users },
+        { label: 'Teachers', singular: 'Teacher', value: stats.data.teachers, icon: GraduationCap },
+        { label: 'Courses', singular: 'Course', value: stats.data.courses, icon: BookOpen },
+        { label: 'Opportunities', singular: 'Opportunity', value: stats.data.opportunities, icon: Briefcase },
       ]
     : []
 
@@ -166,7 +171,9 @@ export function LandingPage() {
                       <p className="text-xl font-bold tabular-nums leading-none">
                         {formatCount(tile.value)}
                       </p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">{tile.label}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {pluralise(tile.value, tile.singular)}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -174,10 +181,21 @@ export function LandingPage() {
             )}
           </div>
 
-          {/* right — illustration panel */}
+          {/* right — portrait panel, chips floating over it */}
           <div className="relative mx-auto h-[24rem] w-full max-w-lg lg:h-[30rem]">
             <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-brand-from/25 via-brand-to/20 to-transparent" />
             <div className="absolute inset-x-6 bottom-0 top-16 rounded-[2rem] bg-gradient-to-br from-brand-to/30 to-brand-from/20 blur-2xl" />
+
+            {/* The photograph sits in a soft-edged frame; the chips read against it. */}
+            <div className="absolute inset-x-10 bottom-6 top-10 overflow-hidden rounded-[2rem] border border-border/60 bg-muted shadow-pop">
+              <img
+                src="/avatars/owner-square.png"
+                alt="A SHARPOINT student"
+                className="h-full w-full object-cover object-top"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/45 via-transparent to-transparent" />
+            </div>
 
             {/* avatar ring */}
             {AVATARS.map((person, i) => {
