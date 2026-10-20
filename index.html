@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="SHARPOINT — an AI-powered student collaboration and academic management platform."
+    />
+    <title>SHARPOINT</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #f8fafc;
+      }
+      #boot {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        color: #64748b;
+        text-align: center;
+        padding: 24px;
+      }
+      #boot .title {
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 18px;
+      }
+      #boot .err {
+        max-width: 640px;
+        text-align: left;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+        padding: 14px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot">
+        <div class="title">SHARPOINT</div>
+        <div>Loading…</div>
+      </div>
+    </div>
+
+    <!--
+      Safety net: if the app fails to boot for any reason, show the reason on
+      screen instead of leaving the user with a blank page.
+    -->
+    <script>
+      ;(function () {
+        function show(html) {
+          var b = document.getElementById('boot')
+          if (!b) return
+          b.innerHTML =
+            '<div class="title">SHARPOINT failed to start</div>' +
+            '<div class="err">' +
+            html +
+            '</div>'
+        }
+        window.addEventListener('error', function (e) {
+          show('Error: ' + (e.message || 'unknown') + '\nAt: ' + (e.filename || '?') + ':' + (e.lineno || 0))
+        })
+        window.addEventListener('unhandledrejection', function (e) {
+          var r = e.reason
+          show('Unhandled promise rejection:\n' + ((r && (r.stack || r.message)) || String(r)))
+        })
+      })()
+    </script>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
