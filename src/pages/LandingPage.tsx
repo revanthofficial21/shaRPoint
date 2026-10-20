@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { CampusBackdrop } from '@/components/common/CampusBackdrop'
+import { CartoonAvatar } from '@/components/common/CartoonAvatar'
 import {
   ArrowRight,
   BookOpen,
@@ -42,12 +43,9 @@ const HERO_CHIPS = [
   { icon: FolderOpen, title: 'Academic Resources', body: 'Notes, Projects, Materials', position: 'right-4 bottom-16', tone: 'bg-tile-green/15 text-tile-green' },
 ]
 
-const AVATARS = [
-  { initials: 'PS', ring: 'bg-tile-violet' },
-  { initials: 'AM', ring: 'bg-tile-sky' },
-  { initials: 'KR', ring: 'bg-tile-green' },
-  { initials: 'VP', ring: 'bg-tile-pink' },
-]
+// Names, not initials — the cartoon is derived from the name, so these four
+// render as four visibly different people.
+const AVATARS = ['Priya Sharma', 'Arjun Mehta', 'Karthik Reddy', 'Vikram Patel']
 
 const FEATURES = [
   { icon: Users, tone: 'bg-tile-violet/15 text-tile-violet', title: 'Collaborate & Learn', body: 'Study groups, a campus feed and direct messages — so nobody revises alone.' },
@@ -182,7 +180,7 @@ export function LandingPage() {
             <div className="absolute inset-x-6 bottom-0 top-16 rounded-[2rem] bg-gradient-to-br from-brand-to/30 to-brand-from/20 blur-2xl" />
 
             {/* avatar ring */}
-            {AVATARS.map((avatar, i) => {
+            {AVATARS.map((person, i) => {
               const spots = [
                 'left-6 top-24',
                 'right-10 top-8',
@@ -191,11 +189,10 @@ export function LandingPage() {
               ]
               return (
                 <span
-                  key={avatar.initials}
-                  className={`absolute ${spots[i]} grid h-11 w-11 place-items-center rounded-full text-xs font-bold text-white ring-4 ring-background ${avatar.ring}`}
-                  aria-hidden="true"
+                  key={person}
+                  className={`absolute ${spots[i]} overflow-hidden rounded-full ring-4 ring-background shadow-card`}
                 >
-                  {avatar.initials}
+                  <CartoonAvatar name={person} size={46} />
                 </span>
               )
             })}

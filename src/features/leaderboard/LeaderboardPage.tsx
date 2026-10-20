@@ -1,8 +1,8 @@
 import { Award, Medal, Trophy } from 'lucide-react'
+import { UserAvatar } from '@/components/common/UserAvatar'
 import { PageHeader } from '@/components/common/PageHeader'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorState } from '@/components/common/ErrorState'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,7 +15,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { relativeTime } from '@/lib/utils'
-import { initials } from '@/lib/utils'
 import { useLeaderboard, useMyPointHistory, useMyRewards } from './hooks'
 
 export function LeaderboardPage() {
@@ -95,10 +94,11 @@ export function LeaderboardPage() {
                         : 'h-6 w-6 text-amber-700'
                   }
                 />
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={entry.profile?.avatar_url ?? undefined} />
-                  <AvatarFallback>{initials(entry.profile?.full_name)}</AvatarFallback>
-                </Avatar>
+                <UserAvatar
+                  name={entry.profile?.full_name}
+                  src={entry.profile?.avatar_url}
+                  size={48}
+                />
                 <p className="text-sm font-medium">{entry.profile?.full_name ?? 'Unknown'}</p>
                 <p className="text-xs text-muted-foreground">{entry.profile?.course ?? ''}</p>
                 <p className="text-lg font-semibold">{entry.points} pts</p>
@@ -129,10 +129,11 @@ export function LeaderboardPage() {
                     <TableCell className="text-muted-foreground">{index + 4}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-7 w-7">
-                          <AvatarImage src={entry.profile?.avatar_url ?? undefined} />
-                          <AvatarFallback>{initials(entry.profile?.full_name)}</AvatarFallback>
-                        </Avatar>
+                        <UserAvatar
+                          name={entry.profile?.full_name}
+                          src={entry.profile?.avatar_url}
+                          size={28}
+                        />
                         <span className="text-sm">{entry.profile?.full_name ?? 'Unknown'}</span>
                       </div>
                     </TableCell>

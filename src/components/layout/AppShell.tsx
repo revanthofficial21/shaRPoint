@@ -5,7 +5,6 @@ import { useAuth } from '@/features/auth/auth-context'
 import { useSessionContext } from '@/features/profiles/hooks'
 import { ROLE_LABEL } from '@/lib/permissions'
 import { navForRole } from './nav-config'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,7 +15,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { cn, initials } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { UserAvatar } from '@/components/common/UserAvatar'
 import { NotificationBell } from '@/features/notifications/NotificationBell'
 import { GlobalSearch } from '@/features/search/GlobalSearch'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
@@ -160,10 +160,7 @@ export function AppShell() {
                   className="ml-1 rounded-full ring-offset-2 ring-offset-background transition-shadow hover:ring-2 hover:ring-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   aria-label="Account menu"
                 >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={profile?.avatar_url ?? undefined} alt={profile?.full_name ?? ''} />
-                    <AvatarFallback>{initials(profile?.full_name)}</AvatarFallback>
-                  </Avatar>
+                  <UserAvatar name={profile?.full_name} src={profile?.avatar_url} size={32} />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
@@ -201,11 +198,42 @@ export function AppShell() {
         <main
           id="main-content"
           tabIndex={-1}
-          className="relative flex-1 p-4 focus:outline-none md:p-6 lg:p-8"
+          className="relative flex-1 p-4 pb-24 focus:outline-none md:p-6 lg:p-8 lg:pb-8"
         >
           <Outlet />
         </main>
       </div>
+
+      {/* ── mobile bottom navigation ─────────────────────────────────────── */}
+      {/* The sidebar is off-canvas below lg, so small screens need their own
+          way to move between the primary sections. */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/95 backdrop-blur-xl lg:hidden"
+        aria-label="Primary navigation"
+      >
+        <div className="flex items-stretch">
+          {items.slice(0, 5).map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/app' || item.to === '/teacher' || item.to === '/admin'}
+              className={({ isActive }) =>
+                cn(
+                  'flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors',
+                  isActive ? 'text-primary' : 'text-muted-foreground',
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} aria-hidden="true" />
+                  <span className="truncate px-0.5">{item.label}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
     </div>
   )
 }

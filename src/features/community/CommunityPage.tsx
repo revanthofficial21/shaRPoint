@@ -1,11 +1,11 @@
 import { useState } from 'react'
+import { UserAvatar } from '@/components/common/UserAvatar'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Flag, Heart, Loader2, MessageCircle, Send, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/features/auth/auth-context'
 import { useSessionContext } from '@/features/profiles/hooks'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { useReportContent } from '@/features/admin/hooks'
-import { initials, relativeTime, toUserMessage } from '@/lib/utils'
+import { relativeTime, toUserMessage } from '@/lib/utils'
 
 const PAGE_SIZE = 10
 
@@ -222,10 +222,11 @@ export function CommunityPage() {
           <Card key={post.id}>
             <CardContent className="space-y-3 pt-6">
               <div className="flex items-start gap-3">
-                <Avatar>
-                  <AvatarImage src={post.author?.avatar_url ?? undefined} />
-                  <AvatarFallback>{initials(post.author?.full_name)}</AvatarFallback>
-                </Avatar>
+                <UserAvatar
+                  name={post.author?.full_name}
+                  src={post.author?.avatar_url}
+                  size={40}
+                />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="truncate text-sm font-medium">
@@ -296,10 +297,7 @@ export function CommunityPage() {
                 <div className="space-y-3 border-t pt-3">
                   {comments.data?.map((c) => (
                     <div key={c.id} className="flex gap-2">
-                      <Avatar className="h-7 w-7">
-                        <AvatarImage src={c.author?.avatar_url ?? undefined} />
-                        <AvatarFallback>{initials(c.author?.full_name)}</AvatarFallback>
-                      </Avatar>
+                      <UserAvatar name={c.author?.full_name} src={c.author?.avatar_url} size={28} />
                       <div>
                         <p className="text-xs font-medium">{c.author?.full_name ?? 'Unknown'}</p>
                         <p className="text-sm text-muted-foreground">{c.content}</p>
