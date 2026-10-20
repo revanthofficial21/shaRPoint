@@ -59,6 +59,19 @@ export default {
           3: 'hsl(var(--chart-3))',
           4: 'hsl(var(--chart-4))',
         },
+        /*
+         * Statistic and quick-action tile hues. Deliberately independent of the
+         * accent preset — a dashboard where every icon is the brand colour is
+         * unreadable, and finding the right tile should not require reading it.
+         */
+        tile: {
+          blue: 'hsl(var(--tile-blue))',
+          violet: 'hsl(var(--tile-violet))',
+          green: 'hsl(var(--tile-green))',
+          orange: 'hsl(var(--tile-orange))',
+          pink: 'hsl(var(--tile-pink))',
+          teal: 'hsl(var(--tile-teal))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

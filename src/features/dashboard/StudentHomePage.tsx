@@ -80,9 +80,9 @@ export function StudentHomePage() {
   })
 
   const cards = [
-    { label: 'Enrolled courses', value: stats.data?.courses, icon: BookOpen, tone: 'primary' as const },
-    { label: 'Submissions', value: stats.data?.submissions, icon: ClipboardList, tone: 'muted' as const },
-    { label: 'Points', value: stats.data?.points, icon: Trophy, tone: 'warning' as const },
+    { label: 'Enrolled courses', value: stats.data?.courses, icon: BookOpen, tone: 'blue' as const },
+    { label: 'Submissions', value: stats.data?.submissions, icon: ClipboardList, tone: 'violet' as const },
+    { label: 'Points', value: stats.data?.points, icon: Trophy, tone: 'orange' as const },
   ]
 
   return (

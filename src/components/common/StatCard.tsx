@@ -3,38 +3,43 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
-type Tone = 'primary' | 'success' | 'warning' | 'destructive' | 'muted'
+/**
+ * Tile hues are independent of the accent preset — a dashboard where every icon
+ * wears the brand colour is unreadable. These are the six saturated tones from
+ * the design reference.
+ */
+export type TileTone = 'blue' | 'violet' | 'green' | 'orange' | 'pink' | 'teal'
 
-const TONES: Record<Tone, string> = {
-  primary: 'bg-primary/10 text-primary',
-  success: 'bg-success/15 text-success',
-  warning: 'bg-warning/20 text-warning',
-  destructive: 'bg-destructive/10 text-destructive',
-  muted: 'bg-muted text-muted-foreground',
+const TONES: Record<TileTone, string> = {
+  blue: 'bg-tile-blue/15 text-tile-blue',
+  violet: 'bg-tile-violet/15 text-tile-violet',
+  green: 'bg-tile-green/15 text-tile-green',
+  orange: 'bg-tile-orange/15 text-tile-orange',
+  pink: 'bg-tile-pink/15 text-tile-pink',
+  teal: 'bg-tile-teal/15 text-tile-teal',
 }
 
 /**
- * One number per tile, with a tinted medallion so the figures are scannable
- * rather than a wall of identical cards. `tabular-nums` stops the digits
- * jittering as counts change.
+ * One figure per tile, with a saturated medallion so a row of statistics is
+ * scannable at a glance. `tabular-nums` stops digits jittering as counts change.
  */
 export function StatCard({
   label,
   value,
   icon: Icon,
   hint,
-  tone = 'primary',
+  tone = 'blue',
   isLoading,
 }: {
   label: string
   value: number | string | undefined
   icon: LucideIcon
   hint?: string
-  tone?: Tone
+  tone?: TileTone
   isLoading?: boolean
 }) {
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden transition-colors hover:border-primary/40">
       <CardContent className="flex items-start justify-between gap-3 pt-6">
         <div className="min-w-0 space-y-1">
           <p className="truncate text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -50,7 +55,7 @@ export function StatCard({
 
         <span
           className={cn(
-            'ring-hairline grid h-10 w-10 shrink-0 place-items-center rounded-xl',
+            'ring-hairline grid h-11 w-11 shrink-0 place-items-center rounded-xl',
             TONES[tone],
           )}
         >

@@ -486,6 +486,16 @@ export interface Database {
         Args: { p_limit?: number }
         Returns: { allowed: boolean; used: number; limit_value: number }[]
       }
+      public_platform_stats: {
+        Args: Record<string, never>
+        Returns: {
+          students: number
+          teachers: number
+          courses: number
+          resources: number
+          opportunities: number
+        }
+      }
       admin_platform_stats: {
         Args: Record<string, never>
         Returns: {

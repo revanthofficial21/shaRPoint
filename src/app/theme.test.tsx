@@ -53,13 +53,13 @@ describe('ThemeProvider', () => {
 })
 
 describe('palette presets', () => {
-  it('defaults to ember and applies it to the document', () => {
+  it('defaults to nebula and applies it to the document', () => {
     render(
       <ThemeProvider>
         <ThemeProbe />
       </ThemeProvider>,
     )
-    expect(document.documentElement.getAttribute('data-palette')).toBe('ember')
+    expect(document.documentElement.getAttribute('data-palette')).toBe('nebula')
   })
 
   it('applies a chosen palette to the document', () => {
@@ -68,7 +68,7 @@ describe('palette presets', () => {
       return (
         <>
           <span data-testid="palette">{palette}</span>
-          <button onClick={() => setPalette('violet')}>violet</button>
+          <button onClick={() => setPalette('ember')}>ember</button>
         </>
       )
     }
@@ -77,23 +77,23 @@ describe('palette presets', () => {
         <Picker />
       </ThemeProvider>,
     )
-    fireEvent.click(screen.getByRole('button', { name: 'violet' }))
-    expect(screen.getByTestId('palette')).toHaveTextContent('violet')
-    expect(document.documentElement.getAttribute('data-palette')).toBe('violet')
+    fireEvent.click(screen.getByRole('button', { name: 'ember' }))
+    expect(screen.getByTestId('palette')).toHaveTextContent('ember')
+    expect(document.documentElement.getAttribute('data-palette')).toBe('ember')
   })
 
   it('persists the choice for the inline script to apply on reload', () => {
     function Picker() {
       const { setPalette } = useTheme()
-      return <button onClick={() => setPalette('teal')}>teal</button>
+      return <button onClick={() => setPalette('aurora')}>aurora</button>
     }
     render(
       <ThemeProvider>
         <Picker />
       </ThemeProvider>,
     )
-    fireEvent.click(screen.getByRole('button', { name: 'teal' }))
-    expect(localStorage.getItem('sharpoint-palette')).toBe('teal')
+    fireEvent.click(screen.getByRole('button', { name: 'aurora' }))
+    expect(localStorage.getItem('sharpoint-palette')).toBe('aurora')
   })
 
   it('honours a stored palette', () => {
@@ -110,7 +110,7 @@ describe('palette presets', () => {
     expect(screen.getByTestId('palette')).toHaveTextContent('rose')
   })
 
-  it('ignores a garbage stored palette and falls back to ember', () => {
+  it('ignores a garbage stored palette and falls back to nebula', () => {
     localStorage.setItem('sharpoint-palette', 'neon')
     function Probe() {
       const { palette } = useTheme()
@@ -121,7 +121,7 @@ describe('palette presets', () => {
         <Probe />
       </ThemeProvider>,
     )
-    expect(screen.getByTestId('palette')).toHaveTextContent('ember')
+    expect(screen.getByTestId('palette')).toHaveTextContent('nebula')
   })
 
   it('keeps the mode and the palette independent', () => {

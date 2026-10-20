@@ -62,7 +62,7 @@ export function AppShell() {
       >
         <div className="flex h-16 shrink-0 items-center gap-2 border-b border-border/60 px-4">
           <Link to="/" className="flex items-center gap-2 overflow-hidden">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-b from-primary to-primary/85 text-sm font-bold text-primary-foreground shadow-sm">
+            <span className="bg-brand-gradient shadow-brand grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sm font-bold text-primary-foreground">
               S
             </span>
             {!collapsed && <span className="truncate font-semibold tracking-tight">SHARPOINT</span>}
@@ -81,27 +81,13 @@ export function AppShell() {
                 cn(
                   'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   isActive
-                    ? 'bg-accent text-accent-foreground'
+                    ? 'bg-brand-gradient text-primary-foreground shadow-brand'
                     : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground',
                 )
               }
             >
-              {({ isActive }) => (
-                <>
-                  {/* A 3px accent bar marks the current page without shouting. */}
-                  {isActive && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
-                    />
-                  )}
-                  <item.icon
-                    className={cn('h-4 w-4 shrink-0', isActive && 'text-primary')}
-                    aria-hidden="true"
-                  />
-                  {!collapsed && <span className="truncate">{item.label}</span>}
-                </>
-              )}
+              <item.icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              {!collapsed && <span className="truncate">{item.label}</span>}
             </NavLink>
           ))}
         </nav>

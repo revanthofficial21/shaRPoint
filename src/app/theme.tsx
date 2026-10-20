@@ -9,11 +9,11 @@ import {
 
 export type Theme = 'light' | 'dark'
 
-export const PALETTES = ['ember', 'violet', 'teal', 'rose', 'slate'] as const
+export const PALETTES = ['nebula', 'ember', 'aurora', 'rose', 'slate'] as const
 export type Palette = (typeof PALETTES)[number]
 
 /** Change this to change what everyone sees first. */
-export const DEFAULT_PALETTE: Palette = 'ember'
+export const DEFAULT_PALETTE: Palette = 'nebula'
 
 export interface PaletteMeta {
   label: string
@@ -22,30 +22,30 @@ export interface PaletteMeta {
 }
 
 export const PALETTE_META: Record<Palette, PaletteMeta> = {
+  nebula: {
+    label: 'Nebula',
+    swatch: 'linear-gradient(100deg, hsl(226 88% 52%), hsl(260 80% 56%))',
+    blurb: 'Electric blue to violet on deep navy. The default.',
+  },
   ember: {
     label: 'Ember',
-    swatch: 'hsl(32 98% 58%)',
-    blurb: 'Warm amber on near-black. The brand default.',
+    swatch: 'linear-gradient(100deg, hsl(30 97% 56%), hsl(14 90% 54%))',
+    blurb: 'Warm amber — the original brand look.',
   },
-  violet: {
-    label: 'Violet',
-    swatch: 'hsl(264 90% 68%)',
-    blurb: 'Deep plum with an electric violet accent.',
-  },
-  teal: {
-    label: 'Teal',
-    swatch: 'hsl(174 80% 52%)',
+  aurora: {
+    label: 'Aurora',
+    swatch: 'linear-gradient(100deg, hsl(176 80% 40%), hsl(196 85% 52%))',
     blurb: 'Cool teal on a dark marine canvas.',
   },
   rose: {
     label: 'Rose',
-    swatch: 'hsl(348 92% 68%)',
-    blurb: 'Crimson rose. Bold and sporty.',
+    swatch: 'linear-gradient(100deg, hsl(346 86% 56%), hsl(316 80% 58%))',
+    blurb: 'Crimson to magenta. Bold and loud.',
   },
   slate: {
     label: 'Slate',
-    swatch: 'hsl(220 25% 92%)',
-    blurb: 'Neutral and monochrome, with no accent colour.',
+    swatch: 'linear-gradient(100deg, hsl(220 20% 88%), hsl(222 16% 72%))',
+    blurb: 'Neutral monochrome, with no accent colour.',
   },
 }
 

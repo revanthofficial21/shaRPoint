@@ -30,10 +30,10 @@ export function AdminHomePage() {
   })
 
   const cards = [
-    { label: 'Total users', value: stats.data?.users, icon: Users, tone: 'primary' as const },
-    { label: 'Courses', value: stats.data?.courses, icon: BookOpen, tone: 'muted' as const },
-    { label: 'Community posts', value: stats.data?.posts, icon: GraduationCap, tone: 'muted' as const },
-    { label: 'Open reports', value: stats.data?.reports, icon: Flag, tone: 'destructive' as const },
+    { label: 'Total users', value: stats.data?.users, icon: Users, tone: 'blue' as const },
+    { label: 'Courses', value: stats.data?.courses, icon: BookOpen, tone: 'violet' as const },
+    { label: 'Community posts', value: stats.data?.posts, icon: GraduationCap, tone: 'teal' as const },
+    { label: 'Open reports', value: stats.data?.reports, icon: Flag, tone: 'pink' as const },
   ]
 
   return (

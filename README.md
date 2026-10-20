@@ -104,7 +104,7 @@ CI runs typecheck, lint, test and build on every push (`.github/workflows/ci.yml
 
 ## Theme
 
-**Ember — warm amber on a near-black canvas. Dark by default. Five accents to choose from.**
+**Nebula — electric blue to violet on deep navy. Dark by default. Five accents to choose from.**
 
 Every colour is a CSS variable in `src/styles/globals.css` — there are no hardcoded
 colours in components, so the whole app restyles from that one file.
@@ -115,13 +115,25 @@ Five presets ship, switchable live from **Settings → Appearance**. Each overri
 tokens that carry the personality (accent, ring, charts, canvas tint) and inherits the
 rest, so adding a sixth is about ten lines of CSS.
 
-| Preset | Feel |
+| Preset | Brand gradient |
 |---|---|
-| **Ember** *(default)* | Warm amber on near-black. The brand look. |
-| **Violet** | Deep plum with an electric violet accent. |
-| **Teal** | Cool teal on a dark marine canvas. |
-| **Rose** | Crimson rose. Bold and sporty. |
-| **Slate** | Neutral and monochrome, with no accent colour. |
+| **Nebula** *(default)* | Electric blue → violet on deep navy. |
+| **Ember** | Warm amber → orange. |
+| **Aurora** | Teal → sky on a marine canvas. |
+| **Rose** | Crimson → magenta. |
+| **Slate** | Monochrome, no accent hue. |
+
+### The three ideas that carry it
+
+1. **Gradients, not flat fills.** Buttons, headlines, the logo mark and the active
+   nav item all read from `--brand-from` / `--brand-to`, so switching preset retints
+   every one of them at once.
+2. **Colourful tiles.** Statistics and feature icons each get their own hue from
+   `--tile-blue|violet|green|orange|pink|teal`. These are **deliberately independent of
+   the brand** — a dashboard where every icon wears the accent colour is unreadable,
+   and finding a tile should not require reading it.
+3. **Glow.** A soft aurora wash sits behind the whole app, with drifting orbs behind
+   the hero.
 
 To change the default for everyone, edit `DEFAULT_PALETTE` in `src/app/theme.tsx`.
 The choice is applied by the inline script in `index.html` before first paint, so there
@@ -279,6 +291,7 @@ Migrations live in `supabase/migrations/` and are applied in order:
 | `0005_phase4.sql` | Teacher course-edit policy, grading guard trigger, analytics RPC |
 | `0006_phase5.sql` | Audit triggers, last-owner guard, admin RPCs, moderation policy |
 | `0007_phase6.sql` | Realtime, notification triggers, messaging RPCs, AI usage quota |
+| `0008_public_stats.sql` | `public_platform_stats()` — five aggregate counts for the landing strip |
 
 `supabase/tests/rls.sql` is not a migration — it is the RLS verification suite (see [Testing](#testing)).
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0e0b09" />
+    <meta name="theme-color" content="#080b18" />
     <meta
       name="description"
       content="SHARPOINT — an AI-powered student collaboration and academic management platform."
@@ -24,11 +24,11 @@
           // Accent preset; 'ember' is the base token set, so no rule targets it.
           document.documentElement.setAttribute(
             'data-palette',
-            localStorage.getItem('sharpoint-palette') || 'ember',
+            localStorage.getItem('sharpoint-palette') || 'nebula',
           )
         } catch (e) {
           document.documentElement.classList.add('dark')
-          document.documentElement.setAttribute('data-palette', 'ember')
+          document.documentElement.setAttribute('data-palette', 'nebula')
         }
       })()
     </script>
@@ -38,11 +38,11 @@
       html,
       body {
         margin: 0;
-        background: #fdfaf7;
+        background: #f8faff;
       }
       html.dark,
       html.dark body {
-        background: #0e0b09;
+        background: #080b18;
       }
       #boot {
         min-height: 100vh;

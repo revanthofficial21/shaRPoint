@@ -52,10 +52,10 @@ export function TeacherHomePage() {
   })
 
   const cards = [
-    { label: 'My courses', value: stats.data?.courses, icon: BookOpen, tone: 'primary' as const },
-    { label: 'Enrolled students', value: stats.data?.students, icon: Users, tone: 'muted' as const },
-    { label: 'Assignments', value: stats.data?.assignments, icon: ClipboardList, tone: 'muted' as const },
-    { label: 'Awaiting grading', value: stats.data?.ungraded, icon: Clock, tone: 'warning' as const },
+    { label: 'My courses', value: stats.data?.courses, icon: BookOpen, tone: 'blue' as const },
+    { label: 'Enrolled students', value: stats.data?.students, icon: Users, tone: 'violet' as const },
+    { label: 'Assignments', value: stats.data?.assignments, icon: ClipboardList, tone: 'teal' as const },
+    { label: 'Awaiting grading', value: stats.data?.ungraded, icon: Clock, tone: 'orange' as const },
   ]
 
   return (
