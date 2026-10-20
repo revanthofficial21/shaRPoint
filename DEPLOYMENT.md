@@ -185,6 +185,22 @@ output `dist`. Add both variables for Production *and* Preview, then deploy.
 
 **Netlify** — build `npm run build`, publish `dist`. Add the same variables.
 
+### SPA routing is already configured — don't remove it
+
+This is a single-page app, so the host must serve `index.html` for any path that
+isn't a real file. Without that, **every deep link 404s** — including
+`/auth/callback`, which is where the signup confirmation email and OAuth sign-in
+send people. The repo ships:
+
+- `vercel.json` — checks the filesystem first, then falls back to `index.html`
+- `public/_redirects` and `netlify.toml` — the Netlify equivalent
+
+`src/test/deployment.test.ts` asserts these are present and correctly ordered, so
+removing them fails CI rather than silently breaking the live site.
+
+The order matters: the filesystem check must come **before** the catch-all, or the
+fallback would also swallow `/assets/*.js` and serve HTML where JavaScript belongs.
+
 ---
 
 ## 10. Post-deploy checklist
@@ -212,6 +228,7 @@ Run through this on the live site:
 | "Configuration required" screen | The two env vars aren't reaching the build. Check the build log for the `[sharpoint] supabase url <- …` line — it names which variable was found. |
 | Blank page with "failed to start" | A JavaScript error at boot. The message is shown on screen by the safety net in `index.html`. |
 | `Cannot read properties of undefined (reading 'forwardRef')` | Chunk initialisation order — almost always a `manualChunks` rule splitting React from its dependants. This project deliberately has none; see `vite.config.ts`. |
+| Clicking the confirmation link shows a host 404 | Either the SPA fallback is missing (`vercel.json` / `_redirects`), or the origin isn't in Supabase → Authentication → URL Configuration → Redirect URLs. Both are required. |
 | Can't sign in after registering | Email confirmation is on. Confirm via the link, or disable it for testing. |
 | Messages don't arrive live | `0007_phase6.sql` hasn't run, so the tables aren't in the `supabase_realtime` publication. |
 | Admin pages error on load | `0006_phase5.sql` hasn't run — `admin_user_directory()` and `admin_platform_stats()` are missing. |

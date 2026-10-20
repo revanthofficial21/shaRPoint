@@ -371,15 +371,13 @@ export function useResolveReport() {
         .eq('id', reportId)
       if (error) throw error
 
-      const { error: actionError } = await supabase
-        .from('moderation_actions')
-        .insert({
-          actor_id: user!.id,
-          target_table: 'reports',
-          target_id: reportId,
-          action: status,
-          reason,
-        })
+      const { error: actionError } = await supabase.from('moderation_actions').insert({
+        actor_id: user!.id,
+        target_table: 'reports',
+        target_id: reportId,
+        action: status,
+        reason,
+      })
       if (actionError) throw actionError
     },
     onSuccess: async () => {
