@@ -17,6 +17,8 @@ export interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signUp: (input: SignUpInput) => Promise<{ error: string | null; needsVerification: boolean }>
   signOut: () => Promise<void>
+  /** Ends every session for this account, not just the current one. */
+  signOutEverywhere: () => Promise<{ error: string | null }>
   requestPasswordReset: (email: string) => Promise<{ error: string | null }>
   updatePassword: (password: string) => Promise<{ error: string | null }>
 }

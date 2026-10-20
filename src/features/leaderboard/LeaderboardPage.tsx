@@ -100,7 +100,7 @@ export function LeaderboardPage() {
                   <AvatarFallback>{initials(entry.profile?.full_name)}</AvatarFallback>
                 </Avatar>
                 <p className="text-sm font-medium">{entry.profile?.full_name ?? 'Unknown'}</p>
-                <p className="text-xs text-muted-foreground">{entry.profile?.college ?? ''}</p>
+                <p className="text-xs text-muted-foreground">{entry.profile?.course ?? ''}</p>
                 <p className="text-lg font-semibold">{entry.points} pts</p>
               </CardContent>
             </Card>
@@ -119,7 +119,7 @@ export function LeaderboardPage() {
                 <TableRow>
                   <TableHead className="w-16">#</TableHead>
                   <TableHead>Member</TableHead>
-                  <TableHead className="hidden sm:table-cell">College</TableHead>
+                  <TableHead className="hidden sm:table-cell">Course</TableHead>
                   <TableHead className="text-right">Points</TableHead>
                 </TableRow>
               </TableHeader>
@@ -137,7 +137,7 @@ export function LeaderboardPage() {
                       </div>
                     </TableCell>
                     <TableCell className="hidden text-sm text-muted-foreground sm:table-cell">
-                      {entry.profile?.college || '—'}
+                      {entry.profile?.course || '—'}
                     </TableCell>
                     <TableCell className="text-right font-medium">{entry.points}</TableCell>
                   </TableRow>

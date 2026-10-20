@@ -7,7 +7,7 @@ export interface LeaderboardEntry extends RewardRow {
     id: string
     full_name: string
     avatar_url: string | null
-    college: string | null
+    course: string | null
   } | null
 }
 
@@ -22,7 +22,7 @@ export function useLeaderboard(limit = 50) {
       const { data, error } = await supabase
         .from('rewards')
         .select(
-          'user_id, points, level, badges, updated_at, profile:profiles!rewards_user_id_fkey(id, full_name, avatar_url, college)',
+          'user_id, points, level, badges, updated_at, profile:profiles!rewards_user_id_fkey(id, full_name, avatar_url, course)',
         )
         .order('points', { ascending: false })
         .limit(limit)

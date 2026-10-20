@@ -6,7 +6,6 @@ import { LandingPage } from '@/pages/LandingPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { RedirectIfAuthenticated, RequireAuth, RequireRole } from '@/features/auth/guards'
 import { AppShell } from '@/components/layout/AppShell'
-import { ComingSoon } from '@/components/common/ComingSoon'
 
 const page = <T extends Record<string, unknown>>(loader: () => Promise<T>, name: keyof T) =>
   lazy(async () => {
@@ -29,17 +28,15 @@ const AuthCallbackPage = page(
   'AuthCallbackPage',
 )
 
-const StudentHomePage = page(
-  () => import('@/features/dashboard/StudentHomePage'),
-  'StudentHomePage',
-)
-const TeacherHomePage = page(
-  () => import('@/features/dashboard/TeacherHomePage'),
-  'TeacherHomePage',
-)
+const PrivacyPage = page(() => import('@/pages/LegalPages'), 'PrivacyPage')
+const TermsPage = page(() => import('@/pages/LegalPages'), 'TermsPage')
+
+const StudentHomePage = page(() => import('@/features/dashboard/StudentHomePage'), 'StudentHomePage')
+const TeacherHomePage = page(() => import('@/features/dashboard/TeacherHomePage'), 'TeacherHomePage')
 const AdminHomePage = page(() => import('@/features/dashboard/AdminHomePage'), 'AdminHomePage')
 const CommunityPage = page(() => import('@/features/community/CommunityPage'), 'CommunityPage')
 const ProfilePage = page(() => import('@/features/profiles/ProfilePage'), 'ProfilePage')
+const SettingsPage = page(() => import('@/features/settings/SettingsPage'), 'SettingsPage')
 
 const CoursesPage = page(() => import('@/features/courses/CoursesPage'), 'CoursesPage')
 const CourseDetailPage = page(
@@ -67,6 +64,8 @@ const LeaderboardPage = page(
   () => import('@/features/leaderboard/LeaderboardPage'),
   'LeaderboardPage',
 )
+const MessagesPage = page(() => import('@/features/messaging/MessagesPage'), 'MessagesPage')
+const AssistantPage = page(() => import('@/features/ai/AssistantPage'), 'AssistantPage')
 
 const CoursesManagePage = page(
   () => import('@/features/teacher/CoursesManagePage'),
@@ -77,7 +76,10 @@ const AssignmentsManagePage = page(
   () => import('@/features/teacher/AssignmentsManagePage'),
   'AssignmentsManagePage',
 )
-const SubmissionsPage = page(() => import('@/features/teacher/SubmissionsPage'), 'SubmissionsPage')
+const SubmissionsPage = page(
+  () => import('@/features/teacher/SubmissionsPage'),
+  'SubmissionsPage',
+)
 const AnnouncementsPage = page(
   () => import('@/features/teacher/AnnouncementsPage'),
   'AnnouncementsPage',
@@ -97,9 +99,6 @@ const ReportsPage = page(() => import('@/features/admin/ReportsPage'), 'ReportsP
 const AuditLogsPage = page(() => import('@/features/admin/AuditLogsPage'), 'AuditLogsPage')
 const AdminSettingsPage = page(() => import('@/features/admin/SettingsPage'), 'SettingsPage')
 
-const MessagesPage = page(() => import('@/features/messaging/MessagesPage'), 'MessagesPage')
-const AssistantPage = page(() => import('@/features/ai/AssistantPage'), 'AssistantPage')
-
 function RouteFallback() {
   return (
     <div className="flex min-h-[40vh] items-center justify-center gap-3 text-muted-foreground">
@@ -109,22 +108,18 @@ function RouteFallback() {
   )
 }
 
-/** Routes wired but whose feature ships in a later phase. */
-const roadmap: Record<string, string> = {
-  '/app/settings': 'Phase 7 — Settings',
-  '/teacher/settings': 'Phase 7 — Settings',
-}
-
-const label = (path: string, prefix: string) => path.replace(prefix, '').replace(/-/g, ' ')
-
+/**
+ * Every route below resolves to a real, implemented page. A route that exists
+ * should do something rather than announce that it is unfinished.
+ */
 export default function App() {
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>
-        {/* Public */}
+        {/* ── public ─────────────────────────────────────────────────────── */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/privacy" element={<ComingSoon title="Privacy policy" phase="Phase 7" />} />
-        <Route path="/terms" element={<ComingSoon title="Terms of service" phase="Phase 7" />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
@@ -134,14 +129,15 @@ export default function App() {
           <Route path="/sign-up" element={<SignUpPage />} />
         </Route>
 
-        {/* Signed-in */}
+        {/* ── signed in ──────────────────────────────────────────────────── */}
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
             <Route path="/app" element={<StudentHomePage />} />
             <Route path="/app/community" element={<CommunityPage />} />
             <Route path="/app/profile" element={<ProfilePage />} />
+            <Route path="/app/settings" element={<SettingsPage />} />
 
-            {/* Phase 3 — student experience */}
+            {/* student experience */}
             <Route path="/app/courses" element={<CoursesPage />} />
             <Route path="/app/courses/:courseId" element={<CourseDetailPage />} />
             <Route path="/app/assignments" element={<AssignmentsPage />} />
@@ -151,26 +147,14 @@ export default function App() {
             <Route path="/app/opportunities" element={<OpportunitiesPage />} />
             <Route path="/app/leaderboard" element={<LeaderboardPage />} />
 
-            {/* Phase 6 — messaging, assistant */}
+            {/* advanced layer */}
             <Route path="/app/messages" element={<MessagesPage />} />
             <Route path="/app/assistant" element={<AssistantPage />} />
-
-            {Object.entries(roadmap)
-              .filter(([path]) => path.startsWith('/app/'))
-              .map(([path, phase]) => (
-                <Route
-                  key={path}
-                  path={path}
-                  element={<ComingSoon title={label(path, '/app/')} phase={phase} />}
-                />
-              ))}
           </Route>
 
           <Route element={<RequireRole allow={['teacher', 'admin', 'owner']} />}>
             <Route element={<AppShell />}>
               <Route path="/teacher" element={<TeacherHomePage />} />
-
-              {/* Phase 4 — teacher experience */}
               <Route path="/teacher/courses" element={<CoursesManagePage />} />
               <Route path="/teacher/students" element={<StudentsPage />} />
               <Route path="/teacher/assignments" element={<AssignmentsManagePage />} />
@@ -179,24 +163,13 @@ export default function App() {
               <Route path="/teacher/analytics" element={<AnalyticsPage />} />
               <Route path="/teacher/resources" element={<ResourcesPage />} />
               <Route path="/teacher/profile" element={<ProfilePage />} />
-
-              {Object.entries(roadmap)
-                .filter(([path]) => path.startsWith('/teacher/'))
-                .map(([path, phase]) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={<ComingSoon title={label(path, '/teacher/')} phase={phase} />}
-                  />
-                ))}
+              <Route path="/teacher/settings" element={<SettingsPage />} />
             </Route>
           </Route>
 
           <Route element={<RequireRole allow={['admin', 'owner']} />}>
             <Route element={<AppShell />}>
               <Route path="/admin" element={<AdminHomePage />} />
-
-              {/* Phase 5 — admin & owner console */}
               <Route path="/admin/users" element={<UsersPage />} />
               <Route path="/admin/roles" element={<RolesPage />} />
               <Route path="/admin/departments" element={<DepartmentsPage />} />
@@ -206,16 +179,6 @@ export default function App() {
               <Route path="/admin/reports" element={<ReportsPage />} />
               <Route path="/admin/audit" element={<AuditLogsPage />} />
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
-
-              {Object.entries(roadmap)
-                .filter(([path]) => path.startsWith('/admin/'))
-                .map(([path, phase]) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={<ComingSoon title={label(path, '/admin/')} phase={phase} />}
-                  />
-                ))}
             </Route>
           </Route>
         </Route>

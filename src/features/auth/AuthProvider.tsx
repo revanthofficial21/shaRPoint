@@ -52,6 +52,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
   }, [])
 
+  const signOutEverywhere = useCallback(async () => {
+    // `global` revokes refresh tokens for every device, not just this browser.
+    const { error } = await supabase.auth.signOut({ scope: 'global' })
+    return { error: authErrorMessage(error) }
+  }, [])
+
   const requestPasswordReset = useCallback<AuthContextValue['requestPasswordReset']>(
     async (email) => {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -75,10 +81,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signUp,
       signOut,
+      signOutEverywhere,
       requestPasswordReset,
       updatePassword,
     }),
-    [session, loading, signIn, signUp, signOut, requestPasswordReset, updatePassword],
+    [
+      session,
+      loading,
+      signIn,
+      signUp,
+      signOut,
+      signOutEverywhere,
+      requestPasswordReset,
+      updatePassword,
+    ],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

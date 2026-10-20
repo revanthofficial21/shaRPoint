@@ -3,10 +3,14 @@
 An AI-powered student collaboration and academic management platform for **students,
 teachers and platform administrators**, built on React + TypeScript + Supabase.
 
-> **Status: all 7 phases complete (code).** Foundation, student experience, teacher
-> experience, admin/owner console, the advanced layer (realtime messaging,
-> notifications, global search, AI assistant), and the quality pass — 65 tests, an RLS
-> verification suite, an accessibility pass and full deployment docs.
+> **Status: complete.** Foundation, student experience, teacher experience, admin/owner
+> console, the advanced layer (realtime messaging, notifications, global search, AI
+> assistant), and the quality pass — 95 tests, an RLS verification suite, an
+> accessibility pass and full deployment docs.
+>
+> **Every route resolves to a real page.** There are no placeholder screens left —
+> account settings and the privacy/terms pages were the last two, and a test now fails
+> if a route is ever wired to a stub again.
 >
 > **Start here:** [DEPLOYMENT.md](DEPLOYMENT.md) for the ordered setup walkthrough.
 >
@@ -22,7 +26,7 @@ teachers and platform administrators**, built on React + TypeScript + Supabase.
 ## Testing
 
 ```bash
-npm run test     # 65 tests, vitest + Testing Library
+npm run test     # 95 tests, vitest + Testing Library
 npm run verify   # typecheck → lint → test → build
 ```
 
@@ -31,9 +35,17 @@ npm run verify   # typecheck → lint → test → build
 | `src/lib/permissions.test.ts` | Capability derivation per role, multi-role, empty |
 | `src/lib/storage.test.ts` | Upload validation — extension allow-list, size limit, dotfiles, images-only |
 | `src/lib/utils.test.ts` | Formatting, relative time, and error-message translation |
+| `src/lib/auth-errors.test.ts` | Supabase auth errors translated into actionable messages |
 | `src/features/auth/guards.test.tsx` | Route guards: anonymous redirect, suspended/deactivated blocks, role refusals |
 | `src/app/theme.test.tsx` | Dark default, stored preference, toggle persistence |
 | `src/components/common/states.test.tsx` | Empty and error states |
+| `src/test/deployment.test.ts` | Hosting invariants: SPA fallback ordering, theme script, no stub routes, every lazy import resolves |
+| `src/test/schema.test.ts` | Every column selected from `profiles` exists in the migrations |
+
+Two of these guard bugs that no other check can see, and both caught real ones:
+`deployment.test.ts` covers the SPA fallback (whose absence 404'd every deep link),
+and `schema.test.ts` covers select strings (where a non-existent column took down the
+Leaderboard page).
 
 `supabase/tests/rls.sql` is the security suite — run it in the Supabase SQL editor. It
 seeds a scenario, attempts to break each guarantee, prints PASS/FAIL, and rolls back.

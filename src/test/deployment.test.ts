@@ -87,6 +87,48 @@ describe('entry document', () => {
   })
 })
 
+describe('no unfinished routes', () => {
+  const app = read(path.join('src', 'app', 'App.tsx'))
+
+  it('has no placeholder component wired up', () => {
+    expect(app).not.toContain('ComingSoon')
+  })
+
+  it('does not defer any route to a later phase', () => {
+    // e.g. "Phase 6 — Realtime messaging" left on a route
+    expect(app).not.toMatch(/Phase\s*\d/)
+  })
+
+  it('every lazy import names an export the module actually provides', () => {
+    // Cheap guard against a route pointing at a component that was renamed.
+    const imports = [...app.matchAll(/import\('([^']+)'\),\s*'([A-Za-z]+)'/g)].map(
+      ([, specifier, name]) => ({ specifier, name }),
+    )
+    expect(imports.length).toBeGreaterThan(20)
+
+    const missing: string[] = []
+    for (const { specifier, name } of imports) {
+      const relative = specifier.replace('@/', 'src/')
+      const candidates = [
+        `${relative}.tsx`,
+        `${relative}.ts`,
+        `${relative}/index.tsx`,
+        `${relative}/index.ts`,
+      ]
+      const file = candidates.find((candidate) => fs.existsSync(path.join(root, candidate)))
+      if (!file) {
+        missing.push(`${specifier} (no file)`)
+        continue
+      }
+      const source = read(file)
+      if (!new RegExp(`export\\s+(function|const)\\s+${name}\\b`).test(source)) {
+        missing.push(`${specifier} does not export ${name}`)
+      }
+    }
+    expect(missing).toEqual([])
+  })
+})
+
 describe('auth redirect targets', () => {
   it('only redirects to paths the SPA fallback covers', () => {
     const provider = read(path.join('src', 'features', 'auth', 'AuthProvider.tsx'))
