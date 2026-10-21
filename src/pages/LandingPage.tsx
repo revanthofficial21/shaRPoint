@@ -2,90 +2,294 @@
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
+  Bell,
   BookOpen,
   Bot,
   BriefcaseBusiness,
+  CalendarDays,
+  CheckCircle2,
   GraduationCap,
+  Heart,
+  Home,
+  MessageCircle,
   Play,
-  Users,
+  Search,
+  Send,
+  Settings,
   Sparkles,
-  BookMarked,
+  Users,
 } from 'lucide-react'
-
-import { ThemeToggle } from '@/components/common/ThemeToggle'
-import { CampusBackdrop } from '@/components/common/CampusBackdrop'
 import { Button } from '@/components/ui/button'
-import { usePublicStats } from '@/features/stats/hooks'
-
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import './LandingPage.css'
 
-const features = [
-  {
-    icon: Users,
-    title: 'Study Groups',
-    description: 'Find your people',
-    color: 'cyan',
-  },
-  {
-    icon: Bot,
-    title: 'AI Study Assistant',
-    description: 'Learn smarter',
-    color: 'blue',
-  },
-  {
-    icon: BookMarked,
-    title: 'Academic Resources',
-    description: 'Notes, PYQs & more',
-    color: 'green',
-  },
-  {
-    icon: BriefcaseBusiness,
-    title: 'Internships',
-    description: 'Explore opportunities',
-    color: 'purple',
-  },
-]
-
-const platformStats = [
+const stats = [
   { value: '10K+', label: 'Students', icon: Users, color: 'blue' },
   { value: '500+', label: 'Teachers', icon: GraduationCap, color: 'cyan' },
   { value: '200+', label: 'Courses', icon: BookOpen, color: 'green' },
   { value: '100+', label: 'Opportunities', icon: Sparkles, color: 'purple' },
 ]
 
+const featureCards = [
+  { title: 'Study Groups', detail: 'Find your people', icon: Users, color: 'cyan' },
+  { title: 'AI Study Assistant', detail: 'Learn smarter', icon: Bot, color: 'blue' },
+  { title: 'Internships', detail: 'Explore opportunities', icon: BriefcaseBusiness, color: 'purple' },
+  { title: 'Academic Resources', detail: 'Notes, PYQs & more', icon: BookOpen, color: 'green' },
+]
+
+const sidebarItems = [
+  { label: 'Home', icon: Home },
+  { label: 'Community', icon: Users },
+  { label: 'My Courses', icon: BookOpen },
+  { label: 'Assignments', icon: CheckCircle2 },
+  { label: 'Resources', icon: GraduationCap },
+  { label: 'Study Groups', icon: Users },
+  { label: 'Opportunities', icon: BriefcaseBusiness },
+  { label: 'Messages', icon: MessageCircle },
+  { label: 'Leaderboard', icon: Sparkles },
+  { label: 'AI Assistant', icon: Bot },
+  { label: 'Profile', icon: Users },
+  { label: 'Settings', icon: Settings },
+]
+
+function MiniMetric({
+  value,
+  label,
+  color,
+}: {
+  value: string
+  label: string
+  color: string
+}) {
+  return (
+    <div className="sp-mini-metric">
+      <span className={`sp-mini-metric-icon ${color}`}>
+        <Sparkles size={14} />
+      </span>
+      <strong>{value}</strong>
+      <small>{label}</small>
+    </div>
+  )
+}
+
+function StudentDashboardPreview() {
+  return (
+    <div className="sp-dashboard-window">
+      <div className="sp-window-title">
+        <span><GraduationCap size={17} /> Student Dashboard</span>
+        <span className="sp-window-dots">● ● ●</span>
+      </div>
+
+      <div className="sp-dashboard-toolbar">
+        <strong><GraduationCap size={15} /> SHARPOINT</strong>
+        <div className="sp-fake-search"><Search size={12} /> Search courses, people, resources...</div>
+        <Bell size={14} />
+        <span className="sp-user-dot">R</span>
+      </div>
+
+      <div className="sp-dashboard-body">
+        <aside className="sp-dashboard-sidebar">
+          {sidebarItems.map(({ label, icon: Icon }, index) => (
+            <div className={index === 0 ? 'sp-sidebar-link active' : 'sp-sidebar-link'} key={label}>
+              <Icon size={12} /> {label}
+            </div>
+          ))}
+        </aside>
+
+        <div className="sp-dashboard-content">
+          <div className="sp-dashboard-welcome">
+            <div>
+              <h3>Good Morning, Revanth! 👋</h3>
+              <p>Keep learning, keep collaborating, keep growing.</p>
+            </div>
+            <div className="sp-welcome-note">Small steps today<br />create a brighter tomorrow.</div>
+          </div>
+
+          <div className="sp-dashboard-metrics">
+            <MiniMetric value="5" label="My Courses" color="purple" />
+            <MiniMetric value="3" label="Pending Assignments" color="orange" />
+            <MiniMetric value="12" label="Unread Messages" color="blue" />
+            <MiniMetric value="8" label="New Opportunities" color="green" />
+          </div>
+
+          <div className="sp-dashboard-columns">
+            <div className="sp-white-panel sp-schedule-panel">
+              <div className="sp-panel-heading">Today's Schedule <a href="#features">View All</a></div>
+              {[
+                ['Data Structures', '9:00 AM – 10:00 AM', 'Live'],
+                ['Web Development', '11:00 AM – 12:00 PM', 'Upcoming'],
+                ['AI & Machine Learning', '2:00 PM – 3:00 PM', 'Upcoming'],
+              ].map(([title, time, status]) => (
+                <div className="sp-schedule-row" key={title}>
+                  <span className="sp-schedule-icon"><CalendarDays size={13} /></span>
+                  <div><strong>{title}</strong><small>{time}</small></div>
+                  <span className="sp-status">{status}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="sp-white-panel sp-recommended-panel">
+              <div className="sp-panel-heading">Recommended for You <a href="#features">View All</a></div>
+              {[
+                ['Machine Learning Study Group', 'Join'],
+                ['Google Summer Internship', 'Apply'],
+                ['System Design Notes', 'Open'],
+              ].map(([title, action], index) => (
+                <div className="sp-recommend-row" key={title}>
+                  <span className={`sp-person-dot person-${index}`}>{['M', 'G', 'S'][index]}</span>
+                  <strong>{title}</strong>
+                  <button type="button">{action}</button>
+                </div>
+              ))}
+            </div>
+
+            <div className="sp-white-panel sp-progress-panel">
+              <div className="sp-panel-heading">Your Progress</div>
+              <div className="sp-progress-ring"><strong>75%</strong></div>
+              <small><CheckCircle2 size={11} /> Profile completed</small>
+              <small><CheckCircle2 size={11} /> 3/5 assignments</small>
+              <small><CheckCircle2 size={11} /> 2/3 courses</small>
+            </div>
+          </div>
+
+          <div className="sp-dashboard-bottom">
+            <div className="sp-white-panel">
+              <div className="sp-panel-heading">Quick Actions</div>
+              <div className="sp-quick-actions">
+                <span><Users size={17} />Join Study Group</span>
+                <span><Bot size={17} />Ask AI</span>
+                <span><MessageCircle size={17} />Create Post</span>
+                <span><BookOpen size={17} />Resources</span>
+              </div>
+            </div>
+            <div className="sp-white-panel sp-activity">
+              <div className="sp-panel-heading">Recent Activity</div>
+              <p><CheckCircle2 size={12} /> You submitted a DBMS assignment</p>
+              <p><BookOpen size={12} /> New material uploaded in Web Dev</p>
+              <p><Heart size={12} /> Your post got 12 likes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TeacherDashboardPreview() {
+  return (
+    <div className="sp-lower-window sp-teacher-window">
+      <div className="sp-lower-title"><GraduationCap size={15} /> Teacher Dashboard</div>
+      <div className="sp-lower-toolbar">SHARPOINT <span>Search courses, people, resources...</span></div>
+      <div className="sp-lower-content">
+        <h3>Welcome, Dr. Sharma! 👋</h3>
+        <p>Manage your courses and guide your students.</p>
+        <div className="sp-teacher-metrics">
+          <MiniMetric value="4" label="My Courses" color="purple" />
+          <MiniMetric value="256" label="Students" color="green" />
+          <MiniMetric value="18" label="Pending Grading" color="orange" />
+        </div>
+        <div className="sp-chart">
+          {[35, 52, 44, 70, 63, 88, 76, 95].map((height, i) => (
+            <span key={i} style={{ height: `${height}%` }} />
+          ))}
+        </div>
+        <div className="sp-preview-list">
+          <span>Data Structures <b>Active</b></span>
+          <span>Web Development <b>Active</b></span>
+          <span>AI & Machine Learning <b>Active</b></span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CommunityPreview() {
+  return (
+    <div className="sp-lower-window">
+      <div className="sp-lower-title"><Users size={15} /> Community Feed</div>
+      <div className="sp-lower-toolbar">SHARPOINT <span>Search posts, people, topics...</span></div>
+      <div className="sp-lower-content">
+        <div className="sp-community-tags"><span>All Posts</span><span>Following</span><span>Study Groups</span></div>
+        <div className="sp-post">
+          <div className="sp-post-avatar">R</div>
+          <div><strong>Revanth Kumar</strong><small>Just completed my Web Development project! 🚀</small></div>
+        </div>
+        <div className="sp-post-art">
+          <div className="sp-art-sidebar" />
+          <div className="sp-art-content"><i /><i /><i /><i /><i /><i /></div>
+        </div>
+        <div className="sp-post-actions"><span><Heart size={12} /> 42</span><span><MessageCircle size={12} /> 12</span><span>Share</span></div>
+        <div className="sp-comment"><strong>Ananya Singh</strong><p>Great work! The UI looks amazing! 👏</p></div>
+      </div>
+    </div>
+  )
+}
+
+function AIAssistantPreview() {
+  return (
+    <div className="sp-lower-window sp-ai-window">
+      <div className="sp-lower-title"><Bot size={15} /> AI Study Assistant</div>
+      <div className="sp-lower-content">
+        <div className="sp-ai-intro"><span><Bot size={24} /></span><div><strong>AI Study Assistant</strong><small>Your personal learning companion</small></div></div>
+        <div className="sp-ai-tools"><span>Explain Concept</span><span>Summarize Notes</span><span>Solve Problems</span></div>
+        <div className="sp-ai-answer">Binary search is an efficient algorithm that finds a target value in a sorted array by repeatedly dividing the search interval in half.</div>
+        <div className="sp-code-sample"><span>Java</span><code>while (left &lt;= right) {'{'}<br /> mid = left + (right-left)/2;<br /> {'}'}</code></div>
+        <div className="sp-ai-input">Ask anything about your studies... <Send size={13} /></div>
+      </div>
+    </div>
+  )
+}
+
+function OpportunitiesPreview() {
+  return (
+    <div className="sp-lower-window sp-opportunities-window">
+      <div className="sp-lower-title"><BriefcaseBusiness size={15} /> Opportunities</div>
+      <div className="sp-lower-content">
+        {[
+          ['G', 'Google Summer Internship', 'Software Engineering', 'Apply'],
+          ['M', 'Microsoft Learn Student Ambassador', 'Campus Program', 'Apply'],
+          ['🚀', 'Smart India Hackathon', 'National Level', 'View'],
+          ['F', 'Flipkart SDE Internship', 'Software Development', 'Apply'],
+        ].map(([letter, title, subtitle, action], i) => (
+          <div className="sp-opportunity-row" key={title}>
+            <span className={`sp-company-logo company-${i}`}>{letter}</span>
+            <div><strong>{title}</strong><small>{subtitle}</small></div>
+            <button type="button">{action}</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MobilePreview() {
+  return (
+    <div className="sp-phone">
+      <div className="sp-phone-notch" />
+      <div className="sp-phone-top"><span>9:41</span><span>● ● ▰</span></div>
+      <div className="sp-phone-brand"><GraduationCap size={17} /> SHARPOINT</div>
+      <div className="sp-phone-hero">
+        <small>Good Morning, Revanth! 👋</small>
+        <span>Learn. Collaborate. Grow.</span>
+      </div>
+      <div className="sp-phone-metrics"><span>5<small>Courses</small></span><span>3<small>Tasks</small></span><span>8<small>Events</small></span></div>
+      <div className="sp-phone-icons"><span><Users size={18} /><small>Community</small></span><span><Bot size={18} /><small>AI Assistant</small></span><span><Users size={18} /><small>Study Groups</small></span><span><MessageCircle size={18} /><small>Messages</small></span></div>
+      <div className="sp-phone-nav"><Home size={15} /><BookOpen size={15} /><Users size={15} /><Settings size={15} /></div>
+    </div>
+  )
+}
+
 export function LandingPage() {
-  const stats = usePublicStats()
-
-  const displayedStats = stats.data
-    ? [
-        { value: stats.data.students, label: 'Students', icon: Users, color: 'blue' },
-        { value: stats.data.teachers, label: 'Teachers', icon: GraduationCap, color: 'cyan' },
-        { value: stats.data.courses, label: 'Courses', icon: BookOpen, color: 'green' },
-        {
-          value: stats.data.opportunities,
-          label: 'Opportunities',
-          icon: Sparkles,
-          color: 'purple',
-        },
-      ]
-    : null
-
   return (
     <main className="sp-landing">
       <header className="sp-header">
         <div className="sp-header-inner">
-          <Link to="/" className="sp-brand" aria-label="SHARPOINT home">
-            <span className="sp-brand-icon">
-              <GraduationCap size={28} />
-            </span>
-
-            <span className="sp-brand-copy">
-              <strong>SHARPOINT</strong>
-              <small>Learn · Collaborate · Grow</small>
-            </span>
+          <Link to="/" className="sp-brand">
+            <span className="sp-brand-icon"><GraduationCap size={32} /></span>
+            <span className="sp-brand-copy"><strong>SHARPOINT</strong><small>Learn · Collaborate · Grow</small></span>
           </Link>
 
-          <nav className="sp-nav" aria-label="Main navigation">
+          <nav className="sp-nav">
             <a href="#home">Home</a>
             <a href="#students">For Students</a>
             <a href="#teachers">For Teachers</a>
@@ -95,235 +299,82 @@ export function LandingPage() {
 
           <div className="sp-header-actions">
             <ThemeToggle />
-
             <Button className="sp-header-cta" asChild>
-              <Link to="/sign-up">
-                Get Started <ArrowRight size={15} />
-              </Link>
+              <Link to="/sign-up">Get Started <ArrowRight size={15} /></Link>
             </Button>
           </div>
         </div>
       </header>
 
       <section id="home" className="sp-hero">
-        <div className="sp-campus-background" aria-hidden="true">
-          <CampusBackdrop className="sp-campus-art" />
-        </div>
-
-        <div className="sp-hero-overlay" aria-hidden="true" />
-        <div className="sp-hero-glow sp-glow-one" aria-hidden="true" />
-        <div className="sp-hero-glow sp-glow-two" aria-hidden="true" />
+        <div className="sp-hero-art" aria-hidden="true" />
+        <div className="sp-hero-shade" aria-hidden="true" />
 
         <div className="sp-hero-inner">
           <div className="sp-hero-copy">
-            <div className="sp-eyebrow">
-              <Sparkles size={14} />
-              YOUR CAMPUS. ONE CONNECTED WORLD.
-            </div>
-
-            <h1>
-              One Campus.
-              <br />
-              <span>Infinite Possibilities.</span>
-            </h1>
-
+            <div className="sp-eyebrow"><Sparkles size={14} /> YOUR CAMPUS. ONE CONNECTED WORLD.</div>
+            <h1>One Campus.<br /><span>Infinite Possibilities.</span></h1>
             <h2>Connect Minds. Share Knowledge. Build Your Future.</h2>
-
             <p className="sp-hero-description">
               SHARPOINT is an all-in-one academic and collaboration platform
               where students, teachers and communities come together to learn,
               teach, collaborate and grow.
             </p>
-
             <div className="sp-hero-actions">
               <Button className="sp-primary-button" size="lg" asChild>
-                <Link to="/sign-up">
-                  Get Started <ArrowRight size={17} />
-                </Link>
+                <Link to="/sign-up">Get Started <ArrowRight size={17} /></Link>
               </Button>
-
               <Button className="sp-video-button" variant="outline" size="lg" asChild>
-                <a href="#features">
-                  <Play size={16} />
-                  Explore Features
-                </a>
+                <a href="#features"><Play size={16} /> Watch Video</a>
               </Button>
             </div>
-
             <div className="sp-stats">
-              {(displayedStats ?? platformStats).map((item) => {
-                const Icon = item.icon
-                const value =
-                  typeof item.value === 'number'
-                    ? item.value.toLocaleString('en-IN') + '+'
-                    : item.value
-
-                return (
-                  <div className="sp-stat" key={item.label}>
-                    <span className={`sp-stat-icon ${item.color}`}>
-                      <Icon size={19} />
-                    </span>
-                    <strong>{value}</strong>
-                    <span>{item.label}</span>
-                  </div>
-                )
-              })}
+              {stats.map(({ value, label, icon: Icon, color }) => (
+                <div className="sp-stat" key={label}>
+                  <span className={`sp-stat-icon ${color}`}><Icon size={19} /></span>
+                  <strong>{value}</strong>
+                  <span>{label}</span>
+                </div>
+              ))}
             </div>
-
-            {stats.isLoading && (
-              <p className="sp-stats-note">Loading live platform statistics…</p>
-            )}
           </div>
 
           <div className="sp-hero-visual">
-            <div className="sp-visual-halo" aria-hidden="true" />
-            <div className="sp-campus-caption">
-              Students
-              <br />
-              Teachers
-              <br />
-              Together
-              <br />
-              Stronger
-            </div>
-
-            <div className="sp-student-frame">
-              <img
-                src="/avatars/owner-square.png"
-                alt="SHARPOINT student"
-                className="sp-student-image"
-              />
-              <div className="sp-image-shade" />
-            </div>
-
-            <div className="sp-laptop">
-              <div className="sp-laptop-logo">
-                <GraduationCap size={28} />
+            <div className="sp-campus-caption">Students<br />Teachers<br />Together<br />Stronger</div>
+            {featureCards.map(({ title, detail, icon: Icon, color }, index) => (
+              <div className={`sp-floating-card sp-floating-${index + 1}`} key={title}>
+                <span className={`sp-floating-icon ${color}`}><Icon size={19} /></span>
+                <span className="sp-floating-text"><strong>{title}</strong><small>{detail}</small></span>
               </div>
-              <span>Learn · Collaborate · Grow</span>
-            </div>
-
-            {features.map((feature, index) => {
-              const Icon = feature.icon
-
-              return (
-                <div
-                  className={`sp-floating-card sp-floating-${index + 1}`}
-                  key={feature.title}
-                >
-                  <span className={`sp-floating-icon ${feature.color}`}>
-                    <Icon size={20} />
-                  </span>
-
-                  <span className="sp-floating-text">
-                    <strong>{feature.title}</strong>
-                    <small>{feature.description}</small>
-                  </span>
-                </div>
-              )
-            })}
+            ))}
           </div>
         </div>
       </section>
 
-      <section id="features" className="sp-features-section">
-        <div className="sp-section-heading">
-          <span className="sp-section-kicker">EVERYTHING IN ONE PLACE</span>
-          <h2>Make your campus experience extraordinary.</h2>
-          <p>
-            Spend less time searching and more time learning, building
-            connections and discovering opportunities.
-          </p>
-        </div>
-
-        <div className="sp-feature-grid">
-          {features.map((feature) => {
-            const Icon = feature.icon
-
-            return (
-              <article className="sp-feature-card" key={feature.title}>
-                <span className={`sp-feature-icon ${feature.color}`}>
-                  <Icon size={23} />
-                </span>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
-                <a href="#get-started" aria-label={`Explore ${feature.title}`}>
-                  Explore <ArrowRight size={15} />
-                </a>
-              </article>
-            )
-          })}
-        </div>
+      <section id="students" className="sp-dashboard-section">
+        <StudentDashboardPreview />
       </section>
 
-      <section id="students" className="sp-audience-section">
-        <div className="sp-audience-card">
-          <span className="sp-feature-icon blue">
-            <GraduationCap size={25} />
-          </span>
-          <h2>Built for students</h2>
-          <p>
-            Organise your learning, join study groups, find resources and
-            discover opportunities to grow.
-          </p>
-          <Link to="/sign-up">
-            Join as a student <ArrowRight size={16} />
-          </Link>
-        </div>
-
-        <div className="sp-audience-card" id="teachers">
-          <span className="sp-feature-icon purple">
-            <BookOpen size={25} />
-          </span>
-          <h2>Designed for teachers</h2>
-          <p>
-            Share learning materials, support your students and bring academic
-            collaboration into one space.
-          </p>
-          <Link to="/sign-up">
-            Get started <ArrowRight size={16} />
-          </Link>
-        </div>
+      <section className="sp-lower-previews" id="features">
+        <div id="teachers"><TeacherDashboardPreview /></div>
+        <CommunityPreview />
+        <AIAssistantPreview />
+        <OpportunitiesPreview />
+        <MobilePreview />
       </section>
 
-      <section id="about" className="sp-about-section">
-        <div>
-          <span className="sp-section-kicker">THE SHARPOINT VISION</span>
-          <h2>Better connections. Better learning.</h2>
-        </div>
-        <p>
-          We bring students, teachers, learning resources and opportunities
-          together in a single academic community designed to help everyone
-          move forward.
-        </p>
-      </section>
-
-      <section id="get-started" className="sp-final-cta">
-        <span className="sp-final-icon">
-          <GraduationCap size={30} />
-        </span>
-        <h2>Your campus journey starts here.</h2>
-        <p>Connect with your campus community and discover what is possible.</p>
-        <Button className="sp-primary-button" size="lg" asChild>
-          <Link to="/sign-up">
-            Get Started Today <ArrowRight size={17} />
-          </Link>
+      <section className="sp-bottom-cta" id="about">
+        <div><Sparkles size={21} /><h2>One campus. Infinite possibilities.</h2></div>
+        <p>Learn together, build connections, and make your next opportunity happen.</p>
+        <Button className="sp-primary-button" asChild>
+          <Link to="/sign-up">Join SHARPOINT <ArrowRight size={16} /></Link>
         </Button>
       </section>
 
       <footer className="sp-footer">
-        <Link to="/" className="sp-footer-brand">
-          <GraduationCap size={22} />
-          SHARPOINT
-        </Link>
-
+        <Link to="/" className="sp-footer-brand"><GraduationCap size={22} /> SHARPOINT</Link>
         <p>Learn · Collaborate · Grow</p>
-
-        <div className="sp-footer-links">
-          <Link to="/privacy">Privacy</Link>
-          <Link to="/terms">Terms</Link>
-        </div>
-
+        <div className="sp-footer-links"><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link></div>
         <small>© {new Date().getFullYear()} SHARPOINT. All rights reserved.</small>
       </footer>
     </main>
