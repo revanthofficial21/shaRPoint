@@ -47,7 +47,14 @@
 }
 .sp-hero-art {
   position:absolute; inset:0; z-index:-3;
-  background-image:url('/avatars/campus-student-hero.png');
+  /*
+   * This pointed at /avatars/campus-student-hero.png, which was never added to
+   * the repository — so the hero art 404'd and the hero fell back to a flat dark
+   * rectangle. Now it points at a file that exists. To use a photograph, drop it
+   * in public/avatars/ and change this one line; the shade below already assumes
+   * a busy image.
+   */
+  background-image:url('/avatars/campus-night.svg');
   background-size:cover;
   background-position:center 42%;
 }
