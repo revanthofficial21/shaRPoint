@@ -59,42 +59,42 @@
 .sp-header-cta { padding:0 20px!important; }
 .sp-hero {
   position:relative; isolation:isolate;
-  min-height:520px; overflow:hidden;
+  min-height:780px; overflow:hidden;
   background:#000b2c;
 }
 .sp-hero-art {
   position:absolute; inset:0; z-index:-3;
   /*
-   * Two layers: the student illustration on top of the campus-at-night backdrop.
+   * Two layers: the student illustration over the campus backdrop.
    *
-   * This used to point at /avatars/campus-student-hero.png, which was never added
-   * to the repository — so the hero art 404'd and the hero fell back to a flat
-   * dark rectangle. Both files now exist and a test guards the references.
+   * Both are WebP rather than PNG — 167 KB for the figure (was 1341 KB) and
+   * 316 KB for the backdrop (was 2436 KB), with no visible loss at these sizes.
    *
-   * The illustration is WebP, not PNG: same 1100px artwork with alpha, 138 KB
-   * instead of 1341 KB.
+   * The backdrop is the supplied painted artwork. public/avatars/campus-night.svg
+   * is the procedurally generated fallback (scripts/generate-campus-backdrop.py)
+   * and is kept in the repository in case the painting is ever removed.
    */
   background-image:
     url('/avatars/campus-student-hero.webp'),
-    url('/avatars/campus-night.svg');
+    url('/avatars/campus-hero.webp');
   /*
    * The reference frames the student centre-right and nearly full height, with
    * the body bleeding off the bottom edge. 92% / right 5% left him too small and
    * pinned to the far edge, which is why the hero read as mostly empty navy.
    */
-  background-size:auto 86%, cover;
-  background-position:right 42% bottom, center;
+  background-size:auto 88%, cover;
+  background-position:right 26% bottom, center;
   background-repeat:no-repeat, no-repeat;
   background-position:center 42%;
 }
 .sp-hero-shade {
   position:absolute; inset:0; z-index:-2; pointer-events:none;
   background:
-    linear-gradient(90deg,rgba(0,11,44,.97) 0%,rgba(0,11,44,.88) 28%,rgba(0,11,44,.36) 49%,rgba(0,11,44,.06) 100%),
-    linear-gradient(0deg,#000b2c 0%,transparent 18%,transparent 80%,rgba(0,11,44,.18) 100%);
+    linear-gradient(90deg,rgba(0,11,44,.88) 0%,rgba(0,11,44,.64) 30%,rgba(0,11,44,.18) 52%,rgba(0,11,44,0) 100%),
+    linear-gradient(0deg,#000b2c 0%,transparent 16%,transparent 82%,rgba(0,11,44,.14) 100%);
 }
 .sp-hero-inner {
-  width:min(1600px,100%); min-height:520px; margin:auto;
+  width:min(1600px,100%); min-height:780px; margin:auto;
   padding:42px 32px 28px;
   display:grid; grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);
   gap:20px; align-items:center;
@@ -178,10 +178,10 @@
   box-shadow:0 8px 28px rgba(0,0,0,.24),0 0 18px rgba(44,112,255,.16);
   backdrop-filter:blur(12px); z-index:4;
 }
-.sp-floating-1 { top:26%; right:2%; }
-.sp-floating-2 { top:50%; right:2%; }
-.sp-floating-3 { top:74%; right:2%; }
-.sp-floating-4 { bottom:12%; right:30%; }
+.sp-floating-1 { top:32%; right:1%; }
+.sp-floating-2 { top:50%; right:1%; }
+.sp-floating-3 { top:68%; right:1%; }
+.sp-floating-4 { bottom:16%; right:24%; }
 .sp-floating-icon {
   width:36px; height:36px; flex-shrink:0;
   display:grid; place-items:center; border-radius:10px;
