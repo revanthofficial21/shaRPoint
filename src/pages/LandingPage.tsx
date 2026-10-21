@@ -1,32 +1,31 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
-import { CampusBackdrop } from '@/components/common/CampusBackdrop'
 import { CartoonAvatar } from '@/components/common/CartoonAvatar'
 import {
   ArrowRight,
+  Bell,
   BookOpen,
   Bot,
   Briefcase,
-  FolderOpen,
+  CalendarDays,
+  CheckCircle2,
+  ClipboardList,
   GraduationCap,
+  Heart,
+  LayoutDashboard,
+  MessageCircle,
   Play,
+  Search,
+  Send,
+  Sparkles,
   Users,
+  FolderOpen,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { usePublicStats } from '@/features/stats/hooks'
-
-/*
- * Layout mirrors the light reference: nav, a four-line headline with only the
- * last line in the brand gradient, two pill CTAs, a four-item statistic strip
- * with icon tiles above the numbers, and an illustration panel on the right
- * carrying floating feature chips and a ring of avatars.
- *
- * The statistics are REAL — public_platform_stats() returns five aggregate
- * counts and nothing else, and the strip hides itself if that function is
- * missing rather than rendering zeros.
- */
+import './LandingPage.css'
 
 const NAV = [
   ['Home', '/'],
@@ -36,37 +35,130 @@ const NAV = [
   ['About', '#about'],
 ]
 
-const HERO_CHIPS = [
-  { icon: Users, title: 'Study Groups', body: 'Collaborate & Learn', position: 'left-2 top-8', tone: 'bg-tile-violet/15 text-tile-violet' },
-  { icon: Bot, title: 'AI Study Assistant', body: 'Get instant help', position: 'right-2 top-24', tone: 'bg-tile-sky/15 text-tile-sky' },
-  { icon: Briefcase, title: 'Internships', body: 'Explore Opportunities', position: 'left-6 bottom-32', tone: 'bg-tile-amber/15 text-tile-amber' },
-  { icon: FolderOpen, title: 'Academic Resources', body: 'Notes, Projects, Materials', position: 'right-4 bottom-16', tone: 'bg-tile-green/15 text-tile-green' },
-]
-
-// Names, not initials — the cartoon is derived from the name, so these four
-// render as four visibly different people.
-const AVATARS = ['Priya Sharma', 'Arjun Mehta', 'Karthik Reddy', 'Vikram Patel']
-
 const FEATURES = [
-  { icon: Users, tone: 'bg-tile-violet/15 text-tile-violet', title: 'Collaborate & Learn', body: 'Study groups, a campus feed and direct messages — so nobody revises alone.' },
-  { icon: BookOpen, tone: 'bg-tile-blue/15 text-tile-blue', title: 'Courses & Materials', body: 'Every course, note, paper and PYQ in one place, organised by subject.' },
-  { icon: Briefcase, tone: 'bg-tile-amber/15 text-tile-amber', title: 'Opportunities', body: 'Internships, hackathons and competitions on one board, with a tracker.' },
-  { icon: Bot, tone: 'bg-tile-sky/15 text-tile-sky', title: 'AI Study Assistant', body: 'Explains concepts and builds revision plans. It teaches — it will not do the work.' },
+  { icon: Users, tone: 'violet', title: 'Collaborate & Learn', body: 'Study groups, a campus feed and direct messages — so nobody revises alone.' },
+  { icon: BookOpen, tone: 'blue', title: 'Courses & Materials', body: 'Every course, note, paper and PYQ in one place, organised by subject.' },
+  { icon: Briefcase, tone: 'amber', title: 'Opportunities', body: 'Internships, hackathons and competitions on one board, with a tracker.' },
+  { icon: Bot, tone: 'sky', title: 'AI Study Assistant', body: 'Understand concepts, summarise notes and build a revision plan.' },
 ]
+
+const HERO_CHIPS = [
+  { icon: Users, title: 'Study Groups', body: 'Find your people', cls: 'chip-study' },
+  { icon: Bot, title: 'AI Study Assistant', body: 'Learn smarter', cls: 'chip-ai' },
+  { icon: Briefcase, title: 'Internships', body: 'Explore opportunities', cls: 'chip-internship' },
+  { icon: FolderOpen, title: 'Academic Resources', body: 'Notes, projects & more', cls: 'chip-resources' },
+]
+
+const AVATARS = ['Priya Sharma', 'Arjun Mehta', 'Karthik Reddy', 'Vikram Patel']
 
 function formatCount(value: number) {
   if (value >= 1000) return `${(value / 1000).toFixed(1).replace(/\.0$/, '')}K+`
   return String(value)
 }
 
-/** "1 Student", not "1 Students". Small counts are the honest ones. */
-function pluralise(count: number, singular: string, plural = `${singular}s`) {
-  return count === 1 ? singular : plural
+function pluralise(count: number, singular: string) {
+  return count === 1 ? singular : `${singular}s`
+}
+
+function Brand() {
+  return (
+    <Link to="/" className="sp-brand" aria-label="SHARPOINT home">
+      <span className="sp-brand-mark"><GraduationCap size={27} /></span>
+      <span className="sp-brand-name">SHARPOINT<span>LEARN · COLLABORATE · GROW</span></span>
+    </Link>
+  )
+}
+
+function DashboardPreview() {
+  return (
+    <div className="sp-dashboard-stage" aria-label="Preview of the SHARPOINT student dashboard">
+      <div className="sp-dashboard-window">
+        <div className="sp-window-top">
+          <span className="sp-window-brand"><GraduationCap size={17} /> SHARPOINT</span>
+          <div className="sp-window-search"><Search size={12} /> Search courses, people, resources...</div>
+          <Bell size={14} />
+          <span className="sp-window-user"><span>RK</span> Revanth</span>
+        </div>
+        <div className="sp-window-body">
+          <aside className="sp-window-sidebar">
+            {[
+              [LayoutDashboard, 'Home'],
+              [Users, 'Community'],
+              [BookOpen, 'My Courses'],
+              [ClipboardList, 'Assignments'],
+              [FolderOpen, 'Resources'],
+              [Briefcase, 'Opportunities'],
+              [MessageCircle, 'Messages'],
+              [Bot, 'AI Assistant'],
+            ].map(([Icon, label]: any, i) => (
+              <div className={`sp-side-item ${i === 0 ? 'is-active' : ''}`} key={label}>
+                <Icon size={12} /> <span>{label}</span>
+              </div>
+            ))}
+          </aside>
+          <div className="sp-window-content">
+            <div className="sp-dash-heading">
+              <div><h3>Good morning, Revanth! <span>✦</span></h3><p>Keep learning, keep collaborating, keep growing.</p></div>
+              <div className="sp-date-pill"><CalendarDays size={11} /> This week</div>
+            </div>
+            <div className="sp-stat-grid">
+              <div className="sp-stat"><span className="sp-stat-icon purple"><BookOpen size={14}/></span><b>05</b><small>My Courses</small></div>
+              <div className="sp-stat"><span className="sp-stat-icon orange"><ClipboardList size={14}/></span><b>03</b><small>Assignments</small></div>
+              <div className="sp-stat"><span className="sp-stat-icon blue"><MessageCircle size={14}/></span><b>12</b><small>Messages</small></div>
+              <div className="sp-stat"><span className="sp-stat-icon green"><Briefcase size={14}/></span><b>08</b><small>Opportunities</small></div>
+            </div>
+            <div className="sp-dash-grid">
+              <div className="sp-mini-panel sp-schedule">
+                <div className="sp-mini-title">Today's Schedule <span>View all ↗</span></div>
+                {[
+                  ['Data Structures', '09:00 AM – 10:00 AM', 'LIVE', 'green'],
+                  ['Web Development', '11:00 AM – 12:00 PM', 'SOON', 'blue'],
+                  ['AI & Machine Learning', '02:00 PM – 03:00 PM', 'UP NEXT', 'purple'],
+                ].map(([title, time, badge, tone]) => <div className="sp-class-row" key={title}>
+                  <span className={`sp-class-icon ${tone}`}><BookOpen size={12}/></span>
+                  <span><b>{title}</b><small>{time}</small></span>
+                  <em className={tone}>{badge}</em>
+                </div>)}
+              </div>
+              <div className="sp-mini-panel sp-progress">
+                <div className="sp-mini-title">Your Progress</div>
+                <div className="sp-progress-ring"><div><b>75%</b><small>Complete</small></div></div>
+                <div className="sp-progress-line"><span>Courses completed</span><b>2/5</b></div>
+                <div className="sp-progress-track"><i /></div>
+                <div className="sp-progress-line"><span>Resources saved</span><b>12</b></div>
+                <div className="sp-progress-track second"><i /></div>
+              </div>
+            </div>
+            <div className="sp-quick-panel">
+              <div className="sp-mini-title">Quick Actions</div>
+              <div className="sp-quick-actions">
+                <span><Users size={13}/> Join Study Group</span>
+                <span><Sparkles size={13}/> Ask AI Assistant</span>
+                <span><Send size={13}/> Create a Post</span>
+                <span><FolderOpen size={13}/> Upload Material</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="sp-float-badge sp-float-community"><span><Users size={17}/></span><div><b>Campus Community</b><small>Connect with your people</small></div></div>
+      <div className="sp-float-badge sp-float-ai"><span><Sparkles size={17}/></span><div><b>AI Study Assistant</b><small>Learn at your own pace</small></div></div>
+      <div className="sp-avatar-orbit" aria-hidden="true">
+        {AVATARS.map((name, i) => <span className={`sp-orbit-avatar orbit-${i + 1}`} key={name}><CartoonAvatar name={name} size={42}/></span>)}
+      </div>
+    </div>
+  )
+}
+
+function MiniDashboardCard({ title, icon: Icon, children, className = '' }: { title: string; icon: any; children: ReactNode; className?: string }) {
+  return <div className={`sp-mini-dashboard ${className}`}>
+    <div className="sp-mini-dashboard-head"><span><Icon size={14}/></span>{title}<i /></div>
+    {children}
+  </div>
 }
 
 export function LandingPage() {
   const stats = usePublicStats()
-
   const statTiles = stats.data
     ? [
         { label: 'Students', singular: 'Student', value: stats.data.students, icon: Users },
@@ -77,295 +169,120 @@ export function LandingPage() {
     : []
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* ── nav ──────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-        <div className="container flex h-16 items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5">
-            <span className="bg-brand-gradient shadow-brand grid h-9 w-9 shrink-0 place-items-center rounded-xl">
-              <GraduationCap className="h-5 w-5 text-primary-foreground" aria-hidden="true" />
-            </span>
-            <span className="text-lg font-bold tracking-tight">SHARPOINT</span>
-          </Link>
-
-          <nav className="hidden items-center gap-1 text-sm font-medium lg:flex">
-            {NAV.map(([label, href]) => (
-              <a
-                key={label}
-                href={href}
-                className="rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                {label}
-              </a>
-            ))}
+    <main className="sp-landing">
+      <header className="sp-header">
+        <div className="sp-header-inner">
+          <Brand />
+          <nav className="sp-main-nav" aria-label="Main navigation">
+            {NAV.map(([label, href]) => <a key={label} href={href}>{label}</a>)}
           </nav>
-
-          <div className="flex items-center gap-2">
+          <div className="sp-header-actions">
             <ThemeToggle />
-            <Button variant="ghost" className="hidden sm:inline-flex" asChild>
-              <Link to="/sign-in">Login</Link>
-            </Button>
-            <Button className="rounded-full" asChild>
-              <Link to="/sign-up">Get Started</Link>
-            </Button>
+            <Button variant="ghost" className="sp-login-button" asChild><Link to="/sign-in">Login</Link></Button>
+            <Button className="sp-header-cta" asChild><Link to="/sign-up">Get Started <ArrowRight size={15}/></Link></Button>
           </div>
         </div>
       </header>
 
-      {/* ── hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 -z-20 hidden h-full w-full dark:block" aria-hidden="true">
-          <CampusBackdrop className="h-full w-full" />
-        </div>
-        <div className="pointer-events-none absolute inset-0 -z-10 hidden bg-gradient-to-b from-background/55 via-background/75 to-background dark:block" aria-hidden="true" />
-        <div className="pointer-events-none absolute -right-32 -top-24 -z-10 h-[30rem] w-[30rem] rounded-full bg-brand-to/25 blur-3xl dark:hidden" aria-hidden="true" />
-        <div className="pointer-events-none absolute -left-40 top-40 -z-10 h-[26rem] w-[26rem] rounded-full bg-brand-from/20 blur-3xl dark:hidden" aria-hidden="true" />
-
-        <div className="container grid gap-12 py-16 lg:grid-cols-2 lg:items-center lg:py-24">
-          {/* left */}
-          <div className="space-y-6">
-            <h1 className="text-4xl font-bold leading-[1.06] tracking-tight sm:text-5xl lg:text-6xl">
-              Connect
-              <br />
-              Learn
-              <br />
-              Collaborate
-              <br />
-              <span className="text-brand-gradient">Grow Together</span>
-            </h1>
-
-            <p className="max-w-md leading-relaxed text-muted-foreground">
-              SHARPOINT is an all-in-one academic and collaboration platform for students,
-              teachers, and educational communities.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Button size="lg" className="rounded-full" asChild>
-                <Link to="/sign-up">Get Started</Link>
-              </Button>
-              <Button size="lg" variant="outline" className="rounded-full" asChild>
-                <Link to="/sign-in">
-                  <Play className="h-4 w-4" aria-hidden="true" />
-                  Watch Video
-                </Link>
-              </Button>
+      <section className="sp-hero">
+        <div className="sp-hero-stars" aria-hidden="true" />
+        <div className="sp-hero-glow sp-glow-one" aria-hidden="true" />
+        <div className="sp-hero-glow sp-glow-two" aria-hidden="true" />
+        <div className="sp-hero-inner">
+          <div className="sp-hero-copy">
+            <div className="sp-eyebrow"><span /> THE CAMPUS, CONNECTED</div>
+            <h1>One Campus.<br/><span>Infinite Possibilities.</span></h1>
+            <h2>Connect Minds. Share Knowledge. Build Your Future.</h2>
+            <p className="sp-hero-description">SHARPOINT is your all-in-one academic and collaboration space — where students, teachers and communities come together to learn, teach and grow.</p>
+            <div className="sp-hero-buttons">
+              <Button size="lg" className="sp-primary-cta" asChild><Link to="/sign-up">Get Started <ArrowRight size={17}/></Link></Button>
+              <Button size="lg" variant="outline" className="sp-video-cta" asChild><a href="#features"><Play size={15}/> Explore Features</a></Button>
             </div>
-
-            {/* statistic strip */}
-            {stats.isLoading && (
-              <div className="grid max-w-lg grid-cols-4 gap-4 pt-6">
-                {[0, 1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-16" />
-                ))}
-              </div>
-            )}
-
-            {statTiles.length > 0 && (
-              <div className="grid max-w-xl grid-cols-2 gap-6 pt-6 sm:grid-cols-4">
-                {statTiles.map((tile) => (
-                  <div key={tile.label} className="space-y-2">
-                    <span className="ring-hairline grid h-10 w-10 place-items-center rounded-xl bg-tile-blue/15">
-                      <tile.icon className="h-5 w-5 text-tile-blue" aria-hidden="true" />
-                    </span>
-                    <div>
-                      <p className="text-xl font-bold tabular-nums leading-none">
-                        {formatCount(tile.value)}
-                      </p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {pluralise(tile.value, tile.singular)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            {statTiles.length > 0 && <div className="sp-hero-stats">
+              {statTiles.map((tile) => <div className="sp-hero-stat" key={tile.label}>
+                <span><tile.icon size={18}/></span>
+                <b>{formatCount(tile.value)}</b>
+                <small>{pluralise(tile.value, tile.singular)}</small>
+              </div>)}
+            </div>}
+            {stats.isLoading && <div className="sp-stats-loading">Bringing your campus together...</div>}
+            <div className="sp-handwritten">Students<br/>Teachers<br/>Together stronger <ArrowRight size={23}/></div>
           </div>
-
-          {/* right — portrait panel, chips floating over it */}
-          <div className="relative mx-auto h-[24rem] w-full max-w-lg lg:h-[30rem]">
-            <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-brand-from/25 via-brand-to/20 to-transparent" />
-            <div className="absolute inset-x-6 bottom-0 top-16 rounded-[2rem] bg-gradient-to-br from-brand-to/30 to-brand-from/20 blur-2xl" />
-
-            {/* The photograph sits in a soft-edged frame; the chips read against it. */}
-            <div className="absolute inset-x-10 bottom-6 top-10 overflow-hidden rounded-[2rem] border border-border/60 bg-muted shadow-pop">
-              <img
-                src="/avatars/owner-square.png"
-                alt="A SHARPOINT student"
-                className="h-full w-full object-cover object-top"
-                loading="eager"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/45 via-transparent to-transparent" />
+          <div className="sp-hero-visual">
+            <div className="sp-campus-silhouette" aria-hidden="true">
+              <div className="sp-campus-building building-one"><i/><i/><i/><i/></div>
+              <div className="sp-campus-building building-two"><i/><i/><i/><i/><i/><i/></div>
+              <div className="sp-campus-moon" />
             </div>
-
-            {/* avatar ring */}
-            {AVATARS.map((person, i) => {
-              const spots = [
-                'left-6 top-24',
-                'right-10 top-8',
-                'left-16 bottom-24',
-                'right-16 bottom-32',
-              ]
-              return (
-                <span
-                  key={person}
-                  className={`absolute ${spots[i]} overflow-hidden rounded-full ring-4 ring-background shadow-card`}
-                >
-                  <CartoonAvatar name={person} size={46} />
-                </span>
-              )
-            })}
-
-            {/* floating chips */}
-            {HERO_CHIPS.map((chip) => (
-              <div
-                key={chip.title}
-                className={`absolute ${chip.position} flex items-center gap-2.5 rounded-xl border border-border/70 bg-card/95 p-2.5 shadow-card backdrop-blur`}
-              >
-                <span className={`ring-hairline grid h-9 w-9 shrink-0 place-items-center rounded-lg ${chip.tone}`}>
-                  <chip.icon className="h-4 w-4" aria-hidden="true" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block whitespace-nowrap text-xs font-semibold">{chip.title}</span>
-                  <span className="block whitespace-nowrap text-[10px] text-muted-foreground">
-                    {chip.body}
-                  </span>
-                </span>
-              </div>
-            ))}
+            <div className="sp-owner-avatar">
+              <img src="/avatars/owner-square.png" alt="SHARPOINT illustrated student avatar" />
+              <div className="sp-avatar-caption"><span>✦</span> Learn. Collaborate. Grow.</div>
+            </div>
+            {HERO_CHIPS.map((chip) => <div className={`sp-hero-chip ${chip.cls}`} key={chip.title}>
+              <span><chip.icon size={18}/></span><div><b>{chip.title}</b><small>{chip.body}</small></div>
+            </div>)}
+            <DashboardPreview />
           </div>
         </div>
       </section>
 
-      {/* ── features ─────────────────────────────────────────────────────── */}
-      <section id="features" className="border-y border-border/60 bg-card py-20">
-        <div className="container space-y-12">
-          <div className="max-w-2xl space-y-3">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Built for the whole campus
-            </h2>
-            <p className="text-muted-foreground">
-              Students, teachers and administrators get their own view of the same platform — and
-              only the parts they are entitled to.
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((feature) => (
-              <Card key={feature.title} className="transition-colors hover:border-primary/40">
-                <CardHeader>
-                  <span className={`ring-hairline grid h-11 w-11 place-items-center rounded-xl ${feature.tone}`}>
-                    <feature.icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <CardTitle className="pt-3 text-base">{feature.title}</CardTitle>
-                  <CardDescription className="leading-relaxed">{feature.body}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
+      <section className="sp-preview-strip" aria-label="SHARPOINT platform preview">
+        <div className="sp-preview-intro"><span className="sp-section-kicker">ONE PLATFORM. EVERY ROLE.</span><h2>Everything your campus needs,<br/><span>beautifully connected.</span></h2><p>Purpose-built workspaces for every part of your academic journey.</p></div>
+        <div className="sp-preview-cards">
+          <MiniDashboardCard title="Teacher Dashboard" icon={GraduationCap} className="teacher-preview">
+            <div className="sp-preview-metrics"><span><b>04</b><small>Courses</small></span><span><b>256</b><small>Students</small></span><span><b>18</b><small>To grade</small></span></div>
+            <div className="sp-preview-chart"><i/><i/><i/><i/><i/><i/><i/></div>
+            <div className="sp-preview-list"><span/><span/><span/></div>
+          </MiniDashboardCard>
+          <MiniDashboardCard title="Community Feed" icon={Users} className="community-preview">
+            <div className="sp-preview-post"><span className="sp-preview-avatar">RK</span><div><b>Revanth Kumar</b><small>Just shared a new project ✦</small></div></div>
+            <div className="sp-preview-post-image"><Code2Fallback /></div>
+            <div className="sp-preview-post-actions"><span><Heart size={11}/> 42</span><span><MessageCircle size={11}/> 12</span><span>Share ↗</span></div>
+          </MiniDashboardCard>
+          <MiniDashboardCard title="AI Study Assistant" icon={Bot} className="assistant-preview">
+            <div className="sp-ai-preview-title"><span><Sparkles size={17}/></span><div><b>Your personal study companion</b><small>What are we learning today?</small></div></div>
+            <div className="sp-ai-bubble">Explain binary search with an example.</div>
+            <div className="sp-ai-answer"><span>✦</span><div><b>Binary search</b><small>A faster way to find an item in a sorted list by repeatedly checking the middle.</small></div></div>
+            <div className="sp-ai-input">Ask anything about your studies... <Send size={12}/></div>
+          </MiniDashboardCard>
+          <MiniDashboardCard title="Opportunities" icon={Briefcase} className="opportunity-preview">
+            {['Google Student Program', 'Microsoft Learn', 'Smart India Hackathon'].map((item, i) => <div className="sp-opportunity-row" key={item}><span className={`sp-opportunity-logo logo-${i}`}>{['G','⊞','✦'][i]}</span><div><b>{item}</b><small>{['Internship','Student community','National challenge'][i]}</small></div><ArrowRight size={13}/></div>)}
+          </MiniDashboardCard>
         </div>
       </section>
 
-      {/* ── roles ────────────────────────────────────────────────────────── */}
-      <section id="roles" className="container py-20">
-        <div className="mb-12 max-w-2xl space-y-3">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            One platform, three points of view
-          </h2>
-          <p className="text-muted-foreground">
-            Sign up as a student or a teacher. Administrator access is granted deliberately — never
-            through a public form.
-          </p>
-        </div>
+      <section id="features" className="sp-features-section">
+        <div className="sp-section-heading"><span className="sp-section-kicker">MADE FOR YOUR NEXT STEP</span><h2>More than a platform.<br/><span>Your campus advantage.</span></h2><p>Everything you need to learn together, find opportunities and make progress.</p></div>
+        <div className="sp-feature-grid">{FEATURES.map((feature) => <Card key={feature.title} className="sp-feature-card">
+          <CardHeader><span className={`sp-feature-icon ${feature.tone}`}><feature.icon size={22}/></span><CardTitle>{feature.title}</CardTitle><CardDescription>{feature.body}</CardDescription></CardHeader>
+        </Card>)}</div>
+      </section>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            { icon: GraduationCap, tone: 'bg-tile-blue/15 text-tile-blue', title: 'Students', blurb: 'Everything you need to keep up — in one tab.', points: ['Your own dashboard and leaderboard rank', 'Submit and track every assignment', 'Study groups and direct messages', 'Internships before your friends hear about them'] },
-            { icon: Users, tone: 'bg-tile-violet/15 text-tile-violet', title: 'Teachers', blurb: 'Less admin. More teaching.', points: ['Manage your courses and materials', 'Create assignments and grade submissions', 'See who is falling behind, per course', 'Publish announcements in one click'] },
-            { icon: BookOpen, tone: 'bg-tile-green/15 text-tile-green', title: 'Administrators', blurb: 'Total visibility, without the spreadsheets.', points: ['Users, roles and suspensions in one place', 'Moderate content and resolve reports', 'Departments, courses and the catalogue', 'A complete, tamper-proof audit trail'] },
-          ].map((role) => (
-            <Card key={role.title}>
-              <CardHeader>
-                <span className={`ring-hairline grid h-12 w-12 place-items-center rounded-xl ${role.tone}`}>
-                  <role.icon className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <CardTitle className="pt-3">{role.title}</CardTitle>
-                <CardDescription>{role.blurb}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2.5">
-                {role.points.map((point) => (
-                  <div key={point} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tile-green" aria-hidden="true" />
-                    {point}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          ))}
+      <section id="roles" className="sp-roles-section">
+        <div className="sp-section-heading"><span className="sp-section-kicker">ONE CAMPUS. THREE EXPERIENCES.</span><h2>A better workspace for <span>everyone.</span></h2><p>Personalised experiences for students and teachers, with platform-wide control reserved for authorised administrators.</p></div>
+        <div className="sp-role-grid">
+          <RoleCard icon={GraduationCap} title="For Students" subtitle="Own your learning journey." bullets={['Track courses and assignments','Join study groups and conversations','Discover internships and hackathons']} link="/sign-up"/>
+          <RoleCard icon={Users} title="For Teachers" subtitle="Spend more time teaching." bullets={['Manage courses and learning materials','Create assignments and review submissions','Monitor progress and share announcements']} link="/sign-up"/>
+          <RoleCard icon={LayoutDashboard} title="For Admins & Owners" subtitle="Keep the whole platform in sync." bullets={['Manage users, roles and departments','Moderate content and review reports','Monitor analytics and audit activity']} link="/sign-in"/>
         </div>
       </section>
 
-      {/* ── about / trust ────────────────────────────────────────────────── */}
-      <section id="about" className="border-y border-border/60 bg-card py-20">
-        <div className="container grid gap-10 lg:grid-cols-2 lg:items-center">
-          <div className="space-y-4">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Your work stays yours.</h2>
-            <p className="text-muted-foreground">
-              Access is enforced inside the database itself, not hidden behind a button. Every one
-              of these rules has been tested by trying to break it.
-            </p>
-          </div>
+      <section id="about" className="sp-trust-section"><div className="sp-trust-inner">
+        <div><span className="sp-section-kicker">BUILT AROUND TRUST</span><h2>Your campus.<br/><span>Your space to grow.</span></h2><p>SHARPOINT brings academic life together while keeping access aligned with each person's role.</p><Button className="sp-primary-cta" asChild><Link to="/sign-up">Join SHARPOINT <ArrowRight size={16}/></Link></Button></div>
+        <div className="sp-trust-points">{['Role-aware workspaces for students, teachers and administrators','A shared home for courses, collaboration and opportunities','Designed to grow with your campus community'].map((text) => <div key={text}><CheckCircle2 size={20}/><span>{text}</span></div>)}</div>
+      </div></section>
 
-          <div className="space-y-3">
-            {[
-              'Grades are visible only to you, your teacher and administrators — nobody else.',
-              'Direct messages are readable only by the people in the conversation.',
-              'Nobody can grant themselves a role, and only an owner can appoint another.',
-              'Every administrative action is written to an append-only audit log.',
-            ].map((item) => (
-              <div key={item} className="flex items-start gap-3 rounded-xl border border-border/70 bg-background p-4">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-tile-green" aria-hidden="true" />
-                <p className="text-sm text-muted-foreground">{item}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <section className="sp-final-cta"><div className="sp-final-cta-inner"><span className="sp-final-icon"><GraduationCap size={29}/></span><span className="sp-section-kicker">YOUR NEXT CHAPTER STARTS HERE</span><h2>One Campus. Infinite Possibilities.</h2><p>Learn together, build your future, and find your people with SHARPOINT.</p><Button size="lg" className="sp-primary-cta" asChild><Link to="/sign-up">Get Started <ArrowRight size={17}/></Link></Button></div></section>
 
-      {/* ── cta ──────────────────────────────────────────────────────────── */}
-      <section className="container py-24">
-        <div className="border-brand-gradient flex flex-col items-center gap-5 rounded-3xl px-6 py-16 text-center">
-          <span className="bg-brand-gradient shadow-brand grid h-14 w-14 place-items-center rounded-2xl">
-            <GraduationCap className="h-7 w-7 text-primary-foreground" aria-hidden="true" />
-          </span>
-          <h2 className="max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
-            Your campus is already here.
-          </h2>
-          <p className="max-w-xl text-muted-foreground">
-            Create a student or teacher account and you are in — courses, groups, assignments and
-            opportunities waiting on the other side.
-          </p>
-          <Button size="lg" className="rounded-full" asChild>
-            <Link to="/sign-up">
-              Get Started <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      <footer className="border-t border-border/60 py-10">
-        <div className="container flex flex-col items-center justify-between gap-4 text-sm text-muted-foreground sm:flex-row">
-          <div className="flex items-center gap-2.5">
-            <span className="bg-brand-gradient grid h-7 w-7 place-items-center rounded-lg">
-              <GraduationCap className="h-4 w-4 text-primary-foreground" aria-hidden="true" />
-            </span>
-            <span>© {new Date().getFullYear()} SHARPOINT</span>
-          </div>
-          <nav className="flex gap-5">
-            <Link to="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
-            <Link to="/terms" className="transition-colors hover:text-foreground">Terms</Link>
-          </nav>
-        </div>
-      </footer>
-    </div>
+      <footer className="sp-footer"><Brand/><p>© {new Date().getFullYear()} SHARPOINT · Learn · Collaborate · Grow</p><nav><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link></nav></footer>
+    </main>
   )
+}
+
+function RoleCard({ icon: Icon, title, subtitle, bullets, link }: { icon: any; title: string; subtitle: string; bullets: string[]; link: string }) {
+  return <Card className="sp-role-card"><CardHeader><span className="sp-role-icon"><Icon size={23}/></span><CardTitle>{title}</CardTitle><CardDescription>{subtitle}</CardDescription></CardHeader><CardContent><ul>{bullets.map((bullet) => <li key={bullet}><CheckCircle2 size={15}/>{bullet}</li>)}</ul><Button variant="outline" asChild><Link to={link}>Explore {title} <ArrowRight size={14}/></Link></Button></CardContent></Card>
+}
+
+function Code2Fallback() {
+  return <div className="sp-code-preview"><div><i/><i/><i/></div><span>const campus = "connected";</span><span>learnTogether();</span><span>buildSomething();</span></div>
 }
