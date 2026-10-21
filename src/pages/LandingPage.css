@@ -77,8 +77,13 @@
   background-image:
     url('/avatars/campus-student-hero.webp'),
     url('/avatars/campus-night.svg');
-  background-size:auto 92%, cover;
-  background-position:right 5% bottom, center;
+  /*
+   * The reference frames the student centre-right and nearly full height, with
+   * the body bleeding off the bottom edge. 92% / right 5% left him too small and
+   * pinned to the far edge, which is why the hero read as mostly empty navy.
+   */
+  background-size:auto 86%, cover;
+  background-position:right 42% bottom, center;
   background-repeat:no-repeat, no-repeat;
   background-position:center 42%;
 }
@@ -157,6 +162,14 @@
   font-style:italic; line-height:1.1; text-align:center;
   text-shadow:0 0 18px #a44cff; transform:rotate(-8deg);
 }
+/* "Learn Collaborate Grow" — the caption the reference puts over the laptop. */
+.sp-laptop-caption {
+  position:absolute; left:26%; bottom:16%; color:#eaf3ff;
+  font-family:'Segoe Script','Brush Script MT','Apple Chancery','Bradley Hand',cursive;
+  font-size:clamp(13px,1.25vw,19px); font-style:italic; line-height:1.15;
+  text-align:center; transform:rotate(-6deg); z-index:5;
+  text-shadow:0 0 16px rgba(70,140,255,.85);
+}
 .sp-floating-card {
   position:absolute; display:flex; align-items:center; gap:9px;
   min-width:174px; padding:9px 11px;
@@ -165,10 +178,10 @@
   box-shadow:0 8px 28px rgba(0,0,0,.24),0 0 18px rgba(44,112,255,.16);
   backdrop-filter:blur(12px); z-index:4;
 }
-.sp-floating-1 { top:40%; right:1%; }
-.sp-floating-2 { top:58%; right:4%; }
-.sp-floating-3 { bottom:9%; right:0; }
-.sp-floating-4 { bottom:5%; right:40%; }
+.sp-floating-1 { top:26%; right:2%; }
+.sp-floating-2 { top:50%; right:2%; }
+.sp-floating-3 { top:74%; right:2%; }
+.sp-floating-4 { bottom:12%; right:30%; }
 .sp-floating-icon {
   width:36px; height:36px; flex-shrink:0;
   display:grid; place-items:center; border-radius:10px;
@@ -391,7 +404,8 @@
   .sp-header-actions { gap:6px; }
   .sp-header-cta { padding:0 12px!important; font-size:11px!important; }
   .sp-hero { min-height:auto; }
-  .sp-hero-art { background-position:64% center; }
+  .sp-hero-art { background-size:auto 92%, cover; background-position:right 8% bottom, 64% center; }
+  .sp-laptop-caption { left:8%; bottom:12%; }
   .sp-hero-shade { background:linear-gradient(180deg,rgba(0,11,44,.9),rgba(0,11,44,.76) 48%,#000b2c 100%); }
   .sp-hero-inner { display:flex; flex-direction:column; align-items:stretch; gap:0; padding:34px 17px 18px; }
   .sp-eyebrow { font-size:8px; letter-spacing:.9px; margin-bottom:15px; }

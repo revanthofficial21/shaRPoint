@@ -341,6 +341,7 @@ export function LandingPage() {
 
           <div className="sp-hero-visual">
             <div className="sp-campus-caption">Students<br />Teachers<br />Together<br />Stronger</div>
+            <div className="sp-laptop-caption" aria-hidden="true">Learn<br />Collaborate<br />Grow</div>
             {featureCards.map(({ title, detail, icon: Icon, color }, index) => (
               <div className={`sp-floating-card sp-floating-${index + 1}`} key={title}>
                 <span className={`sp-floating-icon ${color}`}><Icon size={19} /></span>
