@@ -61,6 +61,32 @@ describe('asset references resolve to real files', () => {
     expect(available.has('avatars/owner.png')).toBe(true)
   })
 
+  it('every SVG asset parses as XML', () => {
+    // The hero backdrop is emitted by scripts/generate-campus-backdrop.py. A bad
+    // edit there produces a malformed file that still sits at the right path —
+    // the asset guard would pass and the hero would silently go blank.
+    //
+    // This uses a real XML parser rather than counting tags. An earlier version
+    // of this test counted opening and closing elements with a regex and reported
+    // a false failure, because the pattern required a character before '>' and so
+    // missed bare <g> tags entirely.
+    const svgs = [...available].filter((name) => name.endsWith('.svg'))
+    expect(svgs.length).toBeGreaterThan(0)
+
+    const broken: string[] = []
+    for (const name of svgs) {
+      const raw = fs.readFileSync(path.join(publicDir, name), 'utf8')
+      const doc = new DOMParser().parseFromString(raw, 'image/svg+xml')
+      const error = doc.querySelector('parsererror')
+      if (error) {
+        broken.push(`${name}: ${(error.textContent || 'malformed').trim().slice(0, 120)}`)
+      } else if (doc.documentElement.tagName.toLowerCase() !== 'svg') {
+        broken.push(`${name}: root element is <${doc.documentElement.tagName}>`)
+      }
+    }
+    expect(broken).toEqual([])
+  })
+
   it('every local asset reference exists in public/', () => {
     const missing: string[] = []
 
