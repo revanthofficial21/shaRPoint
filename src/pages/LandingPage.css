@@ -48,14 +48,21 @@
 .sp-hero-art {
   position:absolute; inset:0; z-index:-3;
   /*
-   * This pointed at /avatars/campus-student-hero.png, which was never added to
-   * the repository — so the hero art 404'd and the hero fell back to a flat dark
-   * rectangle. Now it points at a file that exists. To use a photograph, drop it
-   * in public/avatars/ and change this one line; the shade below already assumes
-   * a busy image.
+   * Two layers: the student illustration on top of the campus-at-night backdrop.
+   *
+   * This used to point at /avatars/campus-student-hero.png, which was never added
+   * to the repository — so the hero art 404'd and the hero fell back to a flat
+   * dark rectangle. Both files now exist and a test guards the references.
+   *
+   * The illustration is WebP, not PNG: same 1100px artwork with alpha, 138 KB
+   * instead of 1341 KB.
    */
-  background-image:url('/avatars/campus-night.svg');
-  background-size:cover;
+  background-image:
+    url('/avatars/campus-student-hero.webp'),
+    url('/avatars/campus-night.svg');
+  background-size:auto 92%, cover;
+  background-position:right 5% bottom, center;
+  background-repeat:no-repeat, no-repeat;
   background-position:center 42%;
 }
 .sp-hero-shade {
