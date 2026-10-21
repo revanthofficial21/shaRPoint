@@ -32,18 +32,35 @@
 .sp-nav a { color:#dce5fb; font-size:13px; }
 .sp-nav a:hover { color:#43dfff; }
 .sp-header-actions { display:flex; align-items:center; gap:12px; }
+/*
+ * Two different buttons, measured separately from the reference.
+ *
+ * The NAV pill is a blue -> violet -> magenta gradient (#323dfb -> #811dfc ->
+ * #c23ff9). The HERO button is not a gradient at all — it is a white pill with
+ * blue text (#f4f8fd on #1c3cfa). They were sharing one rule, which is why the
+ * hero button was wrong.
+ */
 .sp-header-cta,.sp-primary-button {
   border:1px solid rgba(255,255,255,.22)!important;
   border-radius:999px!important;
-  color:white!important;
-  background:linear-gradient(110deg,#276cff,#942aff)!important;
-  box-shadow:0 0 22px rgba(74,84,255,.32);
 }
+.sp-header-cta {
+  color:white!important;
+  background:linear-gradient(100deg,#323dfb,#811dfc,#c23ff9)!important;
+  box-shadow:0 0 22px rgba(74,84,255,.35);
+}
+.sp-primary-button {
+  color:#1c3cfa!important;
+  background:#f4f8fd!important;
+  border-color:transparent!important;
+  box-shadow:0 12px 30px rgba(28,60,250,.38);
+}
+.sp-primary-button:hover { background:#ffffff!important; }
 .sp-header-cta { padding:0 20px!important; }
 .sp-hero {
   position:relative; isolation:isolate;
   min-height:520px; overflow:hidden;
-  background:#04112d;
+  background:#000b2c;
 }
 .sp-hero-art {
   position:absolute; inset:0; z-index:-3;
@@ -68,8 +85,8 @@
 .sp-hero-shade {
   position:absolute; inset:0; z-index:-2; pointer-events:none;
   background:
-    linear-gradient(90deg,rgba(3,13,37,.97) 0%,rgba(3,13,37,.87) 28%,rgba(3,13,37,.35) 49%,rgba(3,13,37,.08) 100%),
-    linear-gradient(0deg,#04112d 0%,transparent 18%,transparent 80%,rgba(3,13,37,.18) 100%);
+    linear-gradient(90deg,rgba(0,11,44,.97) 0%,rgba(0,11,44,.88) 28%,rgba(0,11,44,.36) 49%,rgba(0,11,44,.06) 100%),
+    linear-gradient(0deg,#000b2c 0%,transparent 18%,transparent 80%,rgba(0,11,44,.18) 100%);
 }
 .sp-hero-inner {
   width:min(1600px,100%); min-height:520px; margin:auto;
@@ -92,7 +109,13 @@
 }
 .sp-hero h1 span {
   display:inline-block; padding:4px 0 7px;
-  background:linear-gradient(95deg,#f9faff 0%,#c3c8ff 40%,#2dd9ff 100%);
+  /*
+   * Measured: the second line sweeps white -> magenta -> violet -> cyan
+   * (#ea95fb -> #d178f7 -> #57c9fb). The previous version went white ->
+   * periwinkle -> cyan and lost the pink entirely, which is most of the
+   * character of the headline.
+   */
+  background:linear-gradient(95deg,#ffffff 0%,#ea95fb 32%,#d178f7 56%,#57c9fb 100%);
   background-clip:text; -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
@@ -120,16 +143,17 @@
   width:38px; height:38px; display:grid; place-items:center;
   margin-bottom:2px; border:1px solid rgba(255,255,255,.1); border-radius:11px;
 }
-.sp-stat-icon.blue,.sp-floating-icon.blue { background:rgba(35,115,255,.22); color:#4bbcff; }
-.sp-stat-icon.cyan,.sp-floating-icon.cyan { background:rgba(0,210,255,.18); color:#43e5ff; }
-.sp-stat-icon.green,.sp-floating-icon.green { background:rgba(24,218,160,.18); color:#48e6b1; }
-.sp-stat-icon.purple,.sp-floating-icon.purple { background:rgba(168,66,255,.22); color:#d59aff; }
+.sp-stat-icon.blue,.sp-floating-icon.blue { background:rgba(43,47,165,.55); color:#8b9bff; }
+.sp-stat-icon.cyan,.sp-floating-icon.cyan { background:rgba(9,206,244,.34); color:#2ee9ff; }
+.sp-stat-icon.green,.sp-floating-icon.green { background:rgba(18,234,236,.26); color:#3ff0e0; }
+.sp-stat-icon.purple,.sp-floating-icon.purple { background:rgba(126,52,211,.52); color:#d178f7; }
 .sp-stat strong { color:white; font-size:22px; font-weight:900; line-height:1; }
 .sp-stat>span:last-child { color:#d1def5; font-size:11px; }
 .sp-hero-visual { position:relative; min-height:420px; align-self:stretch; }
 .sp-campus-caption {
   position:absolute; right:5%; top:3%; color:#e0bdff;
-  font-family:cursive; font-size:clamp(15px,1.5vw,23px);
+  font-family:'Segoe Script','Brush Script MT','Apple Chancery','Bradley Hand',cursive;
+  font-size:clamp(15px,1.5vw,23px);
   font-style:italic; line-height:1.1; text-align:center;
   text-shadow:0 0 18px #a44cff; transform:rotate(-8deg);
 }
@@ -368,7 +392,7 @@
   .sp-header-cta { padding:0 12px!important; font-size:11px!important; }
   .sp-hero { min-height:auto; }
   .sp-hero-art { background-position:64% center; }
-  .sp-hero-shade { background:linear-gradient(180deg,rgba(3,13,37,.9),rgba(3,13,37,.76) 48%,#04112d 100%); }
+  .sp-hero-shade { background:linear-gradient(180deg,rgba(0,11,44,.9),rgba(0,11,44,.76) 48%,#000b2c 100%); }
   .sp-hero-inner { display:flex; flex-direction:column; align-items:stretch; gap:0; padding:34px 17px 18px; }
   .sp-eyebrow { font-size:8px; letter-spacing:.9px; margin-bottom:15px; }
   .sp-hero h1 { font-size:clamp(37px,9vw,55px); letter-spacing:-1.8px; }

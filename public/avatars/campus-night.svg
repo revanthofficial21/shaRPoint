@@ -110,5 +110,37 @@
     <rect x="1475" y="760" width="10" height="90"/><circle cx="1480" cy="726" r="68"/>
   </g>
 
+  <!-- street lamps: the reference has warm light pools along the walkway -->
+  <defs>
+    <radialGradient id="lampglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffd9a0" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#ffbe6b" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffbe6b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g>
+    <g fill="#061633">
+      <rect x="243" y="640" width="5" height="200"/>
+      <rect x="536" y="664" width="5" height="176"/>
+      <rect x="852" y="628" width="5" height="212"/>
+      <rect x="1174" y="652" width="5" height="188"/>
+      <rect x="1461" y="670" width="5" height="170"/>
+    </g>
+    <g fill="#ffd9a0">
+      <circle cx="245" cy="636" r="7" opacity=".9"/>
+      <circle cx="538" cy="660" r="7" opacity=".9"/>
+      <circle cx="854" cy="624" r="7" opacity=".9"/>
+      <circle cx="1176" cy="648" r="7" opacity=".9"/>
+      <circle cx="1463" cy="666" r="7" opacity=".9"/>
+    </g>
+    <g>
+      <circle cx="245" cy="636" r="76" fill="url(#lampglow)"/>
+      <circle cx="538" cy="660" r="70" fill="url(#lampglow)"/>
+      <circle cx="854" cy="624" r="80" fill="url(#lampglow)"/>
+      <circle cx="1176" cy="648" r="72" fill="url(#lampglow)"/>
+      <circle cx="1463" cy="666" r="66" fill="url(#lampglow)"/>
+    </g>
+  </g>
+
   <rect x="0" y="840" width="1600" height="60" fill="url(#ground)"/>
 </svg>
