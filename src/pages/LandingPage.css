@@ -25,14 +25,14 @@
 }
 .sp-brand { display:flex; align-items:center; gap:10px; color:white; flex-shrink:0; }
 .sp-brand-icon {
-  width:46px; height:46px; flex-shrink:0; display:grid; place-items:center;
+  width:58px; height:58px; flex-shrink:0; display:grid; place-items:center;
   border-radius:14px; color:#1b46ec;
   background:linear-gradient(145deg,#ffffff,#d7e3ff);
   box-shadow:0 8px 20px rgba(27,70,236,.32);
 }
 .sp-brand-copy { display:flex; flex-direction:column; gap:3px; }
-.sp-brand-copy strong { font-size:31px; font-weight:850; letter-spacing:-1.1px; }
-.sp-brand-copy small { color:#d0dcf4; font-size:13px; letter-spacing:1px; }
+.sp-brand-copy strong { font-size:40px; font-weight:850; letter-spacing:-1.4px; }
+.sp-brand-copy small { color:#d0dcf4; font-size:14px; letter-spacing:1.1px; }
 .sp-nav { display:flex; align-items:center; gap:25px; }
 .sp-nav a { color:#dce5fb; font-size:16px; }
 .sp-nav a:hover { color:#43dfff; }
@@ -208,7 +208,7 @@
    * column was widened to fit the headline, which narrowed this grid column and
    * pushed the caption into the chip. It sits left of the column as a result.
    */
-  position:absolute; left:-86%; bottom:14%; color:#eaf3ff;
+  position:absolute; left:-78%; bottom:12%; color:#eaf3ff;
   font-family:'Segoe Script','Brush Script MT','Apple Chancery','Bradley Hand',cursive;
   font-size:clamp(16px,1.62vw,25px); font-style:italic; line-height:1.14;
   text-align:center; transform:rotate(-6deg); z-index:5;
@@ -217,16 +217,30 @@
 }
 .sp-floating-card {
   position:absolute; display:flex; align-items:center; gap:9px;
-  min-width:262px; padding:12px 16px;
+  min-width:288px; padding:13px 17px;
   border:1px solid rgba(94,190,255,.58); border-radius:13px;
   background:linear-gradient(115deg,rgba(6,38,82,.94),rgba(37,32,104,.91));
   box-shadow:0 8px 28px rgba(0,0,0,.24),0 0 18px rgba(44,112,255,.16);
   backdrop-filter:blur(12px); z-index:4;
 }
-.sp-floating-1 { top:27%; right:26%; }
-.sp-floating-2 { top:44%; right:22%; }
-.sp-floating-3 { top:61%; right:26%; }
-.sp-floating-4 { top:78%; right:24%; }
+/*
+ * The chips are a flex column with a real gap, NOT absolutely positioned
+ * percentages.
+ *
+ * They were offset as percentages of the column's height. That column stretches
+ * to match the copy block, so it grows with the viewport — the chips moved apart
+ * while their own height stayed fixed, and the last two collided and clipped each
+ * other's text. A gap cannot do that at any width.
+ */
+.sp-hero-visual {
+  display:flex; flex-direction:column; justify-content:flex-end;
+  align-items:flex-end; gap:16px; padding-bottom:4%;
+}
+.sp-floating-card { position:static; }
+.sp-floating-1 { margin-right:0; }
+.sp-floating-2 { margin-right:4%; }
+.sp-floating-3 { margin-right:0; }
+.sp-floating-4 { margin-right:3%; }
 .sp-floating-icon {
   width:36px; height:36px; flex-shrink:0;
   display:grid; place-items:center; border-radius:10px;
