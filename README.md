@@ -5,7 +5,7 @@ teachers and platform administrators**, built on React + TypeScript + Supabase.
 
 > **Status: complete.** Foundation, student experience, teacher experience, admin/owner
 > console, the advanced layer (realtime messaging, notifications, global search, AI
-> assistant), and the quality pass — 95 tests, an RLS verification suite, an
+> assistant), and the quality pass — 107 tests, an RLS verification suite, an
 > accessibility pass and full deployment docs.
 >
 > **Every route resolves to a real page.** There are no placeholder screens left —
@@ -29,7 +29,7 @@ proven.
 |---|---|---|
 | Migrations applied | `admin_user_directory`, `my_conversations`, the grade guard, 4 audit triggers and realtime membership all present | ✅ `1, 1, 4, 1` |
 | **Security model** | `supabase/tests/rls.sql` against the live database | ✅ **14 / 14 PASS** |
-| Application logic | `npm run test` — 95 tests | ✅ pass |
+| Application logic | `npm run test` — 107 tests | ✅ pass |
 | Types | `npm run typecheck` | ✅ clean |
 | Lint | `npm run lint` | ✅ 0 errors |
 | Production build | `npm run build` | ✅ succeeds |
@@ -65,7 +65,7 @@ Each of these was actively attempted and refused by the database:
 ## Testing
 
 ```bash
-npm run test     # 95 tests, vitest + Testing Library
+npm run test     # 107 tests, vitest + Testing Library
 npm run verify   # typecheck → lint → test → build
 ```
 
@@ -104,28 +104,47 @@ CI runs typecheck, lint, test and build on every push (`.github/workflows/ci.yml
 
 ## Hero backdrop
 
-The landing hero sits on `src/components/common/CampusBackdrop.tsx` — a **night campus
-drawn as SVG**: gradient sky, a soft glow, a lit skyline, ~480 windows and a treeline.
-It scales to any viewport, costs a few KB, retints with the accent preset, and is yours.
+The landing hero layers **two supplied images**:
 
-**Why not the reference image?** That hero illustration is a raster image embedded in a
-composite mockup. It cannot be extracted cleanly — the student figure and the baked-in
-captions sit over it — and its licence is unknown, so a crop would be both low-resolution
-and legally shaky.
+| Layer | File | Size |
+|---|---|---|
+| Student illustration (alpha) | `public/avatars/campus-student-hero.webp` | 167 KB |
+| Painted campus | `public/avatars/campus-hero.webp` | 316 KB |
 
-**To use a real photograph instead:**
+Both are WebP rather than PNG — 1341 KB → 167 KB and 2436 KB → 316 KB, with no visible
+loss at the sizes they render. That is a ~9× saving on the two largest assets in the app.
 
-1. Put the file in `public/` (e.g. `public/hero-campus.jpg`)
-2. In `src/pages/LandingPage.tsx`, replace `<CampusBackdrop />` with
-   `<img src="/hero-campus.jpg" alt="" className="h-full w-full object-cover" />`
-3. Keep the scrim `<div>` below it — without that the headline becomes unreadable over a
-   busy photo.
+They are positioned in `src/pages/LandingPage.css`:
+
+```css
+.sp-hero-art {
+  background-image: url('/avatars/campus-student-hero.webp'),
+                    url('/avatars/campus-hero.webp');
+  background-size: auto 88%, cover;
+  background-position: right 26% bottom, center;
+}
+```
+
+A `.sp-hero-shade` overlay sits on top. It is not decoration — it is what makes the
+headline legible over the painting, and it is tuned so the lit buildings still read
+through on the left.
+
+**A generated fallback also ships.** `scripts/generate-campus-backdrop.py` emits
+`public/avatars/campus-night.svg` — a stylised night campus (Milky Way, lit windows,
+wet-paving reflections) drawn procedurally from a seed. It is unreferenced while the
+painting is in place; point the first `url()` above at it if the painting is ever
+removed. Regenerate with `python3 scripts/generate-campus-backdrop.py`.
+
+**Swapping in a different photograph:** drop it in `public/avatars/`, change that one
+`url()`, and keep the shade overlay. Render it through a browser rather than an SVG
+rasteriser — `cairosvg` silently ignores SVG filters, which makes the backdrop look far
+worse than it does in a real engine.
 
 ---
 
 ## Theme
 
-**Nebula — electric blue to violet on deep navy. Dark by default. Five accents to choose from.**
+**Nebula — electric blue to violet. Light by default, with a dark mode. Five accents to choose from.**
 
 ### Measured palette
 
@@ -172,7 +191,7 @@ rest, so adding a sixth is about ten lines of CSS.
    nav item all read from `--brand-from` / `--brand-to`, so switching preset retints
    every one of them at once.
 2. **Colourful tiles.** Statistics and feature icons each get their own hue from
-   `--tile-blue|violet|green|orange|pink|teal`. These are **deliberately independent of
+   `--tile-blue|violet|sky|green|amber|pink|purple`. These are **deliberately independent of
    the brand** — a dashboard where every icon wears the accent colour is unreadable,
    and finding a tile should not require reading it.
 3. **Glow.** A soft aurora wash sits behind the whole app, with drifting orbs behind
@@ -184,20 +203,21 @@ is no flash of the wrong palette.
 
 | Token | Light | Dark | Used for |
 |---|---|---|---|
-| `--primary` | orange `22 90% 44%` | amber `28 96% 56%` | buttons, links, active nav, focus ring |
-| `--background` | warm off-white `30 25% 99%` | deep navy `234 42% 6%` | page canvas |
-| `--success` | green `152 62% 34%` | green `152 58% 44%` | “Enrolled”, “Submitted”, released grades |
-| `--warning` | yellow `45 93% 44%` | yellow `45 90% 58%` | drafts, pending grading, overdue |
-| `--destructive` | red `0 72% 51%` | red `0 70% 52%` | errors, suspensions, delete |
-| `--chart-1…4` | amber / teal / violet / sky | brighter equivalents | Recharts series |
+| `--primary` | blue `228 85% 52%` | blue `231 92% 62%` | buttons, links, active nav, focus ring |
+| `--background` | pale blue-white `220 60% 98%` | deep navy `222 96% 10%` | page canvas |
+| `--success` | green `152 58% 40%` | green `160 75% 55%` | “Enrolled”, “Submitted”, released grades |
+| `--warning` | amber `33 90% 46%` | amber `38 95% 60%` | drafts, pending grading, overdue |
+| `--destructive` | coral `358 78% 58%` | red `0 72% 58%` | errors, suspensions, delete |
+| `--chart-1…4` | blue / violet / green / coral | brighter equivalents | Recharts series |
+| `--brand-from` → `--brand-to` | `228 85% 52%` → `262 84% 62%` | `231 92% 59%` → `256 95% 57%` | every gradient in the app |
 
 Two deliberate choices worth knowing before you edit them:
 
-- **Dark-mode primary is bright amber with *dark* text.** White on orange fails
-  contrast badly (~2.6:1); near-black on the same orange is ~8:1. This is what makes
-  the buttons read as confident rather than washed out.
-- **`warning` is yellow, not amber.** The brand is amber now, so a warning badge in the
-  brand colour would be indistinguishable from a primary button.
+- **The headline gradient is not the button gradient.** The button sweeps blue → violet;
+  the headline sweeps violet → blue → cyan and ends on `#57c9fb`. Both are in the design
+  reference, and collapsing them into one token loses the headline's character.
+- **`warning` is amber, not blue.** The brand is blue, so a warning badge in the brand
+  colour would be indistinguishable from a primary button.
 
 ### Craft, not just colour
 

@@ -35,8 +35,10 @@ import './LandingPage.css'
  * If the function is missing or the call fails, the figure renders as a dash
  * rather than inventing something.
  */
-function formatCount(value?: number) {
-  if (value === undefined) return '—'
+function formatCount(value?: number): string | null {
+  // null, not a dash. Four "—" tiles read as a broken page; the render omits the
+  // figure entirely and the tiles become an icon+label capability strip.
+  if (value === undefined) return null
   if (value >= 1000) return `${(value / 1000).toFixed(1).replace(/\.0$/, '')}K+`
   return String(value)
 }
@@ -375,7 +377,7 @@ export function LandingPage() {
               {stats.map(({ value, label, icon: Icon, color }) => (
                 <div className="sp-stat" key={label}>
                   <span className={`sp-stat-icon ${color}`}><Icon size={19} /></span>
-                  <strong>{value}</strong>
+                  {value !== null && <strong>{value}</strong>}
                   <span>{label}</span>
                 </div>
               ))}

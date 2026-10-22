@@ -37,8 +37,11 @@ describe('landing page social proof', () => {
     expect(invented).toEqual([])
   })
 
-  it('renders a dash rather than a number when the counts are unavailable', () => {
-    // An unmigrated database or a failed request must not read as "0 students".
-    expect(landing).toContain("return '—'")
+  it('omits the figure entirely when the counts are unavailable', () => {
+    // An unmigrated database or a failed request must not read as "0 students",
+    // and four dashes read as a broken page. The render drops the number and the
+    // tiles become an icon + label strip.
+    expect(landing).toContain('if (value === undefined) return null')
+    expect(landing).toMatch(/value !== null && <strong>/)
   })
 })
