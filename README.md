@@ -129,11 +129,14 @@ A `.sp-hero-shade` overlay sits on top. It is not decoration — it is what make
 headline legible over the painting, and it is tuned so the lit buildings still read
 through on the left.
 
-**A generated fallback also ships.** `scripts/generate-campus-backdrop.py` emits
-`public/avatars/campus-night.svg` — a stylised night campus (Milky Way, lit windows,
-wet-paving reflections) drawn procedurally from a seed. It is unreferenced while the
-painting is in place; point the first `url()` above at it if the painting is ever
-removed. Regenerate with `python3 scripts/generate-campus-backdrop.py`.
+**There is a generated fallback, on demand.** `scripts/generate-campus-backdrop.py`
+draws a stylised night campus — Milky Way, lit windows, wet-paving reflections — from a
+seed. It is *not* committed, because the painting supersedes it; run it and it writes
+`public/avatars/campus-night.svg`, then point the first `url()` above at that file.
+
+```bash
+python3 scripts/generate-campus-backdrop.py
+```
 
 **Swapping in a different photograph:** drop it in `public/avatars/`, change that one
 `url()`, and keep the shade overlay. Render it through a browser rather than an SVG

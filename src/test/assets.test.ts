@@ -58,7 +58,9 @@ describe('asset references resolve to real files', () => {
 
   it('found the public assets (guards against a vacuous pass)', () => {
     expect(available.size).toBeGreaterThan(0)
-    expect(available.has('avatars/owner.png')).toBe(true)
+    // a canary that must always exist: the favicon is referenced by index.html
+    expect(available.has('favicon.svg')).toBe(true)
+    expect(available.has('avatars/campus-hero.webp')).toBe(true)
   })
 
   it('every SVG asset parses as XML', () => {
