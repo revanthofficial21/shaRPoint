@@ -59,7 +59,10 @@
 .sp-header-cta { padding:0 20px!important; }
 .sp-hero {
   position:relative; isolation:isolate;
-  min-height:780px; overflow:hidden;
+  /* Fills the viewport below the 72px header, as the reference frames it, so the
+     dashboard preview never peeks above the fold. Capped so it cannot run away
+     on a very tall monitor. */
+  min-height:clamp(680px, calc(100vh - 72px), 960px); overflow:hidden;
   background:#000b2c;
 }
 .sp-hero-art {
@@ -82,10 +85,9 @@
    * the body bleeding off the bottom edge. 92% / right 5% left him too small and
    * pinned to the far edge, which is why the hero read as mostly empty navy.
    */
-  background-size:auto 88%, cover;
-  background-position:right 26% bottom, center;
+  background-size:auto 98%, cover;
+  background-position:right 22% bottom, center;
   background-repeat:no-repeat, no-repeat;
-  background-position:center 42%;
 }
 .sp-hero-shade {
   position:absolute; inset:0; z-index:-2; pointer-events:none;
@@ -94,7 +96,7 @@
     linear-gradient(0deg,#000b2c 0%,transparent 16%,transparent 82%,rgba(0,11,44,.14) 100%);
 }
 .sp-hero-inner {
-  width:min(1600px,100%); min-height:780px; margin:auto;
+  width:min(1600px,100%); min-height:clamp(680px, calc(100vh - 72px), 960px); margin:auto;
   padding:42px 32px 28px;
   display:grid; grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);
   gap:20px; align-items:center;
@@ -107,6 +109,27 @@
   color:#69e7ff; background:rgba(5,39,81,.68);
   font-size:10px; font-weight:800; letter-spacing:1.5px;
 }
+/*
+ * The gradient covers the whole heading, not just the second line.
+ *
+ * In the reference "Campus." is already pink and "One" is still white — the
+ * sweep begins on the first line and finishes cyan on the last word. Clipping it
+ * to the second line alone loses that, and the heading reads flat.
+ *
+ * The slight downward angle (112deg) is what makes the first line land earlier in
+ * the sweep than the second.
+ */
+/*
+ * Each line carries its OWN gradient.
+ *
+ * In the reference "One" is white while "Campus." is already pink, and the second
+ * line restarts white before finishing cyan. So the sweep begins on both lines.
+ * One gradient across the whole heading cannot do that — both lines sample the
+ * same x positions, so line one would inherit line two's colours.
+ *
+ * Per line is also deterministic: the colours land on the same words at every
+ * viewport width instead of drifting with the box.
+ */
 .sp-hero h1 {
   margin:0; color:#fff;
   font-size:clamp(39px,4.2vw,68px);
@@ -114,15 +137,12 @@
 }
 .sp-hero h1 span {
   display:inline-block; padding:4px 0 7px;
-  /*
-   * Measured: the second line sweeps white -> magenta -> violet -> cyan
-   * (#ea95fb -> #d178f7 -> #57c9fb). The previous version went white ->
-   * periwinkle -> cyan and lost the pink entirely, which is most of the
-   * character of the headline.
-   */
-  background:linear-gradient(95deg,#ffffff 0%,#ea95fb 32%,#d178f7 56%,#57c9fb 100%);
   background-clip:text; -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
+}
+.sp-line-one { background-image:linear-gradient(100deg,#ffffff 0%,#f9d8fc 50%,#ea95fb 100%); }
+.sp-line-two {
+  background-image:linear-gradient(100deg,#ffffff 0%,#f4c2fb 16%,#ea95fb 40%,#d178f7 64%,#57c9fb 88%,#6fe0ff 100%);
 }
 .sp-hero-copy h2 {
   margin:12px 0 9px; color:#f0f4ff;
@@ -381,8 +401,13 @@
 .sp-footer>small { grid-column:1/-1; padding-top:12px; border-top:1px solid #1b2d4b; text-align:center; }
 
 @media (min-width:1500px) {
-  .sp-hero,.sp-hero-inner { min-height:570px; }
-  .sp-hero-visual { min-height:470px; }
+  /*
+   * This used to force min-height:570px, shrinking the hero on exactly the
+   * screens with the most room for it — and it silently beat the base rule,
+   * because media-query rules come last. The reference fills the viewport, so
+   * the base height stands and only the illustration column grows.
+   */
+  .sp-hero-visual { min-height:560px; }
 }
 @media (max-width:1100px) {
   .sp-header-inner { padding:0 18px; gap:14px; }

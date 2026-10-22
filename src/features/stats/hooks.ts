@@ -23,7 +23,17 @@ export function usePublicStats() {
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<PublicStats> => {
       const { data, error } = await supabase.rpc('public_platform_stats')
-      if (error) throw error
+      if (error) {
+        /*
+         * Surface the real reason. When this call fails the landing page simply
+         * omits its figures — the strip looks intentional rather than broken — so
+         * without this line there is nothing at all to go on when the counts do
+         * not appear. The usual cause is that 0008_public_stats.sql has not been
+         * applied to this project, or the project is paused.
+         */
+        console.error('[sharpoint] public_platform_stats failed:', error.message)
+        throw error
+      }
       return data as PublicStats
     },
   })

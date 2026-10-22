@@ -358,7 +358,11 @@ export function LandingPage() {
         <div className="sp-hero-inner">
           <div className="sp-hero-copy">
             <div className="sp-eyebrow"><Sparkles size={14} /> YOUR CAMPUS. ONE CONNECTED WORLD.</div>
-            <h1>One Campus.<br /><span>Infinite Possibilities.</span></h1>
+            <h1>
+              <span className="sp-line-one">One Campus.</span>
+              <br />
+              <span className="sp-line-two">Infinite Possibilities.</span>
+            </h1>
             <h2>Connect Minds. Share Knowledge. Build Your Future.</h2>
             <p className="sp-hero-description">
               SHARPOINT is an all-in-one academic and collaboration platform
