@@ -12,56 +12,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
-import { usePublicStats, type PublicStats } from '@/features/stats/hooks'
 import './LandingPage.css'
-
-/*
- * These four figures are REAL.
- *
- * They come from public_platform_stats(), which returns five aggregate counts and
- * nothing else — no rows, no identifiers, no PII. The previous version of this
- * page hard-coded "10K+ / 500+ / 200+ / 100+", which claimed ten thousand students
- * on a platform that had one. Those were not numbers, they were a claim.
- *
- * If the function is missing or the call fails, the figure renders as a dash
- * rather than inventing something.
- */
-function formatCount(value?: number): string | null {
-  // null, not a dash. Four "—" tiles read as a broken page; the render omits the
-  // figure entirely and the tiles become an icon+label capability strip.
-  if (value === undefined) return null
-  if (value >= 1000) return `${(value / 1000).toFixed(1).replace(/\.0$/, '')}K+`
-  return String(value)
-}
-
-function buildStats(counts?: PublicStats) {
-  return [
-    {
-      value: formatCount(counts?.students),
-      label: counts?.students === 1 ? 'Student' : 'Students',
-      icon: Users,
-      color: 'blue',
-    },
-    {
-      value: formatCount(counts?.teachers),
-      label: counts?.teachers === 1 ? 'Teacher' : 'Teachers',
-      icon: GraduationCap,
-      color: 'cyan',
-    },
-    {
-      value: formatCount(counts?.courses),
-      label: counts?.courses === 1 ? 'Course' : 'Courses',
-      icon: BookOpen,
-      color: 'green',
-    },
-    {
-      value: formatCount(counts?.opportunities),
-      label: counts?.opportunities === 1 ? 'Opportunity' : 'Opportunities',
-      icon: Sparkles,
-      color: 'purple',
-    },
-  ]
-}
 
 const featureCards = [
   { title: 'Study Groups', detail: 'Find your people', icon: Users, color: 'cyan' },
@@ -72,9 +23,6 @@ const featureCards = [
 
 
 export function LandingPage() {
-  const publicStats = usePublicStats()
-  const stats = buildStats(publicStats.data)
-
   return (
     <main className="sp-landing">
       <header className="sp-header">
@@ -126,15 +74,6 @@ export function LandingPage() {
               <Button className="sp-video-button" variant="outline" size="lg" asChild>
                 <a href="#features"><Play size={16} /> Watch Video</a>
               </Button>
-            </div>
-            <div className="sp-stats" aria-busy={publicStats.isLoading}>
-              {stats.map(({ value, label, icon: Icon, color }) => (
-                <div className="sp-stat" key={label}>
-                  <span className={`sp-stat-icon ${color}`}><Icon size={19} /></span>
-                  {value !== null && <strong>{value}</strong>}
-                  <span>{label}</span>
-                </div>
-              ))}
             </div>
           </div>
 

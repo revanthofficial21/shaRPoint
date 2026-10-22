@@ -159,21 +159,15 @@
   border-color:rgba(210,225,255,.5)!important;
   background:rgba(5,18,45,.72)!important; color:white!important;
 }
-.sp-stats {
-  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-  max-width:500px; gap:17px; margin-top:25px;
-}
-.sp-stat { display:flex; flex-direction:column; align-items:flex-start; gap:5px; min-width:0; }
-.sp-stat-icon {
-  width:38px; height:38px; display:grid; place-items:center;
-  margin-bottom:2px; border:1px solid rgba(255,255,255,.1); border-radius:11px;
-}
-.sp-stat-icon.blue,.sp-floating-icon.blue { background:rgba(43,47,165,.55); color:#8b9bff; }
-.sp-stat-icon.cyan,.sp-floating-icon.cyan { background:rgba(9,206,244,.34); color:#2ee9ff; }
-.sp-stat-icon.green,.sp-floating-icon.green { background:rgba(18,234,236,.26); color:#3ff0e0; }
-.sp-stat-icon.purple,.sp-floating-icon.purple { background:rgba(126,52,211,.52); color:#d178f7; }
-.sp-stat strong { color:white; font-size:22px; font-weight:900; line-height:1; }
-.sp-stat>span:last-child { color:#d1def5; font-size:11px; }
+
+
+
+
+
+
+
+
+
 .sp-hero-visual { position:relative; min-height:420px; align-self:stretch; }
 .sp-campus-caption {
   position:absolute; right:5%; top:3%; color:#e0bdff;
@@ -373,9 +367,6 @@
   .sp-floating-2 { top:48%; right:0; }
   .sp-floating-3 { bottom:5%; right:0; }
   .sp-floating-4 { bottom:3%; right:auto; left:0; }
-  .sp-stats { gap:10px; margin-top:24px; }
-  .sp-stat strong { font-size:19px; }
-  .sp-stat>span:last-child { font-size:10px; }
   .sp-window-title { height:30px; }
   .sp-fake-search { font-size:0; }
   .sp-welcome-note { display:none; }
