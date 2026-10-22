@@ -6,13 +6,36 @@ import {
   Bot,
   BriefcaseBusiness,
   GraduationCap,
-  Play,
   Sparkles,
   Users,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { usePublicStats, type PublicStats } from '@/features/stats/hooks'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 import './LandingPage.css'
+
+/*
+ * The four figures are REAL: public_platform_stats() returns five aggregate counts
+ * and nothing else — no rows, no identifiers, no PII.
+ *
+ * A figure renders only when the call returns one. If the function is missing or
+ * the request fails, the tile drops its number rather than showing a zero it
+ * cannot vouch for, and the failure is logged in the browser console.
+ */
+function formatCount(value?: number): string | null {
+  if (value === undefined) return null
+  if (value >= 1000) return `${(value / 1000).toFixed(1).replace(/\.0$/, '')}K+`
+  return String(value)
+}
+
+function buildStats(counts?: PublicStats) {
+  return [
+    { value: formatCount(counts?.students), label: counts?.students === 1 ? 'Student' : 'Students', icon: Users, color: 'blue' },
+    { value: formatCount(counts?.teachers), label: counts?.teachers === 1 ? 'Teacher' : 'Teachers', icon: GraduationCap, color: 'cyan' },
+    { value: formatCount(counts?.courses), label: counts?.courses === 1 ? 'Course' : 'Courses', icon: BookOpen, color: 'green' },
+    { value: formatCount(counts?.opportunities), label: counts?.opportunities === 1 ? 'Opportunity' : 'Opportunities', icon: Sparkles, color: 'purple' },
+  ]
+}
 
 const featureCards = [
   { title: 'Study Groups', detail: 'Find your people', icon: Users, color: 'cyan' },
@@ -23,6 +46,9 @@ const featureCards = [
 
 
 export function LandingPage() {
+  const publicStats = usePublicStats()
+  const stats = buildStats(publicStats.data)
+
   return (
     <main className="sp-landing">
       <header className="sp-header">
@@ -72,8 +98,18 @@ export function LandingPage() {
                 <Link to="/sign-up">Get Started <ArrowRight size={17} /></Link>
               </Button>
               <Button className="sp-video-button" variant="outline" size="lg" asChild>
-                <a href="#features"><Play size={16} /> Watch Video</a>
+                <Link to="/sign-up">Sign up</Link>
               </Button>
+            </div>
+
+            <div className="sp-stats" aria-busy={publicStats.isLoading}>
+              {stats.map(({ value, label, icon: Icon, color }) => (
+                <div className="sp-stat" key={label}>
+                  <span className={`sp-stat-icon ${color}`}><Icon size={19} /></span>
+                  {value !== null && <strong>{value}</strong>}
+                  <span>{label}</span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -88,6 +124,13 @@ export function LandingPage() {
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="sp-bottom-join">
+        <p>Your campus is already here.</p>
+        <Button className="sp-primary-button" asChild>
+          <Link to="/sign-up">Join Now <ArrowRight size={16} /></Link>
+        </Button>
       </section>
 
       <footer className="sp-footer">
