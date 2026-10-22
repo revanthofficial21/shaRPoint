@@ -31,10 +31,10 @@
   box-shadow:0 8px 20px rgba(27,70,236,.32);
 }
 .sp-brand-copy { display:flex; flex-direction:column; gap:3px; }
-.sp-brand-copy strong { font-size:27px; font-weight:850; letter-spacing:-1px; }
-.sp-brand-copy small { color:#d0dcf4; font-size:11.5px; letter-spacing:.9px; }
+.sp-brand-copy strong { font-size:31px; font-weight:850; letter-spacing:-1.1px; }
+.sp-brand-copy small { color:#d0dcf4; font-size:13px; letter-spacing:1px; }
 .sp-nav { display:flex; align-items:center; gap:25px; }
-.sp-nav a { color:#dce5fb; font-size:14.5px; }
+.sp-nav a { color:#dce5fb; font-size:16px; }
 .sp-nav a:hover { color:#43dfff; }
 .sp-header-actions { display:flex; align-items:center; gap:12px; }
 /*
@@ -102,11 +102,19 @@
 }
 .sp-hero-inner {
   width:min(1600px,100%); min-height:clamp(680px, calc(100vh - 72px), 960px); margin:auto;
-  padding:42px 32px 28px;
-  display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
+  padding:30px 32px 24px;
+  display:grid; grid-template-columns:minmax(0,1.42fr) minmax(0,.58fr);
   gap:20px; align-items:center;
 }
-.sp-hero-copy { position:relative; z-index:2; max-width:720px; }
+/*
+ * The copy column must be wide enough for the longest headline line.
+ *
+ * It was capped at 720px, which forced "Infinite Possibilities." to wrap and gave
+ * a three-line headline where the reference has two. The reference's headline runs
+ * to ~1014px — wider than the figure's left edge, so it passes under him, and the
+ * figure is a full-bleed background layer and does not move when this changes.
+ */
+.sp-hero-copy { position:relative; z-index:2; max-width:1120px; }
 .sp-eyebrow {
   display:inline-flex; align-items:center; gap:8px;
   padding:9px 16px; margin-bottom:23px;
@@ -142,8 +150,13 @@
    * Possibilities." onto two lines, giving a three-line headline where the
    * reference has two. The cap is set so the longest line fits the copy column.
    */
-  font-size:clamp(40px,4.3vw,74px);
-  line-height:1.03; letter-spacing:-2.8px; font-weight:900;
+  /*
+   * Sized by measurement, not by eye: the reference's longest headline line runs
+   * 1098px at 1672 wide, which this typeface reaches at ~94px. Two earlier guesses
+   * (74px, then 80px) both came out short.
+   */
+  font-size:clamp(46px,5.62vw,94px);
+  line-height:1.02; letter-spacing:-3.4px; font-weight:900;
 }
 .sp-hero h1 span {
   display:inline-block; padding:4px 0 7px;
@@ -158,16 +171,16 @@
 }
 .sp-hero-copy h2 {
   margin:16px 0 13px; color:#f0f4ff;
-  font-size:clamp(16px,1.72vw,25px); line-height:1.4; font-weight:700;
+  max-width:790px; font-size:clamp(17px,1.86vw,27px); line-height:1.4; font-weight:700;
 }
 .sp-hero-description {
-  max-width:520px; margin:0; color:#c3d1ee;
-  font-size:16px; line-height:1.68;
+  max-width:640px; margin:0; color:#c3d1ee;
+  font-size:17px; line-height:1.7;
 }
 .sp-hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
-.sp-primary-button { min-height:53px; padding:0 27px!important; gap:10px; font-size:16px!important; }
+.sp-primary-button { min-height:58px; padding:0 31px!important; gap:11px; font-size:17px!important; }
 .sp-video-button {
-  min-height:53px; padding:0 27px!important; gap:10px; font-size:16px!important; border-radius:999px!important;
+  min-height:58px; padding:0 31px!important; gap:11px; font-size:17px!important; border-radius:999px!important;
   border-color:rgba(210,225,255,.5)!important;
   background:rgba(5,18,45,.72)!important; color:white!important;
 }
@@ -190,7 +203,12 @@
 }
 /* "Learn Collaborate Grow" — the caption the reference puts over the laptop. */
 .sp-laptop-caption {
-  position:absolute; left:26%; bottom:16%; color:#eaf3ff;
+  /*
+   * Anchored over the laptop, left of the Academic Resources chip. The copy
+   * column was widened to fit the headline, which narrowed this grid column and
+   * pushed the caption into the chip. It sits left of the column as a result.
+   */
+  position:absolute; left:-86%; bottom:14%; color:#eaf3ff;
   font-family:'Segoe Script','Brush Script MT','Apple Chancery','Bradley Hand',cursive;
   font-size:clamp(13px,1.25vw,19px); font-style:italic; line-height:1.15;
   text-align:center; transform:rotate(-6deg); z-index:5;
@@ -198,15 +216,15 @@
 }
 .sp-floating-card {
   position:absolute; display:flex; align-items:center; gap:9px;
-  min-width:174px; padding:9px 11px;
+  min-width:272px; padding:15px 18px;
   border:1px solid rgba(94,190,255,.58); border-radius:13px;
   background:linear-gradient(115deg,rgba(6,38,82,.94),rgba(37,32,104,.91));
   box-shadow:0 8px 28px rgba(0,0,0,.24),0 0 18px rgba(44,112,255,.16);
   backdrop-filter:blur(12px); z-index:4;
 }
-.sp-floating-1 { top:32%; right:1%; }
-.sp-floating-2 { top:50%; right:1%; }
-.sp-floating-3 { top:68%; right:1%; }
+.sp-floating-1 { top:30%; right:26%; }
+.sp-floating-2 { top:49%; right:22%; }
+.sp-floating-3 { top:67%; right:26%; }
 .sp-floating-4 { bottom:16%; right:24%; }
 .sp-floating-icon {
   width:36px; height:36px; flex-shrink:0;
@@ -406,15 +424,15 @@
 /* ── statistics strip ─────────────────────────────────────────────────────── */
 .sp-stats {
   display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-  max-width:560px; gap:20px; margin-top:32px;
+  max-width:600px; gap:24px; margin-top:38px;
 }
 .sp-stat { display:flex; flex-direction:column; align-items:flex-start; gap:5px; min-width:0; }
 .sp-stat-icon {
-  width:46px; height:46px; display:grid; place-items:center;
-  margin-bottom:4px; border:1px solid rgba(255,255,255,.1); border-radius:13px;
+  width:50px; height:50px; display:grid; place-items:center;
+  margin-bottom:5px; border:1px solid rgba(255,255,255,.1); border-radius:14px;
 }
-.sp-stat strong { color:#fff; font-size:29px; font-weight:900; line-height:1; }
-.sp-stat>span:last-child { color:#d1def5; font-size:13px; }
+.sp-stat strong { color:#fff; font-size:32px; font-weight:900; line-height:1; }
+.sp-stat>span:last-child { color:#d1def5; font-size:14px; }
 
 /* ── bottom "Join Now" band ───────────────────────────────────────────────── */
 .sp-bottom-join {
