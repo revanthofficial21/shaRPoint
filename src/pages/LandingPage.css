@@ -210,22 +210,23 @@
    */
   position:absolute; left:-86%; bottom:14%; color:#eaf3ff;
   font-family:'Segoe Script','Brush Script MT','Apple Chancery','Bradley Hand',cursive;
-  font-size:clamp(13px,1.25vw,19px); font-style:italic; line-height:1.15;
+  font-size:clamp(16px,1.62vw,25px); font-style:italic; line-height:1.14;
   text-align:center; transform:rotate(-6deg); z-index:5;
+  text-shadow:0 2px 10px rgba(2,8,26,.85), 0 0 22px rgba(120,190,255,.45);
   text-shadow:0 0 16px rgba(70,140,255,.85);
 }
 .sp-floating-card {
   position:absolute; display:flex; align-items:center; gap:9px;
-  min-width:272px; padding:15px 18px;
+  min-width:262px; padding:12px 16px;
   border:1px solid rgba(94,190,255,.58); border-radius:13px;
   background:linear-gradient(115deg,rgba(6,38,82,.94),rgba(37,32,104,.91));
   box-shadow:0 8px 28px rgba(0,0,0,.24),0 0 18px rgba(44,112,255,.16);
   backdrop-filter:blur(12px); z-index:4;
 }
-.sp-floating-1 { top:30%; right:26%; }
-.sp-floating-2 { top:49%; right:22%; }
-.sp-floating-3 { top:67%; right:26%; }
-.sp-floating-4 { bottom:16%; right:24%; }
+.sp-floating-1 { top:27%; right:26%; }
+.sp-floating-2 { top:44%; right:22%; }
+.sp-floating-3 { top:61%; right:26%; }
+.sp-floating-4 { top:78%; right:24%; }
 .sp-floating-icon {
   width:36px; height:36px; flex-shrink:0;
   display:grid; place-items:center; border-radius:10px;
